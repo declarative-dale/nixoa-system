@@ -1,0 +1,50 @@
+# ==============================================================================
+# XO Server Configuration Settings
+# ==============================================================================
+# Edit this file to configure Xen Orchestra server settings
+# After making changes, run: ./commit-config "Updated XO settings"
+# Then rebuild: cd /etc/nixos/nixoa-ce && sudo nixos-rebuild switch --flake .#nixoa
+
+# ==============================================================================
+# HTTP/HTTPS CONFIGURATION
+# ==============================================================================
+
+[xo]
+host = "0.0.0.0"
+port = 80
+httpsPort = 443
+
+# ==============================================================================
+# TLS/SSL CONFIGURATION
+# ==============================================================================
+
+[tls]
+enable = true
+redirectToHttps = true
+autoGenerate = true  # Automatically generate/renew self-signed certs
+dir = "/etc/ssl/xo"
+cert = "/etc/ssl/xo/certificate.pem"
+key = "/etc/ssl/xo/key.pem"
+
+# ==============================================================================
+# ADVANCED XO SERVER SETTINGS (Optional)
+# ==============================================================================
+# Most users don't need to change these
+
+[authentication]
+# Token validity period (examples: "30 days", "1 week", "24 hours")
+defaultTokenValidity = "30 days"
+
+[logs]
+# Log level: "trace", "debug", "info", "warn", "error"
+level = "info"
+
+# ==============================================================================
+# PATHS (Auto-configured, usually don't need changes)
+# ==============================================================================
+
+[paths]
+# These are set by NiXOA CE modules and usually don't need customization
+# dataDir = "/var/lib/xo/data"
+# tempDir = "/var/lib/xo/tmp"
+# mountsDir = "/var/lib/xo/mounts"

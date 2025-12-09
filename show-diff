@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Convenience wrapper for scripts/show-diff.sh
+exec "$(dirname "$0")/scripts/show-diff.sh" "$@"

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Convenience wrapper for scripts/history.sh
+exec "$(dirname "$0")/scripts/history.sh" "$@"

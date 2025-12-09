@@ -2,6 +2,9 @@
 result
 result-*
 
+# Flake lock file (keep local, don't track in template)
+flake.lock
+
 # Editor files
 *.swp
 *.swo
@@ -12,3 +15,8 @@ result-*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*~

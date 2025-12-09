@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Convenience wrapper for scripts/apply-config.sh
+exec "$(dirname "$0")/scripts/apply-config.sh" "$@"
