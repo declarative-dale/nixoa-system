@@ -22,7 +22,7 @@ This repository provides a simple TOML-based configuration system for NiXOA CE:
 nixoa-ce-config/
 ├── system-settings.toml           # Edit this: System configuration
 ├── xo-server-settings.toml        # Edit this: XO server configuration
-├── flake.nix                      # Flake definition (don't edit)
+├── flake.nix                      # Flake definition
 ├── modules/
 │   ├── system.nix                 # Reads system-settings.toml
 │   └── xo-server-config.nix       # Reads xo-server-settings.toml
@@ -35,8 +35,12 @@ nixoa-ce-config/
 ├── apply-config
 ├── show-diff
 ├── history
-└── README.md                      # This file
+├── README.md                      # This file
+├── QUICKSTART.md                  # 5-minute quick start guide
+└── CLI-REFERENCE.md               # Complete CLI command reference
 ```
+
+> **💡 Tip:** After installing NiXOA CE, use the `nixoa` command for all operations. The scripts are still available for advanced use.
 
 ## Quick Start
 
@@ -49,39 +53,92 @@ cd /etc/nixos/nixoa-ce-config
 
 ### 2. Edit your configuration
 
-**Edit system settings:**
+**Using the nixoa CLI (recommended):**
 ```bash
-nano system-settings.toml
+nixoa config edit
 ```
 
 At minimum, you must:
 - Add your SSH public keys to the `sshKeys` array
 - Set your `hostname`, `username`, and `timezone`
 
-**Edit XO server settings (optional):**
+**Or edit manually:**
 ```bash
-nano xo-server-settings.toml
+nano system-settings.toml      # System settings
+nano xo-server-settings.toml   # XO server settings (optional)
 ```
 
-Change ports, TLS settings, logging level, etc.
+### 3. Apply your changes
 
-### 3. Save and apply your changes
+**Using the nixoa CLI (recommended):**
+```bash
+nixoa config apply "Initial configuration"
+```
 
-**Option A: Commit and apply in one step**
+**Or using scripts:**
 ```bash
 ./apply-config "Initial configuration"
 ```
 
-**Option B: Commit, then rebuild separately**
+**Or manually:**
 ```bash
 ./commit-config "Initial configuration"
 cd /etc/nixos/nixoa-ce
 sudo nixos-rebuild switch --flake .#nixoa
 ```
 
+> **📖 New to NiXOA CE?** Check out [QUICKSTART.md](QUICKSTART.md) for a 5-minute guide!
+
+## CLI Quick Reference
+
+The `nixoa` command provides an easy interface for all configuration tasks:
+
+```bash
+# Configuration Management
+nixoa config edit               # Edit configuration files
+nixoa config show               # Show uncommitted changes
+nixoa config commit "msg"       # Commit changes
+nixoa config apply "msg"        # Commit + rebuild
+nixoa config history            # View change history
+nixoa config status             # Git status
+
+# System Management
+nixoa rebuild                   # Rebuild system (switch)
+nixoa rebuild test              # Test without switching
+nixoa update                    # Update all inputs + rebuild
+nixoa rollback                  # Rollback to previous generation
+nixoa list-generations          # List available generations
+
+# Information
+nixoa status                    # Show system status
+nixoa version                   # Show version info
+nixoa help                      # Show full help
+```
+
+**Tab completion is enabled!** Just type `nixoa <tab>` to see available commands.
+
+> **📖 Complete CLI Documentation:** See [CLI-REFERENCE.md](CLI-REFERENCE.md) for detailed command reference and examples.
+
 ## Daily Workflow
 
-### Making Configuration Changes
+### Using the nixoa CLI (Recommended)
+
+1. **Edit configuration:**
+   ```bash
+   nixoa config edit
+   ```
+
+2. **Check what changed:**
+   ```bash
+   nixoa config show
+   ```
+
+3. **Apply changes:**
+   ```bash
+   nixoa config apply "Updated firewall ports"
+   ```
+
+### Using Scripts Directly
 
 1. **Edit the TOML files:**
    ```bash
