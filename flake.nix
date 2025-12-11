@@ -11,15 +11,23 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
+      # Legacy: keep for xo-config.nix module
       systemConfig = import ./modules/system.nix;
       xoToml       = import ./modules/xo-server-config.nix systemConfig;
     in {
+      # Export NixOS module (replaces old nixoa.system raw data export)
+      nixosModules.default = import ./modules/nixoa-config.nix;
+
+      # Alias for backwards compatibility during transition
+      nixosModules.config = self.nixosModules.default;
+
       # Configuration data for NiXOA CE
       nixoa = {
-        # Used by NiXOA CE vars.nix instead of nixoa.toml
+        # DEPRECATED: Legacy raw data export (kept for xo-config.nix compatibility)
+        # New approach: use nixosModules.default
         system = systemConfig;
 
-        # Used by a small module in NiXOA CE to generate /etc/xo-server/config.toml
+        # Used by xo-config.nix module in NiXOA CE to generate /etc/xo-server/config.toml
         xoServer.toml = xoToml;
       };
 

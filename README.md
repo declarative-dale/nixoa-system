@@ -24,7 +24,7 @@ nixoa-ce-config/
 ├── xo-server-settings.toml        # Edit this: XO server configuration
 ├── flake.nix                      # Flake definition
 ├── modules/
-│   ├── system.nix                 # Reads system-settings.toml
+│   ├── nixoa-config.nix           # Converts system-settings.toml to NixOS module
 │   └── xo-server-config.nix       # Reads xo-server-settings.toml
 ├── scripts/                       # Helper scripts
 │   ├── commit-config.sh
@@ -202,7 +202,6 @@ This file contains all your system-level settings:
 
 ```toml
 # Basic settings
-system = "x86_64-linux"
 hostname = "nixoa"
 username = "xoa"
 timezone = "UTC"
@@ -412,30 +411,81 @@ chmod +x commit-config apply-config show-diff history
 chmod +x scripts/*.sh
 ```
 
-## Migration from nixoa.toml
+## Architecture Notes
 
-If you're migrating from the old `nixoa.toml` approach:
+### NixOS Module System
 
-1. Copy your settings from `nixoa.toml` to `system-settings.toml` and `xo-server-settings.toml`
-2. The structure is identical, just split across two files now
-3. Commit your new configuration: `./commit-config "Migrated from nixoa.toml"`
-4. Rebuild: `cd /etc/nixos/nixoa-ce && sudo nixos-rebuild switch --flake .#nixoa`
-5. Once working, you can delete the old `nixoa.toml` (NiXOA CE will use the flake automatically)
+This configuration repository now uses the **NixOS module system** with proper `options.nixoa.*` definitions:
+
+- **nixoa-ce** defines `options.nixoa.*` with types, defaults, and validation
+- **nixoa-ce-config** (this repo) provides `config.nixoa.*` values via NixOS module
+- TOML is just a convenient frontend - you can configure directly in Nix if preferred
+
+**For complete options documentation and pure Nix configuration examples**, see:
+- `nixoa-ce/MIGRATION-OPTIONS.md` - Complete options reference
+- Configuration methods (TOML, pure Nix, hybrid)
+- Querying and validating configuration
+
+### Alternative: Pure Nix Configuration
+
+You can skip TOML entirely and configure directly in your flake:
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixoa-ce.url = "path:/etc/nixos/nixoa-ce";
+  };
+
+  outputs = { nixpkgs, nixoa-ce, ... }: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        nixoa-ce.nixosModules.default
+        ./hardware-configuration.nix
+        {
+          config.nixoa = {
+            hostname = "myhost";
+            admin.username = "admin";
+            admin.sshKeys = [ "ssh-ed25519 ..." ];
+            xo.port = 8080;
+            # ... all other options
+          };
+        }
+      ];
+    };
+  };
+}
+```
 
 ## How It Works
 
 Behind the scenes:
 
-1. You edit `system-settings.toml` and `xo-server-settings.toml` (plain TOML files)
-2. `modules/system.nix` reads `system-settings.toml` using `builtins.fromTOML`
-3. `modules/xo-server-config.nix` reads `xo-server-settings.toml` and generates the XO config structure
-4. The flake exports these as `nixoa.system` and `nixoa.xoServer.toml`
-5. NiXOA CE reads the flake and:
-   - Uses `nixoa.system` for all system settings (via `vars.nix`)
-   - Generates `/etc/xo-server/config.toml` from `nixoa.xoServer.toml` (via `modules/xo-config.nix`)
-6. On rebuild, everything is applied atomically
+1. **You edit TOML files:** `system-settings.toml` and `xo-server-settings.toml` (plain, human-readable configuration)
 
-**You get declarative configuration with a simple TOML interface!**
+2. **TOML → NixOS Module Conversion:**
+   - `modules/nixoa-config.nix` reads `system-settings.toml` using `builtins.fromTOML`
+   - Converts TOML values into a NixOS module that sets `config.nixoa.*` values
+   - `modules/xo-server-config.nix` reads `xo-server-settings.toml` and generates the XO config structure
+
+3. **Flake Exports:**
+   - `nixosModules.default` - NixOS module setting `config.nixoa.*` from TOML
+   - `nixoa.xoServer.toml` - XO server configuration
+
+4. **NiXOA CE Integration:**
+   - Defines `options.nixoa.*` in `nixoa-ce/modules/nixoa-options.nix` (type-safe option definitions)
+   - Imports this config flake's `nixosModules.default`
+   - Applies `config.nixoa.*` values to system configuration
+   - Generates `/etc/xo-server/config.toml` from `nixoa.xoServer.toml`
+
+5. **On rebuild:** Everything is applied atomically with full type checking
+
+**Benefits:**
+- ✅ Simple TOML interface for users
+- ✅ Type-safe NixOS options under the hood
+- ✅ Full declarative configuration
+- ✅ Alternative: Skip TOML and configure directly in Nix (see nixoa-ce/MIGRATION-OPTIONS.md)
 
 ## Support
 
