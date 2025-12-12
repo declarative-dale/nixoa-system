@@ -14,9 +14,26 @@
       # Legacy: keep for xo-config.nix module
       systemConfig = import ./modules/system.nix;
       xoToml       = import ./modules/xo-server-config.nix systemConfig;
+
+      # Hardware configuration path
+      hardwareConfigPath = ./hardware-configuration.nix;
     in {
       # Export NixOS module (replaces old nixoa.system raw data export)
       nixosModules.default = import ./modules/nixoa-config.nix;
+
+      # Export hardware configuration module
+      nixosModules.hardware =
+        if builtins.pathExists hardwareConfigPath
+        then import hardwareConfigPath
+        else builtins.throw ''
+          nixoa-ce-config: hardware-configuration.nix is missing!
+
+          Please copy your hardware configuration:
+            sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/nixoa-ce-config/
+
+          Or generate it:
+            sudo nixos-generate-config --show-hardware-config > /etc/nixos/nixoa-ce-config/hardware-configuration.nix
+        '';
 
       # Alias for backwards compatibility during transition
       nixosModules.config = self.nixosModules.default;
