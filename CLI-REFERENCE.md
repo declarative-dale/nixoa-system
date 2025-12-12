@@ -12,7 +12,7 @@ Complete command reference for the `nixoa` command-line tool.
 
 ## Configuration Commands
 
-Manage your NiXOA CE configuration files.
+Manage your NiXOA configuration files.
 
 ### `nixoa config edit`
 
@@ -84,7 +84,7 @@ git show <commit-hash>
 
 **Revert to a previous commit:**
 ```bash
-cd /etc/nixos/nixoa-ce-config
+cd /etc/nixos/nixoa/user-config
 git checkout <commit-hash> -- system-settings.toml xo-server-settings.toml
 nixoa config apply "Reverted to previous config"
 ```
@@ -138,7 +138,7 @@ Steps:
 
 **Update specific input:**
 ```bash
-cd /etc/nixos/nixoa-ce
+cd /etc/nixos/nixoa/nixoa-vm
 nix flake lock --update-input xoSrc
 nixoa rebuild
 ```
@@ -284,7 +284,7 @@ nixoa rollback
 # Or revert specific config change
 nixoa config history
 # Find the good commit
-cd /etc/nixos/nixoa-ce-config
+cd /etc/nixos/nixoa/user-config
 git checkout <good-commit> -- *.toml
 nixoa config apply "Reverted to working config"
 ```
@@ -448,7 +448,7 @@ If `nixoa` command is not found after installing NiXOA CE:
 
 ```bash
 # Rebuild to install the CLI
-cd /etc/nixos/nixoa-ce
+cd /etc/nixos/nixoa/nixoa-vm
 sudo nixos-rebuild switch --flake .#nixoa
 
 # Log out and back in, or source your profile
@@ -460,12 +460,12 @@ source /etc/profile
 Ensure the config repo is at the expected location:
 
 ```bash
-ls -la /etc/nixos/nixoa-ce-config/
+ls -la /etc/nixos/nixoa/user-config/
 ```
 
 If missing, clone it:
 ```bash
-git clone https://codeberg.org/dalemorgan/nixoa-ce-config.git /etc/nixos/nixoa-ce-config
+git clone https://codeberg.org/nixoa/user-config.git /etc/nixos/nixoa/user-config
 ```
 
 ### Git Errors
@@ -473,7 +473,7 @@ git clone https://codeberg.org/dalemorgan/nixoa-ce-config.git /etc/nixos/nixoa-c
 If you get git-related errors:
 
 ```bash
-cd /etc/nixos/nixoa-ce-config
+cd /etc/nixos/nixoa/user-config
 
 # Check git status
 git status
@@ -489,5 +489,5 @@ git commit -m "Reinitialize repository"
 
 - [QUICKSTART.md](QUICKSTART.md) - 5-minute getting started guide
 - [README.md](README.md) - Complete configuration documentation
-- Main repository: https://codeberg.org/dalemorgan/nixoa-ce
-- Issues: https://codeberg.org/dalemorgan/nixoa-ce/issues
+- Main repository: https://codeberg.org/nixoa/nixoa-vm
+- Issues: https://codeberg.org/nixoa/nixoa-vm/issues

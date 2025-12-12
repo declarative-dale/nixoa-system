@@ -1,11 +1,11 @@
-# NiXOA CE Quick Start Guide
+# NiXOA Quick Start Guide
 
-This guide gets you up and running with NiXOA CE configuration in 5 minutes.
+This guide gets you up and running with NiXOA configuration in 5 minutes.
 
 ## Prerequisites
 
-- NiXOA CE installed at `/etc/nixos/nixoa-ce`
-- This config repo cloned to `/etc/nixos/nixoa-ce-config`
+- NiXOA installed at `/etc/nixos/nixoa/nixoa-vm`
+- This config repo cloned to `/etc/nixos/nixoa/user-config`
 
 ## Step 1: Edit Configuration
 
@@ -101,7 +101,7 @@ nixoa rebuild          # Manual rebuild if needed
 **Want to undo changes?**
 ```bash
 nixoa config history   # Find the commit to revert to
-cd /etc/nixos/nixoa-ce-config
+cd /etc/nixos/nixoa/user-config
 git checkout <commit> -- system-settings.toml xo-server-settings.toml
 nixoa config apply "Reverted to previous config"
 ```
@@ -117,9 +117,9 @@ sudo journalctl -u xo-server -f            # Follow logs
 
 - Read the full [README.md](README.md) for advanced configuration
 - Explore automated updates, custom services, and more
-- Check out the [NiXOA CE documentation](https://codeberg.org/dalemorgan/nixoa-ce)
+- Check out the [NiXOA documentation](https://codeberg.org/nixoa/nixoa-vm)
 
 ## Support
 
-- Issues: https://codeberg.org/dalemorgan/nixoa-ce/issues
-- Docs: https://codeberg.org/dalemorgan/nixoa-ce
+- Issues: https://codeberg.org/nixoa/nixoa-vm/issues
+- Docs: https://codeberg.org/nixoa/nixoa-vm

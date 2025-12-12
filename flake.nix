@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 {
-  description = "User configuration flake for NiXOA CE (system + XO config)";
+  description = "User configuration flake for NixOA (system + XO config)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
@@ -26,25 +26,25 @@
         if builtins.pathExists hardwareConfigPath
         then import hardwareConfigPath
         else builtins.throw ''
-          nixoa-ce-config: hardware-configuration.nix is missing!
+          user-config: hardware-configuration.nix is missing!
 
           Please copy your hardware configuration:
-            sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/nixoa-ce-config/
+            sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/nixoa/user-config/
 
           Or generate it:
-            sudo nixos-generate-config --show-hardware-config > /etc/nixos/nixoa-ce-config/hardware-configuration.nix
+            sudo nixos-generate-config --show-hardware-config > /etc/nixos/nixoa/user-config/hardware-configuration.nix
         '';
 
       # Alias for backwards compatibility during transition
       nixosModules.config = self.nixosModules.default;
 
-      # Configuration data for NiXOA CE
+      # Configuration data for NixOA
       nixoa = {
         # DEPRECATED: Legacy raw data export (kept for xo-config.nix compatibility)
         # New approach: use nixosModules.default
         system = systemConfig;
 
-        # Used by xo-config.nix module in NiXOA CE to generate /etc/xo-server/config.toml
+        # Used by xo-config.nix module in nixoa-vm to generate /etc/xo-server/config.toml
         xoServer.toml = xoToml;
       };
 

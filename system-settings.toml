@@ -1,9 +1,9 @@
 # ==============================================================================
-# NiXOA CE System Settings
+# NiXOA System Settings
 # ==============================================================================
-# Edit this file to configure your NiXOA CE system
+# Edit this file to configure your NiXOA system
 # After making changes, run: ./commit-config "Your change description"
-# Then rebuild: cd /etc/nixos/nixoa-ce && sudo nixos-rebuild switch --flake .#nixoa
+# Then rebuild: cd /etc/nixos/nixoa/nixoa-vm && sudo nixos-rebuild switch --flake .#nixoa
 
 # ==============================================================================
 # REQUIRED SETTINGS
@@ -50,7 +50,7 @@ enable = false
 # ==============================================================================
 
 [updates]
-repoDir = "/etc/nixos/nixoa-ce"
+repoDir = "/etc/nixos/nixoa/nixoa-vm"
 protectPaths = ["hardware-configuration.nix"]
 
 # Update monitoring and notifications
@@ -80,7 +80,7 @@ keepGenerations = 7
 [updates.flake]
 enable = false
 schedule = "Sun 04:00"
-remoteUrl = "https://codeberg.org/dalemorgan/nixoa-ce.git"
+remoteUrl = "https://codeberg.org/nixoa/nixoa-vm.git"
 branch = "main"
 autoRebuild = false
 

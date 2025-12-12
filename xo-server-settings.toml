@@ -14,7 +14,7 @@
 #
 # After making changes:
 #   1. Commit: ./commit-config "Updated XO overrides"
-#   2. Rebuild: cd /etc/nixos/nixoa-ce && sudo nixos-rebuild switch --flake .#nixoa
+#   2. Rebuild: cd /etc/nixos/nixoa/nixoa-vm && sudo nixos-rebuild switch --flake .#nixoa
 
 [nixoa]
 raw_toml = '''

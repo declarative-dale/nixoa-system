@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-# NiXOA Configuration Module
+# NixOA Configuration Module
 # ==============================================================================
 # Converts system-settings.toml into NixOS module configuration.
 # This provides a convenient TOML frontend for the nixoa.* options defined
-# in nixoa-ce/modules/nixoa-options.nix.
+# in nixoa-vm/modules/nixoa-options.nix.
 # ==============================================================================
 
 { lib, ... }:
@@ -14,7 +14,7 @@ let
   settings =
     if !builtins.pathExists settingsPath then
       builtins.throw ''
-        nixoa-ce-config: system-settings.toml is missing!
+        user-config: system-settings.toml is missing!
 
         Please copy the sample configuration:
           cp system-settings.toml.sample system-settings.toml
@@ -54,7 +54,7 @@ in
   # Set all nixoa.* configuration values from TOML
   # ==========================================================================
 
-  # NOTE: 'system' is NOT set here - that's determined by nixoa-ce/flake.nix
+  # NOTE: 'system' is NOT set here - that's determined by nixoa-vm/flake.nix
   # Modules cannot override the flake-level system architecture
 
   config.nixoa = {
@@ -114,7 +114,7 @@ in
 
     # Updates configuration
     updates = {
-      repoDir = get ["updates" "repoDir"] "/etc/nixos/nixoa-ce";
+      repoDir = get ["updates" "repoDir"] "/etc/nixos/nixoa/nixoa-vm";
       protectPaths = get ["updates" "protectPaths"] ["hardware-configuration.nix"];
 
       monitoring = {
@@ -146,7 +146,7 @@ in
       flake = {
         enable = get ["updates" "flake" "enable"] false;
         schedule = get ["updates" "flake" "schedule"] "Sun 04:00";
-        remoteUrl = get ["updates" "flake" "remoteUrl"] "https://codeberg.org/dalemorgan/nixoa-ce.git";
+        remoteUrl = get ["updates" "flake" "remoteUrl"] "https://codeberg.org/nixoa/nixoa-vm.git";
         branch = get ["updates" "flake" "branch"] "main";
         autoRebuild = get ["updates" "flake" "autoRebuild"] false;
       };

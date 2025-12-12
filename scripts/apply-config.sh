@@ -19,8 +19,8 @@ echo "=== Committing configuration changes ==="
 
 # Apply the configuration
 echo ""
-echo "=== Applying configuration to NiXOA CE ==="
-cd /etc/nixos/nixoa-ce
+echo "=== Applying configuration to NiXOA ==="
+cd /etc/nixos/nixoa/nixoa-vm
 
 echo "Running: sudo nixos-rebuild switch --flake .#nixoa"
 sudo nixos-rebuild switch --flake .#nixoa

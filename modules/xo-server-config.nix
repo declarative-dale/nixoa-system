@@ -11,7 +11,7 @@ let
   xoSettings =
     if !builtins.pathExists xoSettingsPath then
       builtins.throw ''
-        nixoa-ce-config: xo-server-settings.toml is missing!
+        user-config: xo-server-settings.toml is missing!
 
         Please ensure the file exists at: ${toString xoSettingsPath}
       ''
@@ -20,7 +20,7 @@ let
 
   # Extract raw TOML from [nixoa] section
   nixoaRawToml = xoSettings.nixoa.raw_toml or (builtins.throw ''
-    nixoa-ce-config: [nixoa] section with raw_toml is missing in xo-server-settings.toml!
+    user-config: [nixoa] section with raw_toml is missing in xo-server-settings.toml!
 
     Please add a [nixoa] section:
     [nixoa]
