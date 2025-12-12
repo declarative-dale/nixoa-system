@@ -24,6 +24,9 @@ let
     else
       builtins.fromTOML (builtins.readFile settingsPath);
 
+  # Import XO server config generator (returns filtered TOML text)
+  xoServerConfigText = import ./xo-server-config.nix {};
+
   # Helper to get value with fallback
   get = path: default:
     let
@@ -206,5 +209,14 @@ in
       in
         # Merge: detailed configs take precedence over simple enable list
         enabledServices // servicesConfig;
+  };
+
+  # ==========================================================================
+  # Place XO server override configuration file
+  # ==========================================================================
+
+  environment.etc."xo-server/config.nixoa.toml" = {
+    text = xoServerConfigText;
+    mode = "0644";
   };
 }

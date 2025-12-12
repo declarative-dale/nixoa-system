@@ -1,116 +1,103 @@
 # ==============================================================================
-# XO Server Configuration Settings - Complete /etc/xo-server/config.toml Template
+# XO Server Configuration - NixOA Override Generator
 # ==============================================================================
-# This file is a 1:1 representation of what gets generated for /etc/xo-server/config.toml
-# Whatever you configure here will be exactly what Xen Orchestra uses
+# The [nixoa] section below generates /etc/xo-server/config.nixoa.toml
+#
+# HOW IT WORKS:
+# - Everything in the raw_toml multiline string is copied to config.nixoa.toml
+# - Commented lines (starting with #) are excluded
+# - Uncomment lines to include them in the generated config
+#
+# XO will load both:
+#   1. config.toml (XO's built-in defaults)
+#   2. config.nixoa.toml (your overrides from this file)
 #
 # After making changes:
-#   1. Commit: ./commit-config "Updated XO settings"
+#   1. Commit: ./commit-config "Updated XO overrides"
 #   2. Rebuild: cd /etc/nixos/nixoa-ce && sudo nixos-rebuild switch --flake .#nixoa
 
+[nixoa]
+raw_toml = '''
 # ==============================================================================
-# HTTP/HTTPS CONFIGURATION
-# ==============================================================================
-
-[http]
-# Redirect all HTTP traffic to HTTPS (only applies when TLS is enabled)
-redirectToHttps = true
-
-# HTTP Listen Configuration
-# Note: The [[http.listen]] array is conditionally generated based on tls.enable
-# - Always includes HTTP port
-# - HTTPS port only added when tls.enable = true
-
-# HTTP Port (always enabled)
-[http.listen.http]
-port = 80
-
-# HTTPS Port (only when tls.enable = true below)
-[http.listen.https]
-port = 443
-
-# Web UI Mount Points
-# These paths are where XO serves the web interface from
-[http.mounts]
-"/" = "/var/lib/xo/xen-orchestra/packages/xo-web/dist"      # Main UI (v5)
-"/v6" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist" # New UI (v6)
-
-# ==============================================================================
-# TLS/SSL CONFIGURATION
+# REQUIRED NIXOA SETTINGS (uncommented - always included)
 # ==============================================================================
 
-[tls]
-enable = true           # Enable HTTPS
-redirectToHttps = true  # Redirect HTTP → HTTPS
-autoGenerate = true     # Auto-generate/renew self-signed certs
-
-# Certificate paths
-dir = "/etc/ssl/xo"
-cert = "/etc/ssl/xo/certificate.pem"
-key = "/etc/ssl/xo/key.pem"
-
-# ==============================================================================
-# REDIS CONFIGURATION
-# ==============================================================================
-
+# Redis - NixOA uses Unix socket instead of TCP
 [redis]
-# Unix socket for Redis connection (faster than TCP)
 socket = "/run/redis-xo/redis.sock"
 
-# ==============================================================================
-# AUTHENTICATION CONFIGURATION
-# ==============================================================================
-
-[authentication]
-# How long authentication tokens remain valid
-# Examples: "30 days", "1 week", "24 hours", "12 hours"
-defaultTokenValidity = "30 days"
-
-# ==============================================================================
-# LOGGING CONFIGURATION
-# ==============================================================================
-
-[logs]
-# Log verbosity level
-# Options: "trace" (most verbose), "debug", "info", "warn", "error" (least verbose)
-level = "info"
-
-# ==============================================================================
-# DATA STORAGE PATHS
-# ==============================================================================
-
+# Data paths - NixOA custom paths
 [dataStore]
-# Primary data directory for XO (backups metadata, job logs, etc.)
 path = "/var/lib/xo/data"
 
 [tempDir]
-# Temporary directory for XO operations
 path = "/var/lib/xo/tmp"
 
-# ==============================================================================
-# REMOTE STORAGE OPTIONS
-# ==============================================================================
+# HTTP mounts - Paths to built-from-source web UI
+[http.mounts]
+"/" = "/var/lib/xo/xen-orchestra/packages/xo-web/dist"
+"/v6" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist"
 
+# Remote storage - NixOS integration with sudo
 [remoteOptions]
-# Use sudo for mount operations (required for NFS/CIFS)
 useSudo = true
-
-# Base directory for remote storage mounts
 mountsDir = "/var/lib/xo/mounts"
 
 # ==============================================================================
-# ADVANCED CONFIGURATION (Optional)
+# OPTIONAL USER OVERRIDES (commented out - uncomment to enable)
 # ==============================================================================
-# Additional XO server options can be added here following the official
-# Xen Orchestra documentation: https://xen-orchestra.com/docs/configuration.html
-#
-# Examples:
-#
+
+# HTTP/HTTPS Ports - Uncomment to override default ports
+# [[http.listen]]
+# port = 8080
+
+# [[http.listen]]
+# port = 8443
+# cert = "/etc/ssl/xo/certificate.pem"
+# key = "/etc/ssl/xo/key.pem"
+
+# Redirect HTTP to HTTPS
+# [http]
+# redirectToHttps = true
+
+# Authentication - Change token validity
+# [authentication]
+# defaultTokenValidity = "7 days"
+
+# Logging - Increase verbosity for debugging
+# [logs]
+# level = "debug"
+
+# ==============================================================================
+# ADVANCED CONFIGURATION EXAMPLES
+# ==============================================================================
+
+# LDAP Authentication
 # [authentication.ldap]
 # uri = "ldap://ldap.example.com"
 # bind.dn = "cn=xo,ou=users,dc=example,dc=com"
 # bind.password = "secret"
-#
+# base = "ou=users,dc=example,dc=com"
+# filter = "(uid={{name}})"
+
+# Email Configuration
 # [mail]
 # from = "xo@example.com"
 # transport = "smtp://smtp.example.com:587"
+# authUser = "xo@example.com"
+# authPass = "password"
+
+# Proxy Configuration
+# [http.proxies]
+# "/api/proxy" = "http://backend:3000"
+
+# CORS Configuration
+# [http.cors]
+# origin = "*"
+# credentials = true
+
+# Custom Backup Concurrency
+# [backups]
+# maxMergedDeltasPerRun = 2
+# maxExportsConcurrency = 2
+'''

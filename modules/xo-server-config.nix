@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
-# Build a Nix representation of /etc/xo-server/config.toml
-# This is a 1:1 pass-through from xo-server-settings.toml to the generated config
-# Whatever you configure in xo-server-settings.toml appears exactly in /etc/xo-server/config.toml
+# Extract raw TOML from [nixoa] section for /etc/xo-server/config.nixoa.toml
+# This generates a minimal override config that XO loads alongside its defaults
 
 systemConfig:
 let
@@ -19,89 +18,25 @@ let
     else
       builtins.fromTOML (builtins.readFile xoSettingsPath);
 
-  # Extract all sections from TOML
-  http = xoSettings.http or {};
-  tls = xoSettings.tls or {};
-  redis = xoSettings.redis or {};
-  authentication = xoSettings.authentication or {};
-  logs = xoSettings.logs or {};
-  dataStore = xoSettings.dataStore or {};
-  tempDir = xoSettings.tempDir or {};
-  remoteOptions = xoSettings.remoteOptions or {};
+  # Extract raw TOML from [nixoa] section
+  nixoaRawToml = xoSettings.nixoa.raw_toml or (builtins.throw ''
+    nixoa-ce-config: [nixoa] section with raw_toml is missing in xo-server-settings.toml!
 
-  # HTTP listen configuration
-  httpListen = http.listen or {};
-  httpPort = (httpListen.http or {}).port or 80;
-  httpsPort = (httpListen.https or {}).port or 443;
+    Please add a [nixoa] section:
+    [nixoa]
+    raw_toml = '''
+    # Your config here
+    '''
+  '');
 
-  # TLS configuration
-  tlsEnabled = tls.enable or true;
-  tlsCert = tls.cert or "/etc/ssl/xo/certificate.pem";
-  tlsKey = tls.key or "/etc/ssl/xo/key.pem";
+  # Filter out commented lines (lines starting with # after optional whitespace)
+  # Split into lines, filter out empty and commented lines
+  lines = builtins.filter
+    (line: line != "" && !(builtins.match "^[[:space:]]*#.*" line != null))
+    (builtins.split "\n" nixoaRawToml);
 
-  # HTTP mounts (pass through directly from TOML)
-  httpMounts = http.mounts or {
-    "/" = "/var/lib/xo/xen-orchestra/packages/xo-web/dist";
-    "/v6" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist";
-  };
-
-  # redirectToHttps only applies when TLS is enabled
-  redirectToHttps = (http.redirectToHttps or true) && tlsEnabled;
-
-  # Build the http.listen array conditionally
-  # Always include HTTP port, add HTTPS port only when TLS enabled
-  listenArray =
-    [ { port = httpPort; } ]
-    ++ (if tlsEnabled then [
-      {
-        port = httpsPort;
-        cert = tlsCert;
-        key = tlsKey;
-      }
-    ] else []);
+  # Join back into text
+  filteredToml = builtins.concatStringsSep "\n" lines;
 in
-{
-  # HTTP Configuration
-  http = {
-    inherit redirectToHttps;
-    listen = listenArray;
-    mounts = httpMounts;
-  };
-
-  # Redis Configuration (pass through)
-  redis = {
-    socket = redis.socket or "/run/redis-xo/redis.sock";
-  };
-
-  # Authentication Configuration (pass through)
-  authentication = {
-    defaultTokenValidity = authentication.defaultTokenValidity or "30 days";
-  };
-
-  # Logging Configuration (pass through)
-  logs = {
-    level = logs.level or "info";
-  };
-
-  # Data Store Configuration (pass through)
-  dataStore = {
-    path = dataStore.path or "/var/lib/xo/data";
-  };
-
-  # Temp Directory Configuration (pass through)
-  tempDir = {
-    path = tempDir.path or "/var/lib/xo/tmp";
-  };
-
-  # Remote Options Configuration (pass through)
-  remoteOptions = {
-    useSudo = remoteOptions.useSudo or true;
-    mountsDir = remoteOptions.mountsDir or "/var/lib/xo/mounts";
-  };
-
-  # Pass through any additional sections from TOML that aren't explicitly handled above
-  # This allows users to add custom XO configuration sections
-  # Filter out the sections we've already processed
-} // (builtins.removeAttrs xoSettings [
-  "http" "tls" "redis" "authentication" "logs" "dataStore" "tempDir" "remoteOptions"
-])
+  # Return raw text string, not parsed TOML
+  filteredToml
