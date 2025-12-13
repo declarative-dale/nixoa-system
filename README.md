@@ -445,38 +445,6 @@ This configuration repository now uses the **NixOS module system** with proper `
 - Configuration methods (TOML, pure Nix, hybrid)
 - Querying and validating configuration
 
-### Alternative: Pure Nix Configuration
-
-You can skip TOML entirely and configure directly in your flake:
-
-```nix
-{
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixoa-vm.url = "path:/etc/nixos/nixoa/nixoa-vm";
-  };
-
-  outputs = { nixpkgs, nixoa-vm, ... }: {
-    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        nixoa-vm.nixosModules.default
-        ./hardware-configuration.nix
-        {
-          config.nixoa = {
-            hostname = "myhost";
-            admin.username = "admin";
-            admin.sshKeys = [ "ssh-ed25519 ..." ];
-            xo.port = 8080;
-            # ... all other options
-          };
-        }
-      ];
-    };
-  };
-}
-```
-
 ## How It Works
 
 Behind the scenes:
@@ -504,7 +472,6 @@ Behind the scenes:
 - ✅ Simple TOML interface for users
 - ✅ Type-safe NixOS options under the hood
 - ✅ Full declarative configuration
-- ✅ Alternative: Skip TOML and configure directly in Nix (see nixoa-vm/MIGRATION-OPTIONS.md)
 
 ## Support
 
