@@ -31,9 +31,11 @@ let
 
   # Filter out commented lines (lines starting with # after optional whitespace)
   # Split into lines, filter out empty and commented lines
+  # Note: builtins.split returns alternating strings and match groups (lists)
+  # We need to filter to strings only, then filter out empty/commented lines
   lines = builtins.filter
     (line: line != "" && !(builtins.match "^[[:space:]]*#.*" line != null))
-    (builtins.split "\n" nixoaRawToml);
+    (builtins.filter builtins.isString (builtins.split "\n" nixoaRawToml));
 
   # Join back into text
   filteredToml = builtins.concatStringsSep "\n" lines;
