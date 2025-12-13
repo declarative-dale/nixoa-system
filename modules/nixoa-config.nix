@@ -115,7 +115,6 @@ in
     # Updates configuration
     updates = {
       repoDir = get ["updates" "repoDir"] "/etc/nixos/nixoa/nixoa-vm";
-      protectPaths = get ["updates" "protectPaths"] ["hardware-configuration.nix"];
 
       monitoring = {
         notifyOnSuccess = get ["updates" "monitoring" "notifyOnSuccess"] false;

@@ -51,7 +51,6 @@ enable = false
 
 [updates]
 repoDir = "/etc/nixos/nixoa/nixoa-vm"
-protectPaths = ["hardware-configuration.nix"]
 
 # Update monitoring and notifications
 [updates.monitoring]
