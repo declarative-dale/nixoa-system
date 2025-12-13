@@ -215,7 +215,7 @@ in
   # Place XO server override configuration file
   # ==========================================================================
 
-  environment.etc."xo-server/config.nixoa.toml" = {
+  config.environment.etc."xo-server/config.nixoa.toml" = {
     text = xoServerConfigText;
     mode = "0644";
   };
