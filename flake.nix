@@ -9,7 +9,8 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      lib = nixpkgs.lib;
+      pkgs = nixpkgs.legacyPackages.${system};
 
       # Legacy: keep for xo-config.nix module
       systemConfig = import ./modules/system.nix;

@@ -1,32 +1,63 @@
 # NiXOA Quick Start Guide
 
-This guide gets you up and running with NiXOA configuration in 5 minutes.
+Get NiXOA up and running in minutes with the automated bootstrap installer.
 
-## Prerequisites
+## Fastest Path: Automated Installation
 
-- NiXOA installed at `/etc/nixos/nixoa/nixoa-vm`
-- This config repo cloned to `/etc/nixos/nixoa/user-config`
-
-## Step 1: Edit Configuration
+Run the bootstrap installer as a regular user:
 
 ```bash
-# Open system settings
-nixoa config edit
-# Choose option 1 for system-settings.toml
+# Clone and run installer
+git clone https://codeberg.org/nixoa/nixoa-vm.git
+cd nixoa-vm/scripts
+bash xoa-install.sh
+```
+
+The installer will:
+1. Clone nixoa-vm flake to `/etc/nixos/nixoa/nixoa-vm`
+2. Create user-config in `~/user-config`
+3. Generate all Nix modules and TOML templates
+4. Copy/generate hardware configuration
+5. Create symlink for flake input resolution
+
+Then follow the prompts to complete setup.
+
+## Manual Setup (If Preferred)
+
+### Step 1: Clone Repositories
+
+```bash
+# System deployment flake (as root)
+sudo mkdir -p /etc/nixos/nixoa
+cd /etc/nixos/nixoa
+sudo git clone https://codeberg.org/nixoa/nixoa-vm.git
+
+# User configuration (as regular user)
+git clone https://codeberg.org/nixoa/user-config.git ~/user-config
+
+# Create symlink
+sudo ln -sf ~/user-config /etc/nixos/nixoa/user-config
+```
+
+### Step 2: Edit Configuration
+
+```bash
+cd ~/user-config
+nano system-settings.toml
 ```
 
 **Required changes:**
-- Add your SSH public keys to `sshKeys = [...]`
-- Set your `hostname`, `username`, `timezone`
+- Add your SSH public keys to `admin.sshKeys = [...]`
+- Set your `hostname` and `admin.username`
 
 **Optional changes:**
 - Network ports, storage settings, packages, services, etc.
 
-## Step 2: Apply Configuration
+### Step 3: Apply Configuration
 
 ```bash
 # Commit and rebuild in one command
-nixoa config apply "Initial configuration"
+./scripts/apply-config.sh "Initial configuration"
 ```
 
 That's it! Your NiXOA CE system is now configured.
@@ -101,7 +132,7 @@ nixoa rebuild          # Manual rebuild if needed
 **Want to undo changes?**
 ```bash
 nixoa config history   # Find the commit to revert to
-cd /etc/nixos/nixoa/user-config
+cd ~/user-config
 git checkout <commit> -- system-settings.toml xo-server-settings.toml
 nixoa config apply "Reverted to previous config"
 ```

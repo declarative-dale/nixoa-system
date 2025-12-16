@@ -26,6 +26,30 @@ sshKeys = []
 allowedTCPPorts = [80, 443, 3389, 5900, 8012]
 
 # ==============================================================================
+# XEN ORCHESTRA CONFIGURATION
+# ==============================================================================
+
+# Uncomment and customize to override XO server defaults
+# [xo]
+# host = "0.0.0.0"          # Bind address
+# port = 80                  # HTTP port
+# httpsPort = 443            # HTTPS port
+
+# ==============================================================================
+# TLS/HTTPS CONFIGURATION
+# ==============================================================================
+
+# Uncomment and customize to enable/configure HTTPS
+# [tls]
+# enable = true                    # Enable TLS support
+# redirectToHttps = true           # Redirect HTTP to HTTPS
+# autoGenerate = true              # Auto-generate self-signed certificates
+# dir = "/etc/xo-certs"            # Certificate storage directory
+# # For custom certificates, uncomment and set paths:
+# # cert = "/path/to/cert.pem"     # Path to certificate file
+# # key = "/path/to/key.pem"       # Path to private key file
+
+# ==============================================================================
 # STORAGE & MOUNTING
 # ==============================================================================
 
