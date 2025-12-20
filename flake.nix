@@ -12,17 +12,52 @@
       lib = nixpkgs.lib;
       pkgs = nixpkgs.legacyPackages.${system};
 
-      # Legacy: keep for xo-config.nix module
-      systemConfig = import ./modules/system.nix;
-      xoToml       = import ./modules/xo-server-config.nix systemConfig;
+      # ========================================================================
+      # TOML PARSING (single source of truth)
+      # ========================================================================
+
+      # Parse system-settings.toml
+      settingsPath = ./system-settings.toml;
+      settingsContent = builtins.readFile settingsPath;
+      nixoaCfg = builtins.fromTOML settingsContent;
+
+      # Parse xo-server-settings.toml
+      xoSettingsPath = ./xo-server-settings.toml;
+      xoServerCfg =
+        if builtins.pathExists xoSettingsPath
+        then builtins.fromTOML (builtins.readFile xoSettingsPath)
+        else {};
+
+      # Extract XO server TOML text (filtered)
+      xoTomlData = import ./modules/xo-server-config.nix;
+
+      # ========================================================================
+      # EXTRACT CONVENIENCE SCALARS
+      # ========================================================================
+
+      hostname = nixoaCfg.hostname or "nixoa";
+      username = nixoaCfg.username or "xoa";
+
+      # ========================================================================
+      # CREATE ARGS BUNDLE
+      # ========================================================================
+
+      # This bundle is passed to both NixOS and Home Manager modules
+      userArgs = {
+        inherit nixoaCfg xoServerCfg username hostname system;
+        # Add xoTomlData for backwards compatibility with xo-config.nix
+        inherit xoTomlData;
+      };
 
       # Hardware configuration path
       hardwareConfigPath = ./hardware-configuration.nix;
     in {
-      # Export NixOS module (replaces old nixoa.system raw data export)
-      nixosModules.default = import ./modules/nixoa-config.nix;
+      # ========================================================================
+      # NIXOS MODULES
+      # ========================================================================
 
-      # Export hardware configuration module
+      nixosModules.default = import ./nixos;
+
       nixosModules.hardware =
         if builtins.pathExists hardwareConfigPath
         then import hardwareConfigPath
@@ -36,20 +71,33 @@
             sudo nixos-generate-config --show-hardware-config > /etc/nixos/nixoa/user-config/hardware-configuration.nix
         '';
 
-      # Alias for backwards compatibility during transition
-      nixosModules.config = self.nixosModules.default;
+      # ========================================================================
+      # HOME MANAGER MODULES
+      # ========================================================================
 
-      # Configuration data for NixOA
+      homeManagerModules.default = import ./home;
+
+      # ========================================================================
+      # LEGACY CONFIGURATION DATA (backwards compatibility)
+      # ========================================================================
+
       nixoa = {
-        # DEPRECATED: Legacy raw data export (kept for xo-config.nix compatibility)
-        # New approach: use nixosModules.default
-        system = systemConfig;
+        # Expose convenience scalars
+        inherit hostname;
 
-        # Used by xo-config.nix module in nixoa-vm to generate /etc/xo-server/config.toml
-        xoServer.toml = xoToml;
+        # Expose specialArgs bundle for nixoa-vm
+        specialArgs = userArgs;
+        extraSpecialArgs = userArgs;  # Alias for home-manager
+
+        # Legacy exports (for smooth transition)
+        system = nixoaCfg;
+        xoServer.toml = xoTomlData;
       };
 
-      # Helper apps for config management
+      # ========================================================================
+      # HELPER APPS
+      # ========================================================================
+
       apps.${system} = {
         commit = {
           type = "app";
