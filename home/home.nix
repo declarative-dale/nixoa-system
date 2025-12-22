@@ -217,6 +217,14 @@ in
     ];
   };
 
+  # Bash configuration - always enabled for login shells
+  programs.bash = {
+    enable = true;
+    enableCompletion = true;
+    # Shell aliases only in interactive mode (not during login shell initialization)
+    # This prevents syntax errors with aliases containing --flags during SSH login
+  };
+
   # Let Home Manager manage itself (allows using the `home-manager` command for this user)
   programs.home-manager.enable = true;
 }
