@@ -20,9 +20,6 @@ in
   home.homeDirectory = "/home/${username}";
   home.stateVersion = nixoaCfg.stateVersion or "25.11";
 
-  # Allow unfree packages if needed
-  nixpkgs.config.allowUnfree = true;
-
   # ==========================================================================
   # USER PACKAGES
   # ==========================================================================
@@ -127,7 +124,7 @@ in
       sysstatus = "sudo systemctl status";
     };
 
-    initExtra = ''
+    initContent = ''
       # Initialize oh-my-posh with dracula theme
       eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/dracula.omp.json)"
 
@@ -179,7 +176,7 @@ in
   programs.git = lib.mkIf extrasEnabled {
     enable = true;
 
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       pull.rebase = true;
       core.pager = "${pkgs.delta}/bin/delta";
