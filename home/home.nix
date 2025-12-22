@@ -37,7 +37,6 @@ in
   ) ++ lib.optionals extrasEnabled [
     # Enhanced terminal tools (included only if extrasEnabled is true)
     oh-my-posh    # Themable shell prompt program
-    fzf           # Fuzzy finder for command-line
     bat           # Cat replacement with syntax highlighting
     eza           # Modern ls replacement
     fd            # Find replacement (used for fzf default search)
@@ -159,14 +158,6 @@ in
 
     defaultKeymap = "emacs";  # Use Emacs keybindings in shell (e.g. Ctrl+A, Ctrl+E for navigation)
   };
-
-  # If extras are enabled, ensure we launch Zsh for interactive sessions (instead of Bash)
-  programs.bash.initExtra = lib.mkIf extrasEnabled ''
-    if [[ -z "$ZSH_VERSION" ]] && command -v zsh &> /dev/null; then
-      export SHELL=$(command -v zsh)
-      exec zsh
-    fi
-  '';
 
   # ==========================================================================
   # TOOL CONFIGURATIONS (only when extras enabled)
