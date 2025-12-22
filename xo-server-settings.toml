@@ -35,7 +35,8 @@ path = "/var/lib/xo/tmp"
 
 # HTTP mounts - Paths to built-from-source web UI
 [http.mounts]
-"/" = "/var/lib/xo/xen-orchestra/packages/xo-web/dist"
+"/" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist"
+"/v5" = "/var/lib/xo/xen-orchestra/packages/xo-web/dist"
 "/v6" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist"
 
 # Remote storage - NixOS integration with sudo
