@@ -29,7 +29,7 @@
         else {};
 
       # Extract XO server TOML text (filtered)
-      xoTomlData = import ./modules/xo-server-config.nix;
+      xoTomlData = import ./modules/xo-server-config.nix {};
 
       # ========================================================================
       # EXTRACT CONVENIENCE SCALARS
