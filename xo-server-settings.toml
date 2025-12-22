@@ -33,6 +33,19 @@ path = "/var/lib/xo/data"
 [tempDir]
 path = "/var/lib/xo/tmp"
 
+# Redirect HTTP to HTTPS
+[http]
+redirectToHttps = true
+
+# HTTP/HTTPS Ports - Change to override default ports
+[[http.listen]]
+port = 80
+
+[[http.listen]]
+port = 443
+cert = "/etc/ssl/xo/certificate.pem"
+key = "/etc/ssl/xo/key.pem"
+
 # HTTP mounts - Paths to built-from-source web UI
 [http.mounts]
 "/" = "/var/lib/xo/xen-orchestra/@xen-orchestra/web/dist"
@@ -47,19 +60,6 @@ mountsDir = "/var/lib/xo/mounts"
 # ==============================================================================
 # OPTIONAL USER OVERRIDES (commented out - uncomment to enable)
 # ==============================================================================
-
-# HTTP/HTTPS Ports - Uncomment to override default ports
-# [[http.listen]]
-# port = 8080
-
-# [[http.listen]]
-# port = 8443
-# cert = "/etc/ssl/xo/certificate.pem"
-# key = "/etc/ssl/xo/key.pem"
-
-# Redirect HTTP to HTTPS
-# [http]
-# redirectToHttps = true
 
 # Authentication - Change token validity
 # [authentication]
