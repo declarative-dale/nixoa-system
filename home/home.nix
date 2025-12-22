@@ -125,8 +125,8 @@ in
     };
 
     initContent = ''
-      # Initialize oh-my-posh with dracula theme
-      eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/dracula.omp.json)"
+      # Initialize oh-my-posh with night owl theme
+      eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json)"
 
       # Initialize zoxide (smarter cd)
       eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
