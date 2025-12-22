@@ -57,7 +57,6 @@ in
     dog
     bottom
     bandwhich
-    tldr
     tealdeer
     lazygit
     gh
