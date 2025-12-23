@@ -15,8 +15,8 @@ if [ ! -d .git ]; then
 fi
 
 echo "=== Uncommitted Changes ==="
-git diff system-settings.toml xo-server-settings.toml
+git diff configuration.nix config.nixoa.toml
 
-if git diff --quiet system-settings.toml xo-server-settings.toml; then
+if git diff --quiet configuration.nix config.nixoa.toml; then
     echo "No uncommitted changes."
 fi

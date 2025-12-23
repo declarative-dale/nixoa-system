@@ -29,27 +29,24 @@ COMMIT_MSG="$1"
 
 # Show what's changed
 echo "=== Configuration Changes ==="
-git diff --stat system-settings.toml xo-server-settings.toml 2>/dev/null || true
+git diff --stat configuration.nix config.nixoa.toml 2>/dev/null || true
 echo ""
 
-# Stage the TOML files
-git add system-settings.toml xo-server-settings.toml
-
 # Check if there are changes to commit
-if git diff --staged --quiet; then
+if git diff --quiet configuration.nix config.nixoa.toml 2>/dev/null; then
     echo "No changes to commit."
     exit 0
 fi
 
-# Commit the changes
-git commit -m "$COMMIT_MSG"
+# Commit the changes (auto-stages tracked files)
+git commit -a -m "$COMMIT_MSG"
 
 echo "✓ Configuration committed successfully!"
 echo ""
 echo "Next steps:"
 echo "  1. Review changes: git log -1 -p"
 # Get configured hostname for rebuild command
-CONFIG_HOST=$(grep "^hostname" system-settings.toml 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
+CONFIG_HOST=$(grep "hostname = " configuration.nix 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
 CONFIG_HOST="${CONFIG_HOST:-nixoa}"
 echo "  2. Rebuild NiXOA: cd /etc/nixos/nixoa/nixoa-vm && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
 echo ""

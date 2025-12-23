@@ -24,7 +24,7 @@ echo "=== Applying configuration to NiXOA ==="
 cd /etc/nixos/nixoa/nixoa-vm
 
 # Read hostname from user-config (defaults to "nixoa" if not set)
-HOSTNAME=$(grep "^hostname" "${CONFIG_DIR}/system-settings.toml" 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
+HOSTNAME=$(grep "hostname = " "${CONFIG_DIR}/configuration.nix" 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
 HOSTNAME="${HOSTNAME:-nixoa}"
 
 echo "Running: sudo nixos-rebuild switch --flake .#${HOSTNAME}"

@@ -15,8 +15,8 @@ if [ ! -d .git ]; then
 fi
 
 echo "=== Configuration Change History ==="
-git log --oneline --decorate --graph -10 -- system-settings.toml xo-server-settings.toml
+git log --oneline --decorate --graph -10 -- configuration.nix config.nixoa.toml
 
 echo ""
 echo "To see full diff for a commit: git show <commit-hash>"
-echo "To revert to a previous commit: git checkout <commit-hash> -- system-settings.toml xo-server-settings.toml"
+echo "To revert to a previous commit: git checkout <commit-hash> -- configuration.nix config.nixoa.toml"

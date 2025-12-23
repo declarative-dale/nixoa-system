@@ -23,8 +23,8 @@ nixoa config edit
 ```
 
 Interactive menu:
-- **1** - Edit `system-settings.toml`
-- **2** - Edit `xo-server-settings.toml`
+- **1** - Edit `configuration.nix` (main system configuration)
+- **2** - Edit `config.nixoa.toml` (optional XO server overrides)
 - **both** - Edit both files
 
 ### `nixoa config show`
@@ -36,7 +36,7 @@ nixoa config show
 nixoa config diff    # Alias for 'show'
 ```
 
-Displays a git diff of changes to `system-settings.toml` and `xo-server-settings.toml`.
+Displays a git diff of changes to `configuration.nix` and `config.nixoa.toml`.
 
 ### `nixoa config commit <message>`
 
@@ -85,7 +85,7 @@ git show <commit-hash>
 **Revert to a previous commit:**
 ```bash
 cd /etc/nixos/nixoa/user-config
-git checkout <commit-hash> -- system-settings.toml xo-server-settings.toml
+git checkout <commit-hash> -- configuration.nix config.nixoa.toml
 nixoa config apply "Reverted to previous config"
 ```
 
@@ -231,8 +231,11 @@ nixoa config apply "Initial setup"
 ### Change Network Ports
 
 ```bash
-# Edit XO settings
-nixoa config edit  # Choose option 2
+# Edit XO settings in configuration.nix
+nixoa config edit  # Choose option 1
+
+# Find systemSettings.xo and update port/httpsPort values
+# Save and exit
 
 # Apply changes
 nixoa config apply "Changed HTTP port to 8080"
@@ -241,10 +244,10 @@ nixoa config apply "Changed HTTP port to 8080"
 ### Enable a Service
 
 ```bash
-# Edit system settings
+# Edit system settings in configuration.nix
 nixoa config edit  # Choose option 1
 
-# Add to [services] enable list or configure with custom options
+# Add to systemSettings.services.definitions or update xo config
 # Save and exit
 
 # Apply
@@ -254,8 +257,9 @@ nixoa config apply "Enabled Docker"
 ### Add System Packages
 
 ```bash
-nixoa config edit  # Edit system-settings.toml
-# Add packages to [packages.system] extra = [...]
+nixoa config edit  # Edit configuration.nix (Choose option 1)
+# Add packages to systemSettings.packages.system.extra = [...]
+# Or user packages to userSettings.packages.extra = [...]
 nixoa config apply "Added htop and vim"
 ```
 
@@ -285,7 +289,7 @@ nixoa rollback
 nixoa config history
 # Find the good commit
 cd /etc/nixos/nixoa/user-config
-git checkout <good-commit> -- *.toml
+git checkout <good-commit> -- configuration.nix config.nixoa.toml
 nixoa config apply "Reverted to working config"
 ```
 
