@@ -31,15 +31,11 @@ git commit -m "Add hardware-configuration.nix"
 ```
 user-config/
 ├── configuration.nix              # Edit this: System configuration in pure Nix
-├── config.nixoa.toml              # Edit this: XO server configuration
+├── flake.nix                      # Flake definition (simplified, data exports only)
 ├── hardware-configuration.nix     # Copy once: Hardware config (from /etc/nixos/)
-├── flake.nix                      # Flake definition
-├── nixos/                         # NixOS modules
-│   ├── default.nix                # Module auto-importer
-│   └── xo-config.nix              # Generates /etc/xo-server/config.nixoa.toml
-├── home/                          # Home Manager configuration
-│   ├── default.nix                # Module auto-importer
-│   └── home.nix                   # User environment (shell, packages, etc.)
+├── config.nixoa.toml              # Edit this: XO server configuration
+├── system-settings.toml           # Edit this: System settings in TOML format
+├── xo-server-settings.toml        # Edit this: XO server settings in TOML format
 ├── scripts/                       # Helper scripts
 │   ├── commit-config.sh
 │   ├── apply-config.sh
@@ -51,8 +47,15 @@ user-config/
 ├── history
 ├── README.md                      # This file
 ├── QUICKSTART.md                  # 5-minute quick start guide
-└── CLI-REFERENCE.md               # Complete CLI command reference
+├── CLI-REFERENCE.md               # Complete CLI command reference
+└── user-config-bundle.md          # Configuration bundle documentation
 ```
+
+**Key points:**
+- **configuration.nix** - Pure Nix file with your settings (userSettings, systemSettings)
+- **flake.nix** - Simplified to only export configuration data (no module logic)
+- All module implementations are in **nixoa-vm** (separate repository)
+- Home Manager config is in **nixoa-vm/modules/home/home.nix** (not here)
 
 > **💡 Tip:** After installing NiXOA, use the `nixoa` command for all operations. The scripts are still available for advanced use.
 
@@ -494,28 +497,36 @@ This configuration repository now uses the **NixOS module system** with proper `
 
 Behind the scenes:
 
-1. **You edit Nix files:** `configuration.nix` defines `userSettings` and `systemSettings` attribute sets
+1. **You edit configuration files:**
+   - `configuration.nix` defines `userSettings` and `systemSettings` attribute sets
+   - `config.nixoa.toml` provides XO server configuration overrides (optional)
 
-2. **Flake Processing:**
-   - `flake.nix` imports `configuration.nix` and reads `config.nixoa.toml`
+2. **Flake Processing (user-config):**
+   - `flake.nix` imports `configuration.nix`
+   - Reads `config.nixoa.toml` as raw TOML data
    - Extracts `userSettings` and `systemSettings` from the configuration
    - Creates a `userArgs` bundle with both settings and convenience scalars
-   - Exports these via `specialArgs` to all NixOS modules
+   - Exports these via `nixoa.specialArgs` to nixoa-vm
 
-3. **NiXOA Integration:**
-   - `nixoa-vm/flake.nix` receives `userArgs` via specialArgs
-   - Passes `userSettings` and `systemSettings` to all NixOS modules
-   - `nixoa-vm/modules/system.nix` consumes these settings directly (no options layer)
-   - Generates `/etc/xo-server/config.nixoa.toml` from `config.nixoa.toml`
+3. **NiXOA Module System (nixoa-vm):**
+   - `nixoa-vm/flake.nix` receives `userArgs` from user-config
+   - Passes `userSettings` and `systemSettings` to all NixOS modules via `specialArgs`
+   - Modules are organized by concern:
+     - **core/** - System-level modules (users, networking, packages, services)
+     - **xo/** - XO-specific modules (xoa, storage, autocert, updates, extras, etc.)
+     - **home/** - Home Manager configuration
+   - All modules are dynamically discovered and imported via `bundle.nix`
+   - Generates `/etc/xo-server/config.toml` from XO configuration
 
 4. **On rebuild:** Everything is applied atomically with full Nix evaluation type checking
 
 **Benefits:**
-- ✅ Pure Nix configuration (no TOML parsing)
+- ✅ Pure Nix configuration (no TOML parsing in NixOS)
 - ✅ Type safety via Nix evaluation
 - ✅ Simple data structures (attribute sets)
 - ✅ Full declarative configuration
 - ✅ Composable and extensible
+- ✅ Clear separation: user-config (data) vs nixoa-vm (implementation)
 
 ## Support
 
