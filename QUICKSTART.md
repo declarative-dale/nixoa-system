@@ -43,15 +43,28 @@ sudo ln -sf ~/user-config /etc/nixos/nixoa/user-config
 
 ```bash
 cd ~/user-config
-nano system-settings.toml
+nano configuration.nix
 ```
 
 **Required changes:**
-- Add your SSH public keys to `admin.sshKeys = [...]`
-- Set your `hostname` and `admin.username`
+- Add your SSH public keys to `systemSettings.sshKeys = [...]`
+- Set your `systemSettings.hostname` and `systemSettings.username`
+
+Example:
+```nix
+systemSettings = {
+  hostname = "my-xoa";
+  username = "xoa";
+  timezone = "UTC";
+  sshKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@laptop"
+  ];
+  # ... other settings ...
+};
+```
 
 **Optional changes:**
-- Network ports, storage settings, packages, services, etc.
+- Network ports, storage settings, packages, services, etc. (all in configuration.nix)
 
 ### Step 3: Apply Configuration
 
@@ -67,25 +80,31 @@ That's it! Your NiXOA CE system is now configured.
 ### Change Network Ports
 
 ```bash
-nixoa config edit                           # Edit xo-server-settings.toml
-# Change [xo] port = 80 to your desired port
-nixoa config apply "Changed HTTP port"
+nano ~/user-config/config.nixoa.toml       # Edit XO server config
+# Change port = 80 to your desired port
+cd ~/user-config
+git add config.nixoa.toml
+./apply-config.sh "Changed HTTP port"
 ```
 
 ### Add System Packages
 
 ```bash
-nixoa config edit                           # Edit system-settings.toml
-# Add to [packages.system] extra = ["htop", "vim"]
-nixoa config apply "Added system packages"
+nano ~/user-config/configuration.nix       # Edit system config
+# Add to systemSettings.packages.system.extra = ["htop", "vim"]
+cd ~/user-config
+git add configuration.nix
+./apply-config.sh "Added system packages"
 ```
 
 ### Enable Docker
 
 ```bash
-nixoa config edit                           # Edit system-settings.toml
-# Add to [services] enable = ["docker"]
-nixoa config apply "Enabled Docker"
+nano ~/user-config/configuration.nix       # Edit system config
+# Add to systemSettings.services.definitions = { docker = { enable = true; }; }
+cd ~/user-config
+git add configuration.nix
+./apply-config.sh "Enabled Docker"
 ```
 
 ### View Configuration Changes
@@ -131,10 +150,10 @@ nixoa rebuild          # Manual rebuild if needed
 
 **Want to undo changes?**
 ```bash
-nixoa config history   # Find the commit to revert to
 cd ~/user-config
-git checkout <commit> -- system-settings.toml xo-server-settings.toml
-nixoa config apply "Reverted to previous config"
+git log --oneline     # Find the commit to revert to
+git checkout <commit> -- configuration.nix config.nixoa.toml
+./apply-config.sh "Reverted to previous config"
 ```
 
 **Service not starting?**

@@ -4,6 +4,7 @@ result-*
 
 # Flake lock file (keep local, don't track in template)
 flake.lock
+user-config-bundle.md
 
 # Editor files
 *.swp

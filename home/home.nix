@@ -2,14 +2,14 @@
 # Home Manager configuration for NiXOA admin user
 # Manages user-specific settings: shell, packages, dotfiles
 
-{ config, lib, pkgs, username, nixoaCfg ? {}, ... }:
+{ config, lib, pkgs, username, userSettings ? {}, systemSettings ? {}, ... }:
 
 let
-  # Determine if extra terminal enhancements are enabled (from [extras.enable] in TOML)
-  extrasEnabled = nixoaCfg.extras.enable or false;
+  # Determine if extra terminal enhancements are enabled
+  extrasEnabled = userSettings.extras.enable or false;
 
-  # User-specific package list from [packages.user.extra] in TOML
-  userPackages = nixoaCfg.packages.user.extra or [];
+  # User-specific package list
+  userPackages = userSettings.packages.extra or [];
 
   # Command for fzf to use fd (a fast find alternative) for file searching
   fdSearchCmd = "${pkgs.fd}/bin/fd --type f --hidden --follow --exclude .git";
@@ -21,7 +21,7 @@ in
 
   home.username = username;                           # Admin username (passed from system config, not hard-coded "xoa")
   home.homeDirectory = "/home/${username}";
-  home.stateVersion = nixoaCfg.stateVersion or "25.11";
+  home.stateVersion = systemSettings.stateVersion or "25.11";
 
   # ==========================================================================
   # USER PACKAGES
@@ -32,7 +32,7 @@ in
     map (pkgName:
       if builtins.hasAttr pkgName pkgs
       then builtins.getAttr pkgName pkgs
-      else throw "Package ${pkgName} not found in nixpkgs (check [packages.user] in system-settings.toml)."
+      else throw "Package ${pkgName} not found in nixpkgs (check userSettings.packages.extra in configuration.nix)."
     ) userPackages
   ) ++ lib.optionals extrasEnabled [
     # Enhanced terminal tools (included only if extrasEnabled is true)
@@ -74,8 +74,8 @@ in
   # ==========================================================================
 
   home.sessionVariables = {
-    # Expose the Xen Orchestra mounts directory from [storage.mountsDir] as an environment variable
-    XO_MOUNTS = nixoaCfg.storage.mountsDir or "/var/lib/xo/mounts";
+    # Expose the Xen Orchestra mounts directory as an environment variable
+    XO_MOUNTS = systemSettings.storage.mountsDir or "/var/lib/xo/mounts";
   };
 
   # ==========================================================================

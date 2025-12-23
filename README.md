@@ -1,27 +1,28 @@
 # NiXOA Configuration
 
-This is your personal configuration repository for NiXOA. It uses easy-to-edit TOML files that are automatically converted to Nix configurations and applied declaratively.
+This is your personal configuration repository for NiXOA. It uses pure Nix configuration files with optional TOML overrides, applied declaratively.
 
 ## Overview
 
-This repository provides a simple TOML-based configuration system for NiXOA:
+This repository provides a declarative configuration system for NiXOA:
 
 **📝 What you edit:**
-- `system-settings.toml` - System configuration (hostname, users, SSH keys, services, etc.)
-- `xo-server-settings.toml` - Xen Orchestra server configuration (Redis, paths, etc.)
+- `configuration.nix` - System configuration in pure Nix (hostname, users, SSH keys, services, etc.)
+- `config.nixoa.toml` - XO server configuration overrides (Redis, paths, authentication, etc.)
 
 **📋 One-time setup (copy hardware config):**
 ```bash
 sudo cp /etc/nixos/hardware-configuration.nix ~/user-config/
 sudo chown $USER:$USER ~/user-config/hardware-configuration.nix
 cd ~/user-config
-./commit-config.sh "Add hardware-configuration.nix"
+git add hardware-configuration.nix
+git commit -m "Add hardware-configuration.nix"
 ```
 
 **🔧 What happens automatically:**
-- TOML files are read by Nix modules
-- System configuration is generated from your settings
-- `/etc/xo-server/config.nixoa.toml` is created declaratively
+- Configuration.nix defines your system settings as Nix attribute sets
+- System configuration is directly applied from Nix values
+- `/etc/xo-server/config.nixoa.toml` is created from config.nixoa.toml
 - Hardware configuration is imported by nixoa-vm
 - All changes are version-controlled in git
 
@@ -29,13 +30,16 @@ cd ~/user-config
 
 ```
 user-config/
-├── system-settings.toml           # Edit this: System configuration
-├── xo-server-settings.toml        # Edit this: XO server configuration
+├── configuration.nix              # Edit this: System configuration in pure Nix
+├── config.nixoa.toml              # Edit this: XO server configuration
 ├── hardware-configuration.nix     # Copy once: Hardware config (from /etc/nixos/)
 ├── flake.nix                      # Flake definition
-├── modules/
-│   ├── nixoa-config.nix           # Converts system-settings.toml to NixOS module
-│   └── xo-server-config.nix       # Reads xo-server-settings.toml
+├── nixos/                         # NixOS modules
+│   ├── default.nix                # Module auto-importer
+│   └── xo-config.nix              # Generates /etc/xo-server/config.nixoa.toml
+├── home/                          # Home Manager configuration
+│   ├── default.nix                # Module auto-importer
+│   └── home.nix                   # User environment (shell, packages, etc.)
 ├── scripts/                       # Helper scripts
 │   ├── commit-config.sh
 │   ├── apply-config.sh
@@ -80,21 +84,31 @@ This file contains your machine-specific hardware settings (disks, filesystems, 
 
 ### 3. Edit your configuration
 
-**Using the nixoa CLI (recommended):**
+Edit `configuration.nix` in your preferred editor:
+
 ```bash
-nixoa config edit
+cd ~/user-config
+nano configuration.nix
 ```
 
 At minimum, you must:
-- Add your SSH public keys to the `sshKeys` array
-- Set your `hostname`, `username`, and `timezone`
+- Add your SSH public keys to `systemSettings.sshKeys` array
+- Set `systemSettings.hostname`, `systemSettings.username`, and `systemSettings.timezone`
 
-**Or edit manually:**
-```bash
-cd ~/user-config
-nano system-settings.toml      # System settings
-nano xo-server-settings.toml   # XO server settings (optional)
+Example configuration:
+```nix
+systemSettings = {
+  hostname = "my-nixoa";
+  username = "xoa";
+  timezone = "America/New_York";
+  sshKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@laptop"
+  ];
+  # ... more settings ...
+};
 ```
+
+You can optionally customize XO server settings in `config.nixoa.toml`.
 
 ### 4. Apply your changes
 
@@ -228,55 +242,67 @@ nix run .#history
 
 ## Configuration Files
 
-### system-settings.toml
+### configuration.nix
 
-This file contains all your system-level settings:
+This file contains all your system-level and user settings in pure Nix:
 
-```toml
-# Basic settings
-hostname = "nixoa"
-username = "xoa"
-timezone = "UTC"
-sshKeys = [
-  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
-]
+```nix
+{ lib, pkgs, ... }:
 
-# Networking
-[networking.firewall]
-allowedTCPPorts = [80, 443, 3389, 5900, 8012]
+{
+  userSettings = {
+    packages.extra = [  # User packages managed by Home Manager
+      # "neovim" "tmux" "lazygit"
+    ];
+    extras.enable = false;  # Enable terminal enhancements
+  };
 
-# Storage
-[storage]
-mountsDir = "/var/lib/xo/mounts"
+  systemSettings = {
+    # Basic settings
+    hostname = "nixoa";
+    username = "xoa";
+    timezone = "UTC";
+    sshKeys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
+    ];
 
-[storage.nfs]
-enable = true
+    # Networking
+    networking.firewall.allowedTCPPorts = [ 80 443 3389 5900 8012 ];
 
-[storage.cifs]
-enable = true
+    # XO service configuration
+    xo = {
+      host = "0.0.0.0";
+      port = 80;
+      httpsPort = 443;
+      service = { user = "xo"; group = "xo"; };
+      tls = {
+        enable = true;
+        redirectToHttps = true;
+        autoGenerate = true;
+      };
+    };
 
-# Updates, packages, services, etc.
+    # Storage
+    storage = {
+      nfs.enable = true;
+      cifs.enable = true;
+      vhd.enable = true;
+      mountsDir = "/var/lib/xo/mounts";
+    };
+
+    # Updates, packages, services, etc.
+  };
+}
 ```
 
-### xo-server-settings.toml
+### config.nixoa.toml
 
-This file contains XO server-specific settings:
+This file contains XO server-specific overrides (optional):
 
 ```toml
-# HTTP/HTTPS ports
-[xo]
-host = "0.0.0.0"
-port = 80
-httpsPort = 443
-
-# TLS configuration
-[tls]
-enable = true
-redirectToHttps = true
-autoGenerate = true
-dir = "/etc/ssl/xo"
-cert = "/etc/ssl/xo/certificate.pem"
-key = "/etc/ssl/xo/key.pem"
+# Redis configuration
+[redis]
+socket = "/run/redis-xo/redis.sock"
 
 # Authentication
 [authentication]
@@ -468,29 +494,28 @@ This configuration repository now uses the **NixOS module system** with proper `
 
 Behind the scenes:
 
-1. **You edit TOML files:** `system-settings.toml` and `xo-server-settings.toml` (plain, human-readable configuration)
+1. **You edit Nix files:** `configuration.nix` defines `userSettings` and `systemSettings` attribute sets
 
-2. **TOML → NixOS Module Conversion:**
-   - `modules/nixoa-config.nix` reads `system-settings.toml` using `builtins.fromTOML`
-   - Converts TOML values into a NixOS module that sets `config.nixoa.*` values
-   - `modules/xo-server-config.nix` reads `xo-server-settings.toml` and generates the XO config structure
+2. **Flake Processing:**
+   - `flake.nix` imports `configuration.nix` and reads `config.nixoa.toml`
+   - Extracts `userSettings` and `systemSettings` from the configuration
+   - Creates a `userArgs` bundle with both settings and convenience scalars
+   - Exports these via `specialArgs` to all NixOS modules
 
-3. **Flake Exports:**
-   - `nixosModules.default` - NixOS module setting `config.nixoa.*` from TOML
-   - `nixoa.xoServer.toml` - XO server configuration
+3. **NiXOA Integration:**
+   - `nixoa-vm/flake.nix` receives `userArgs` via specialArgs
+   - Passes `userSettings` and `systemSettings` to all NixOS modules
+   - `nixoa-vm/modules/system.nix` consumes these settings directly (no options layer)
+   - Generates `/etc/xo-server/config.nixoa.toml` from `config.nixoa.toml`
 
-4. **NiXOA Integration:**
-   - Defines `options.nixoa.*` in `nixoa-vm/modules/nixoa-options.nix` (type-safe option definitions)
-   - Imports this config flake's `nixosModules.default`
-   - Applies `config.nixoa.*` values to system configuration
-   - Generates `/etc/xo-server/config.toml` from `nixoa.xoServer.toml`
-
-5. **On rebuild:** Everything is applied atomically with full type checking
+4. **On rebuild:** Everything is applied atomically with full Nix evaluation type checking
 
 **Benefits:**
-- ✅ Simple TOML interface for users
-- ✅ Type-safe NixOS options under the hood
+- ✅ Pure Nix configuration (no TOML parsing)
+- ✅ Type safety via Nix evaluation
+- ✅ Simple data structures (attribute sets)
 - ✅ Full declarative configuration
+- ✅ Composable and extensible
 
 ## Support
 

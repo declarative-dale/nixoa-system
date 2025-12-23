@@ -13,30 +13,25 @@
       pkgs = nixpkgs.legacyPackages.${system};
 
       # ========================================================================
-      # TOML PARSING (single source of truth)
+      # PURE NIX CONFIGURATION (single source of truth)
       # ========================================================================
 
-      # Parse system-settings.toml
-      settingsPath = ./system-settings.toml;
-      settingsContent = builtins.readFile settingsPath;
-      nixoaCfg = builtins.fromTOML settingsContent;
+      # Import configuration.nix which defines userSettings and systemSettings
+      config = import ./configuration.nix { inherit lib pkgs; };
 
-      # Parse xo-server-settings.toml
-      xoSettingsPath = ./xo-server-settings.toml;
-      xoServerCfg =
-        if builtins.pathExists xoSettingsPath
-        then builtins.fromTOML (builtins.readFile xoSettingsPath)
-        else {};
+      # Extract settings from configuration
+      userSettings = config.userSettings;
+      systemSettings = config.systemSettings;
 
-      # Extract XO server TOML text (filtered)
-      xoTomlData = import ./modules/xo-server-config.nix {};
+      # Read XO server TOML directly from file
+      xoTomlData = builtins.readFile ./config.nixoa.toml;
 
       # ========================================================================
       # EXTRACT CONVENIENCE SCALARS
       # ========================================================================
 
-      hostname = nixoaCfg.hostname or "nixoa";
-      username = nixoaCfg.username or "xoa";
+      hostname = systemSettings.hostname or "nixoa";
+      username = systemSettings.username or "xoa";
 
       # ========================================================================
       # CREATE ARGS BUNDLE
@@ -44,8 +39,8 @@
 
       # This bundle is passed to both NixOS and Home Manager modules
       userArgs = {
-        inherit nixoaCfg xoServerCfg username hostname system;
-        # Add xoTomlData for backwards compatibility with xo-config.nix
+        inherit username hostname system;
+        inherit userSettings systemSettings;
         inherit xoTomlData;
       };
 
@@ -78,7 +73,7 @@
       homeManagerModules.default = import ./home;
 
       # ========================================================================
-      # LEGACY CONFIGURATION DATA (backwards compatibility)
+      # CONFIGURATION DATA EXPORTS
       # ========================================================================
 
       nixoa = {
@@ -89,8 +84,7 @@
         specialArgs = userArgs;
         extraSpecialArgs = userArgs;  # Alias for home-manager
 
-        # Legacy exports (for smooth transition)
-        system = nixoaCfg;
+        # XO server TOML data
         xoServer.toml = xoTomlData;
       };
 
