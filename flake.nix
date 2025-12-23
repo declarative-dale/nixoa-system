@@ -48,31 +48,6 @@
       hardwareConfigPath = ./hardware-configuration.nix;
     in {
       # ========================================================================
-      # NIXOS MODULES
-      # ========================================================================
-
-      nixosModules.default = import ./nixos;
-
-      nixosModules.hardware =
-        if builtins.pathExists hardwareConfigPath
-        then import hardwareConfigPath
-        else builtins.throw ''
-          user-config: hardware-configuration.nix is missing!
-
-          Please copy your hardware configuration:
-            sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/nixoa/user-config/
-
-          Or generate it:
-            sudo nixos-generate-config --show-hardware-config > /etc/nixos/nixoa/user-config/hardware-configuration.nix
-        '';
-
-      # ========================================================================
-      # HOME MANAGER MODULES
-      # ========================================================================
-
-      homeManagerModules.default = import ./home;
-
-      # ========================================================================
       # CONFIGURATION DATA EXPORTS
       # ========================================================================
 
