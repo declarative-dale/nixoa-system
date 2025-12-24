@@ -181,7 +181,6 @@ in
       init.defaultBranch = "main";         # Use 'main' as default branch name for new repos
       pull.rebase = true;                  # Default `git pull` to rebase
       core.pager = "${pkgs.delta}/bin/delta";                        # Use delta for paging diffs
-      interactive.diffFilter = "${pkgs.delta}/bin/delta --color-only";  # Use delta for interactive hunk selection
       delta = {
         navigate = true;
         line-numbers = true;
