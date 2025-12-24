@@ -99,10 +99,8 @@
         ];
 
         # Pass configuration to all modules via specialArgs
-        # Includes flake sources from nixoa-vm and user-specific settings
-        specialArgs = userArgs // {
-          inherit (nixoa-vm.inputs) xoSrc libvhdiSrc;
-        };
+        # nixoa-vm provides nixoaPackages and nixoaUtils via _module.args
+        specialArgs = userArgs;
       };
 
       # ========================================================================
