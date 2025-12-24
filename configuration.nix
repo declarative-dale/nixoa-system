@@ -86,34 +86,29 @@
 
       gc = {
         enable = false;
-        schedule = "Sun 04:00";
-        keepGenerations = 7;
+        schedule = "weekly";
+        keepDays = 30;
       };
 
-      flake = {
+      autoUpgrade = {
         enable = false;
         schedule = "Sun 04:00";
-        remoteUrl = "https://codeberg.org/nixoa/nixoa-vm.git";
-        branch = "main";
-        autoRebuild = false;
+        flake = "";  # Set to your flake URI, e.g., "github:yourusername/user-config"
       };
 
       nixpkgs = {
         enable = false;
         schedule = "Mon 04:00";
-        keepGenerations = 7;
       };
 
       xoa = {
         enable = false;
         schedule = "Tue 04:00";
-        keepGenerations = 7;
       };
 
       libvhdi = {
         enable = false;
         schedule = "Wed 04:00";
-        keepGenerations = 7;
       };
     };
 
