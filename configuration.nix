@@ -26,7 +26,7 @@
     sshKeys = [];  # Example: [ "ssh-ed25519 AAAA..." ]
 
     # Networking - firewall configuration
-    networking.firewall.allowedTCPPorts = [ 80 443 3389 5900 8012 ];
+    networking.firewall.allowedPorts = [ 80 443 ];
 
     # XO Server configuration
     xo = {
