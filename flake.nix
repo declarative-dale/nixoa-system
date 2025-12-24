@@ -1,12 +1,22 @@
 # SPDX-License-Identifier: Apache-2.0
 {
-  description = "User configuration flake for NixOA (system + XO config)";
+  description = "User configuration flake for NixOA - Entry point for system and user config";
 
   inputs = {
+    # NixOS packages
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+
+    # Import nixoa-vm as module library
+    nixoa-vm = {
+      url = "path:/etc/nixos/nixoa/nixoa-vm";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Get home-manager from nixoa-vm to ensure consistency
+    home-manager.follows = "nixoa-vm/home-manager";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nixoa-vm, home-manager }:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
@@ -43,24 +53,55 @@
         inherit userSettings systemSettings;
         inherit xoTomlData;
       };
-
-      # Hardware configuration path
-      hardwareConfigPath = ./hardware-configuration.nix;
     in {
       # ========================================================================
-      # CONFIGURATION DATA EXPORTS
+      # NIXOS CONFIGURATIONS (Main export - entry point for system)
       # ========================================================================
 
-      nixoa = {
-        # Expose convenience scalars
-        inherit hostname;
+      nixosConfigurations.${hostname} = lib.nixosSystem {
+        inherit system;
 
-        # Expose specialArgs bundle for nixoa-vm
-        specialArgs = userArgs;
-        extraSpecialArgs = userArgs;  # Alias for home-manager
+        modules = [
+          # Hardware configuration - local to this flake
+          ./hardware-configuration.nix
 
-        # XO server TOML data
-        xoServer.toml = xoTomlData;
+          # Import nixoa-vm module library
+          # This provides all system modules (core/, xo/)
+          nixoa-vm.nixosModules.default
+
+          # Home Manager NixOS module
+          home-manager.nixosModules.home-manager
+
+          # Home Manager configuration
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "bak";
+
+              # Pass configuration args to home-manager
+              extraSpecialArgs = userArgs;
+
+              # Configure home for the admin user
+              # Home Manager config is now in this flake, not nixoa-vm
+              users.${username} = import ./modules/home.nix;
+            };
+          }
+
+          # Provide module arguments via _module.args
+          # Config data goes here (follows NixOS 25.11 best practices)
+          {
+            _module.args = {
+              inherit xoTomlData;
+            };
+          }
+        ];
+
+        # Pass configuration to all modules via specialArgs
+        # Includes flake sources from nixoa-vm and user-specific settings
+        specialArgs = userArgs // {
+          inherit (nixoa-vm.inputs) xoSrc libvhdiSrc;
+        };
       };
 
       # ========================================================================

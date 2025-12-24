@@ -18,10 +18,10 @@ fi
 echo "=== Committing configuration changes ==="
 "$SCRIPT_DIR/commit-config.sh" "$COMMIT_MSG"
 
-# Apply the configuration
+# Apply the configuration from user-config directory
 echo ""
 echo "=== Applying configuration to NiXOA ==="
-cd /etc/nixos/nixoa/nixoa-vm
+cd "$CONFIG_DIR"
 
 # Read hostname from user-config (defaults to "nixoa" if not set)
 HOSTNAME=$(grep "hostname = " "${CONFIG_DIR}/configuration.nix" 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)

@@ -1,6 +1,6 @@
 # NiXOA Configuration
 
-This is your personal configuration repository for NiXOA. It uses pure Nix configuration files with optional TOML overrides, applied declaratively.
+This is your personal configuration repository for NiXOA. It is the primary entry point for system rebuilds - you run `nixos-rebuild` from here, not from nixoa-vm. Configuration uses pure Nix files with optional TOML overrides, applied declaratively.
 
 ## Overview
 
@@ -30,12 +30,12 @@ git commit -m "Add hardware-configuration.nix"
 
 ```
 user-config/
-├── configuration.nix              # Edit this: System configuration in pure Nix
-├── flake.nix                      # Flake definition (simplified, data exports only)
+├── configuration.nix              # Edit this: System configuration (userSettings, systemSettings)
 ├── hardware-configuration.nix     # Copy once: Hardware config (from /etc/nixos/)
 ├── config.nixoa.toml              # Edit this: XO server configuration
-├── system-settings.toml           # Edit this: System settings in TOML format
-├── xo-server-settings.toml        # Edit this: XO server settings in TOML format
+├── flake.nix                      # Flake entry point (exports nixosConfigurations)
+├── modules/
+│   └── home.nix                   # Home Manager configuration (user shell, packages, etc.)
 ├── scripts/                       # Helper scripts
 │   ├── commit-config.sh
 │   ├── apply-config.sh
@@ -52,10 +52,11 @@ user-config/
 ```
 
 **Key points:**
-- **configuration.nix** - Pure Nix file with your settings (userSettings, systemSettings)
-- **flake.nix** - Simplified to only export configuration data (no module logic)
-- All module implementations are in **nixoa-vm** (separate repository)
-- Home Manager config is in **nixoa-vm/modules/home/home.nix** (not here)
+- **configuration.nix** - Pure Nix file with your system and user settings
+- **flake.nix** - Entry point that imports nixoa-vm as a module library and exports nixosConfigurations
+- **modules/home.nix** - Home Manager configuration (shell, packages, dotfiles, etc.)
+- All system modules (core, xo, etc.) are in **nixoa-vm** (separate repository, immutable)
+- Rebuilds run from this directory: `nixos-rebuild switch --flake .`
 
 > **💡 Tip:** After installing NiXOA, use the `nixoa` command for all operations. The scripts are still available for advanced use.
 
@@ -67,11 +68,9 @@ user-config/
 # Clone to your home directory (as regular user)
 git clone https://codeberg.org/nixoa/user-config.git ~/user-config
 cd ~/user-config
-
-# Create symlink for flake input (as root)
-sudo mkdir -p /etc/nixos/nixoa
-sudo ln -sf ~/user-config /etc/nixos/nixoa/user-config
 ```
+
+This flake is now your primary entry point - no symlinks needed! The bootstrap installer will clone this automatically during setup.
 
 ### 2. Copy hardware configuration
 
@@ -130,11 +129,10 @@ cd ~/user-config
 ```bash
 cd ~/user-config
 ./scripts/commit-config.sh "Initial configuration"
-cd /etc/nixos/nixoa/nixoa-vm
 sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
-Replace `<hostname>` with the value set in `~/user-config/system-settings.toml`.
+Replace `<hostname>` with the value set in `~/user-config/configuration.nix` (systemSettings.hostname).
 
 > **📖 New to NiXOA?** Check out [QUICKSTART.md](QUICKSTART.md) for a 5-minute guide!
 
