@@ -87,9 +87,6 @@
       gc = {
         enable = false;
         schedule = "monthly";  # Default: monthly. Also supports: "weekly", "daily", "*-*-01 04:00", etc.
-        # Note: keepDays is kept for reference but full cleanup is performed
-        # (equivalent to nix-collect-garbage -d which deletes all unreachable paths)
-        keepDays = 30;
       };
 
       autoUpgrade = {
