@@ -6,7 +6,8 @@
     # NixOS packages
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    # Import nixoa-vm as module library
+    # Note: nixoa-vm should be at /etc/nixos/nixoa/nixoa-vm
+    # If path doesn't exist, clone it: sudo git clone https://codeberg.org/nixoa/nixoa-vm.git /etc/nixos/nixoa/nixoa-vm
     nixoa-vm = {
       url = "path:/etc/nixos/nixoa/nixoa-vm";
       inputs.nixpkgs.follows = "nixpkgs";
