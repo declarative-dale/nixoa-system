@@ -58,6 +58,8 @@
   nixoa.xo = {
     enable = true;
 
+    configNixoaFile = ./config.nixoa.toml;
+
     http = {
       host = "0.0.0.0";
       port = 80;
