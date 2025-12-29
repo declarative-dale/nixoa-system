@@ -49,6 +49,9 @@
           # Home Manager NixOS module
           home-manager.nixosModules.home-manager
 
+          # Import snitch home-manager module
+          snitch.homeManagerModules.default
+
           # Home Manager configuration
           {
             home-manager = {
