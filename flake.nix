@@ -68,6 +68,7 @@
           {
             home-manager.users.xoa.programs.snitch = {
               enable = true;
+              package = snitch.packages.${system}.default;
               settings = {
                 defaults = {
                   theme = "dracula";
