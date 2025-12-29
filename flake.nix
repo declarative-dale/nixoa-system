@@ -70,6 +70,9 @@
           program = toString (pkgs.writeShellScript "commit-config" ''
             ${builtins.readFile ./scripts/commit-config.sh}
           '');
+          meta = {
+            description = "Commit configuration changes to git";
+          };
         };
 
         apply = {
@@ -77,6 +80,9 @@
           program = toString (pkgs.writeShellScript "apply-config" ''
             ${builtins.readFile ./scripts/apply-config.sh}
           '');
+          meta = {
+            description = "Apply configuration changes to the system";
+          };
         };
 
         diff = {
@@ -84,6 +90,9 @@
           program = toString (pkgs.writeShellScript "show-diff" ''
             ${builtins.readFile ./scripts/show-diff.sh}
           '');
+          meta = {
+            description = "Show configuration differences";
+          };
         };
 
         history = {
@@ -91,6 +100,9 @@
           program = toString (pkgs.writeShellScript "history" ''
             ${builtins.readFile ./scripts/history.sh}
           '');
+          meta = {
+            description = "Show configuration commit history";
+          };
         };
       };
     };
