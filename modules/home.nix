@@ -78,16 +78,17 @@ in
   };
 
   # ==========================================================================
-  # ZSH CONFIGURATION (when extras enabled)
+  # ZSH CONFIGURATION
   # ==========================================================================
 
-  programs.zsh = lib.mkIf extrasEnabled {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;         # Zsh autosuggestions (typeahead suggestions)
-    syntaxHighlighting.enable = true;     # Syntax highlighting for command line
+  # Always enable zsh when admin shell is zsh, but only configure extras when enabled
+  programs.zsh = {
+    enable = adminShell == "zsh";
+    enableCompletion = lib.mkIf extrasEnabled true;
+    autosuggestion.enable = lib.mkIf extrasEnabled true;         # Zsh autosuggestions (typeahead suggestions)
+    syntaxHighlighting.enable = lib.mkIf extrasEnabled true;     # Syntax highlighting for command line
 
-    history = {
+    history = lib.mkIf extrasEnabled {
       size = 50000;                       # Large history file to remember lots of commands
       path = "${config.home.homeDirectory}/.zsh_history";
       ignoreDups = true;
@@ -96,7 +97,7 @@ in
       share = true;                       # Share history across sessions
     };
 
-    oh-my-zsh = {
+    oh-my-zsh = lib.mkIf extrasEnabled {
       enable = true;
       plugins = [
         "git"                   # Git plugin (aliases and helpers)
@@ -111,7 +112,7 @@ in
       ];
     };
 
-    shellAliases = {
+    shellAliases = lib.mkIf extrasEnabled {
       # Modern replacements for common commands
       ls = "eza --icons --group-directories-first";
       ll = "eza -l --icons --group-directories-first --git";
@@ -142,7 +143,7 @@ in
     };
 
     # Zsh initialization commands (only run if extrasEnabled)
-    initContent = ''
+    initContent = lib.mkIf extrasEnabled ''
       # Initialize the shell prompt with oh-my-posh (Night Owl theme for a nice look)
       eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json)"
 
@@ -157,7 +158,7 @@ in
       # (Ctrl+R is bound by fzf integration to open searchable command history)
     '';
 
-    defaultKeymap = "emacs";  # Use Emacs keybindings in shell (e.g. Ctrl+A, Ctrl+E for navigation)
+    defaultKeymap = lib.mkIf extrasEnabled "emacs";  # Use Emacs keybindings in shell (e.g. Ctrl+A, Ctrl+E for navigation)
   };
 
   # ==========================================================================
