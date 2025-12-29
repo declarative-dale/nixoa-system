@@ -2,14 +2,22 @@
 # Home Manager configuration for NiXOA admin user
 # Manages user-specific settings: shell, packages, dotfiles
 
-{ config, lib, pkgs, username, userSettings ? {}, systemSettings ? {}, ... }:
+{ config, lib, pkgs, ... }:
 
 let
-  # Determine if extra terminal enhancements are enabled
-  extrasEnabled = userSettings.extras.enable or false;
+  # Get admin username and shell from system config via the top-level config
+  adminUsername = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "admin" config.nixoa)
+                   then config.nixoa.admin.username
+                   else "xoa";
+  adminShell = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "admin" config.nixoa)
+                then config.nixoa.admin.shell
+                else "bash";
+  stateVersion = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "system" config.nixoa)
+                  then config.nixoa.system.stateVersion
+                  else "25.11";
 
-  # User-specific package list
-  userPackages = userSettings.packages.extra or [];
+  # Determine if extra terminal enhancements are enabled (when shell is zsh)
+  extrasEnabled = adminShell == "zsh";
 
   # Command for fzf to use fd (a fast find alternative) for file searching
   fdSearchCmd = "${pkgs.fd}/bin/fd --type f --hidden --follow --exclude .git";
@@ -19,9 +27,9 @@ in
   # HOME MANAGER BASIC SETUP
   # ==========================================================================
 
-  home.username = username;                           # Admin username (passed from system config, not hard-coded "xoa")
-  home.homeDirectory = "/home/${username}";
-  home.stateVersion = systemSettings.stateVersion or "25.11";
+  home.username = adminUsername;
+  home.homeDirectory = "/home/${adminUsername}";
+  home.stateVersion = stateVersion;
 
   # ==========================================================================
   # USER PACKAGES
@@ -75,7 +83,7 @@ in
 
   home.sessionVariables = {
     # Expose the Xen Orchestra mounts directory as an environment variable
-    XO_MOUNTS = systemSettings.storage.mountsDir or "/var/lib/xo/mounts";
+    XO_MOUNTS = "/var/lib/xo/mounts";
   };
 
   # ==========================================================================
