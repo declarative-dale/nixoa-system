@@ -15,6 +15,28 @@
   };
 
   # ============================================================================
+  # BOOT & BOOTLOADER
+  # ============================================================================
+
+  nixoa.boot = {
+    # Boot loader selection: "systemd-boot" (default, recommended for EFI) or "grub" (for BIOS/legacy)
+    loader = "systemd-boot";
+
+    # EFI configuration (only used with systemd-boot)
+    efi.canTouchEfiVariables = true;
+
+    # GRUB configuration (only used when loader = "grub")
+    # Uncomment and set to device path to use GRUB instead of systemd-boot
+    # grub.device = "/dev/sda";  # Examples: /dev/sda, /dev/vda (Xen), /dev/xvda
+  };
+
+  # To switch to GRUB for legacy/BIOS boot, uncomment and modify the boot section:
+  # nixoa.boot = {
+  #   loader = "grub";
+  #   grub.device = "/dev/sda";  # Set to your boot device
+  # };
+
+  # ============================================================================
   # ADMIN USER & XO SERVICE ACCOUNT
   # ============================================================================
 
