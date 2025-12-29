@@ -147,8 +147,10 @@ in
       # Initialize the shell prompt with oh-my-posh (Night Owl theme for a nice look)
       eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json)"
 
+      # Configure FZF with preview (set here to avoid shell export issues with complex arguments)
+      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview '${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}'"
+
       # (No manual zoxide init needed here — Home Manager's zoxide module takes care of it)
-      # (No manual fzf export needed — configured via programs.fzf below)
 
       # Bind Up/Down arrows to history substring search (from oh-my-zsh plugin)
       bindkey '^[[A' history-substring-search-up
@@ -212,7 +214,6 @@ in
       "--height 40%"
       "--layout=reverse"
       "--border"
-      "--preview \"${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}\""
     ];
   };
 
