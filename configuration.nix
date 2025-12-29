@@ -21,7 +21,7 @@
   nixoa.admin = {
     username = "xoa";
     sshKeys = [];  # Example: [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample user@example.com" ]
-    shell = "bash";  # Options: "bash" or "zsh"
+    shell = "bash";  # Options: "bash" or "zsh", selecting zsh will trigger numerous terminal enhancements
   };
 
   nixoa.xo.service = {
