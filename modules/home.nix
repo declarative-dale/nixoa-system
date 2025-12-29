@@ -36,12 +36,8 @@ in
   # ==========================================================================
 
   home.packages = with pkgs; (
-    # Map each package name in userPackages to an actual package attribute from nixpkgs
-    map (pkgName:
-      if builtins.hasAttr pkgName pkgs
-      then builtins.getAttr pkgName pkgs
-      else throw "Package ${pkgName} not found in nixpkgs (check userSettings.packages.extra in configuration.nix)."
-    ) userPackages
+    # Base packages (always installed)
+    []
   ) ++ lib.optionals extrasEnabled [
     # Enhanced terminal tools (included only if extrasEnabled is true)
     oh-my-posh    # Themable shell prompt program
@@ -64,17 +60,12 @@ in
     lazygit       # Terminal UI for git
     gh            # GitHub CLI
 
-    # =======================================================================
-    # CUSTOM USER-DEFINED PACKAGES
-    # =======================================================================
-    # Add custom packages here that you want installed in your user environment
-    # Example:
-    #   - htop (system monitor)
-    #   - tmux (terminal multiplexer)
-    #   - neovim (text editor)
-    #   - rust (programming language)
-    # Simply add them to this list, or better yet, add them to [packages.user] extra
-    # in your system-settings.toml so they're tracked in git
+    # To add additional user packages, edit this section directly.
+    # Examples:
+    #   htop          # system monitor
+    #   tmux          # terminal multiplexer
+    #   neovim        # text editor
+    #   ripgrep       # fast search tool
   ];
 
   # ==========================================================================
