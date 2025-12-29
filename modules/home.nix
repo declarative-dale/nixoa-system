@@ -9,15 +9,9 @@ let
   adminUsername = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "admin" config.nixoa)
                    then config.nixoa.admin.username
                    else "xoa";
-  adminShell = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "admin" config.nixoa)
-                then config.nixoa.admin.shell
-                else "bash";
   stateVersion = if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "system" config.nixoa)
                   then config.nixoa.system.stateVersion
                   else "25.11";
-
-  # Determine if extra terminal enhancements are enabled (when shell is zsh)
-  extrasEnabled = adminShell == "zsh";
 
   # Command for fzf to use fd (a fast find alternative) for file searching
   fdSearchCmd = "${pkgs.fd}/bin/fd --type f --hidden --follow --exclude .git";
@@ -38,7 +32,7 @@ in
   home.packages = with pkgs; (
     # Base packages (always installed)
     []
-  ) ++ lib.optionals extrasEnabled [
+  ) ++ lib.optionals (config.nixoa.admin.shell == "zsh") [
     # Enhanced terminal tools (included only if extrasEnabled is true)
     oh-my-posh    # Themable shell prompt program
     bat           # Cat replacement with syntax highlighting
@@ -81,14 +75,14 @@ in
   # ZSH CONFIGURATION
   # ==========================================================================
 
-  # Always enable zsh when admin shell is zsh, but only configure extras when enabled
-  programs.zsh = {
-    enable = adminShell == "zsh";
-    enableCompletion = lib.mkIf extrasEnabled true;
-    autosuggestion.enable = lib.mkIf extrasEnabled true;         # Zsh autosuggestions (typeahead suggestions)
-    syntaxHighlighting.enable = lib.mkIf extrasEnabled true;     # Syntax highlighting for command line
+  # Always enable zsh when admin shell is zsh, and configure all options when enabled
+  programs.zsh = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;         # Zsh autosuggestions (typeahead suggestions)
+    syntaxHighlighting.enable = true;     # Syntax highlighting for command line
 
-    history = lib.mkIf extrasEnabled {
+    history = {
       size = 50000;                       # Large history file to remember lots of commands
       path = "${config.home.homeDirectory}/.zsh_history";
       ignoreDups = true;
@@ -97,7 +91,7 @@ in
       share = true;                       # Share history across sessions
     };
 
-    oh-my-zsh = lib.mkIf extrasEnabled {
+    oh-my-zsh = {
       enable = true;
       plugins = [
         "git"                   # Git plugin (aliases and helpers)
@@ -112,7 +106,7 @@ in
       ];
     };
 
-    shellAliases = lib.mkIf extrasEnabled {
+    shellAliases = {
       # Modern replacements for common commands
       ls = "eza --icons --group-directories-first";
       ll = "eza -l --icons --group-directories-first --git";
@@ -142,8 +136,8 @@ in
       sysstatus = "sudo systemctl status";        # Check status of a systemd service (usage: sysstatus <unit>)
     };
 
-    # Zsh initialization commands (only run if extrasEnabled)
-    initContent = lib.mkIf extrasEnabled ''
+    # Zsh initialization commands
+    initContent = ''
       # Initialize the shell prompt with oh-my-posh (Night Owl theme for a nice look)
       eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json)"
 
@@ -158,14 +152,14 @@ in
       # (Ctrl+R is bound by fzf integration to open searchable command history)
     '';
 
-    defaultKeymap = lib.mkIf extrasEnabled "emacs";  # Use Emacs keybindings in shell (e.g. Ctrl+A, Ctrl+E for navigation)
+    defaultKeymap = "emacs";  # Use Emacs keybindings in shell (e.g. Ctrl+A, Ctrl+E for navigation)
   };
 
   # ==========================================================================
-  # TOOL CONFIGURATIONS (only when extras enabled)
+  # TOOL CONFIGURATIONS (when zsh is enabled)
   # ==========================================================================
 
-  programs.bat = lib.mkIf extrasEnabled {
+  programs.bat = lib.mkIf (config.nixoa.admin.shell == "zsh") {
     enable = true;
     config = {
       theme = "Dracula";                   # Set bat's color theme
@@ -177,7 +171,7 @@ in
     };
   };
 
-  programs.git = lib.mkIf extrasEnabled {
+  programs.git = lib.mkIf (config.nixoa.admin.shell == "zsh") {
     enable = true;
     settings = {
       init.defaultBranch = "main";         # Use 'main' as default branch name for new repos
@@ -193,18 +187,18 @@ in
     };
   };
 
-  programs.direnv = lib.mkIf extrasEnabled {
+  programs.direnv = lib.mkIf (config.nixoa.admin.shell == "zsh") {
     enable = true;
     nix-direnv.enable = true;             # Integrate direnv with Nix (nix-direnv)
     enableZshIntegration = true;          # Hook direnv into Zsh shell
   };
 
-  programs.zoxide = lib.mkIf extrasEnabled {
+  programs.zoxide = lib.mkIf (config.nixoa.admin.shell == "zsh") {
     enable = true;
     enableZshIntegration = true;          # Enable zoxide and auto-initialize it in Zsh
   };
 
-  programs.fzf = lib.mkIf extrasEnabled {
+  programs.fzf = lib.mkIf (config.nixoa.admin.shell == "zsh") {
     enable = true;
     enableZshIntegration = true;
     # Use fd for default file search (Ctrl-T and general fzf) and bat for preview in fzf
