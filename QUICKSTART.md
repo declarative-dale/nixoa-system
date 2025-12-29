@@ -14,7 +14,7 @@ bash xoa-install.sh
 ```
 
 The installer will:
-1. Clone nixoa-vm flake to `/etc/nixos/nixoa/nixoa-vm`
+1. Clone nixoa-vm flake to `/etc/nixos/nixoa-vm`
 2. Create user-config in `~/user-config`
 3. Generate all Nix modules and TOML templates
 4. Copy/generate hardware configuration

@@ -62,7 +62,7 @@ inputs = {
 
   # NEW: Import nixoa-vm as module library
   nixoa-vm = {
-    url = "path:/etc/nixos/nixoa/nixoa-vm";
+    url = "path:/etc/nixos/nixoa-vm";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -109,7 +109,7 @@ nano configuration.nix
 ./scripts/commit-config.sh "My changes"
 
 # Rebuild FROM nixoa-vm directory
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
@@ -154,7 +154,7 @@ sudo nixos-rebuild switch --flake .#<hostname>
 ### Flake Entry Point
 
 **Old:**
-- **Entry point**: `/etc/nixos/nixoa/nixoa-vm/flake.nix`
+- **Entry point**: `/etc/nixos/nixoa-vm/flake.nix`
 - **Configuration data in**: `/etc/nixos/nixoa/user-config/flake.nix`
 - Confusing: two flakes with unclear relationship
 
@@ -171,7 +171,7 @@ Your home-manager configuration is now part of user-config, not a system-wide mo
 
 ### Before (v0.x)
 ```nix
-# In /etc/nixos/nixoa/nixoa-vm/modules/home/home.nix
+# In /etc/nixos/nixoa-vm/modules/home/home.nix
 # System-wide configuration
 # All users get the same home-manager config
 ```
@@ -228,7 +228,7 @@ systemSettings = {
 - Others can add their own modules to nixoa-vm
 
 ### ✅ Simpler Updates
-- Update system: `cd /etc/nixos/nixoa/nixoa-vm && sudo git pull`
+- Update system: `cd /etc/nixos/nixoa-vm && sudo git pull`
 - Update config: `cd ~/user-config && git pull`
 - Rebuild: `cd ~/user-config && sudo nixos-rebuild switch --flake .#`
 
@@ -261,7 +261,7 @@ bash <(curl -fsSL https://codeberg.org/nixoa/nixoa-vm/raw/main/scripts/xoa-insta
 ```
 
 The installer will:
-1. Clone nixoa-vm to `/etc/nixos/nixoa/nixoa-vm`
+1. Clone nixoa-vm to `/etc/nixos/nixoa-vm`
 2. Clone user-config to `~/user-config`
 3. Set up modules/home.nix
 4. Generate hardware configuration
@@ -277,7 +277,7 @@ cd ~/user-config
 mkdir -p modules
 
 # Copy home-manager config from nixoa-vm
-cp /etc/nixos/nixoa/nixoa-vm/modules/home/home.nix modules/
+cp /etc/nixos/nixoa-vm/modules/home/home.nix modules/
 
 # Copy hardware configuration
 sudo cp /etc/nixos/hardware-configuration.nix .
@@ -337,7 +337,7 @@ Xen Orchestra server configuration (optional overrides)
 
 ### Update System Modules (nixoa-vm)
 ```bash
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 sudo git pull
 cd ~/user-config
 sudo nixos-rebuild switch --flake .#$(hostname)
@@ -436,7 +436,7 @@ configuration.nix (your settings)
 |--------|-----------|-----------|
 | **Entry Point** | nixoa-vm/flake.nix | user-config/flake.nix |
 | **Configuration Location** | /etc/nixos/nixoa/user-config | ~/user-config |
-| **Rebuild Command** | cd /etc/nixos/nixoa/nixoa-vm && rebuild | cd ~/user-config && rebuild |
+| **Rebuild Command** | cd /etc/nixos/nixoa-vm && rebuild | cd ~/user-config && rebuild |
 | **Home-Manager Config** | System-wide (nixoa-vm) | Personal (user-config) |
 | **Flake Role** | Data export | Full system config |
 | **Dependency** | nixoa-vm → user-config | user-config → nixoa-vm |

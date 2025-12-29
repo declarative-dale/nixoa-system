@@ -138,7 +138,7 @@ Steps:
 
 **Update specific input:**
 ```bash
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 nix flake lock --update-input xoSrc
 nixoa rebuild
 ```
@@ -452,7 +452,7 @@ If `nixoa` command is not found after installing NiXOA CE:
 
 ```bash
 # Rebuild to install the CLI
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 sudo nixos-rebuild switch --flake .#nixoa
 
 # Log out and back in, or source your profile

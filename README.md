@@ -415,7 +415,7 @@ git checkout <commit-hash> -- system-settings.toml xo-server-settings.toml
 ./commit-config "Reverted to previous configuration"
 
 # Apply
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 sudo nixos-rebuild switch --flake .#nixoa
 ```
 
@@ -435,7 +435,7 @@ Make sure you've both committed and rebuilt:
 ./apply-config "My changes"
 # Or separately:
 ./commit-config "My changes"
-cd /etc/nixos/nixoa/nixoa-vm
+cd /etc/nixos/nixoa-vm
 sudo nixos-rebuild switch --flake .#nixoa
 ```
 

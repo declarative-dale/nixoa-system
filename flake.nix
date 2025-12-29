@@ -1,15 +1,17 @@
 # SPDX-License-Identifier: Apache-2.0
+# User configuration flake for NixOA - Entry point for system configuration
+
 {
-  description = "User configuration flake for NixOA - Entry point for system and user config";
+  description = "User configuration flake for NixOA - Entry point for system config";
 
   inputs = {
     # NixOS packages
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    # Note: nixoa-vm should be at /etc/nixos/nixoa/nixoa-vm
-    # If path doesn't exist, clone it: sudo git clone https://codeberg.org/nixoa/nixoa-vm.git /etc/nixos/nixoa/nixoa-vm
+    # Note: nixoa-vm should be at /etc/nixos/nixoa-vm
+    # If path doesn't exist, clone it: sudo git clone https://codeberg.org/nixoa/nixoa-vm.git /etc/nixos/nixoa-vm
     nixoa-vm = {
-      url = "path:/etc/nixos/nixoa/nixoa-vm";
+      url = "path:/etc/nixos/nixoa-vm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -22,49 +24,20 @@
       system = "x86_64-linux";
       lib = nixpkgs.lib;
       pkgs = nixpkgs.legacyPackages.${system};
-
-      # ========================================================================
-      # PURE NIX CONFIGURATION (single source of truth)
-      # ========================================================================
-
-      # Import configuration.nix which defines userSettings and systemSettings
-      config = import ./configuration.nix { inherit lib pkgs; };
-
-      # Extract settings from configuration
-      userSettings = config.userSettings;
-      systemSettings = config.systemSettings;
-
-      # Read XO server TOML directly from file
-      xoTomlData = builtins.readFile ./config.nixoa.toml;
-
-      # ========================================================================
-      # EXTRACT CONVENIENCE SCALARS
-      # ========================================================================
-
-      hostname = systemSettings.hostname or "nixoa";
-      username = systemSettings.username or "xoa";
-
-      # ========================================================================
-      # CREATE ARGS BUNDLE
-      # ========================================================================
-
-      # This bundle is passed to both NixOS and Home Manager modules
-      userArgs = {
-        inherit username hostname system;
-        inherit userSettings systemSettings;
-        inherit xoTomlData;
-      };
     in {
       # ========================================================================
       # NIXOS CONFIGURATIONS (Main export - entry point for system)
       # ========================================================================
 
-      nixosConfigurations.${hostname} = lib.nixosSystem {
+      nixosConfigurations.nixoa = lib.nixosSystem {
         inherit system;
 
         modules = [
           # Hardware configuration - local to this flake
           ./hardware-configuration.nix
+
+          # User configuration - defines all nixoa.* options
+          ./configuration.nix
 
           # Import nixoa-vm module library
           # This provides all system modules (core/, xo/)
@@ -80,27 +53,11 @@
               useUserPackages = true;
               backupFileExtension = "bak";
 
-              # Pass configuration args to home-manager
-              extraSpecialArgs = userArgs;
-
               # Configure home for the admin user
-              # Home Manager config is now in this flake, not nixoa-vm
-              users.${username} = import ./modules/home.nix;
-            };
-          }
-
-          # Provide module arguments via _module.args
-          # Config data goes here (follows NixOS 25.11 best practices)
-          {
-            _module.args = {
-              inherit xoTomlData;
+              users.xoa = import ./modules/home.nix;
             };
           }
         ];
-
-        # Pass configuration to all modules via specialArgs
-        # nixoa-vm provides nixoaPackages and nixoaUtils via _module.args
-        specialArgs = userArgs;
       };
 
       # ========================================================================
