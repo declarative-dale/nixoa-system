@@ -2,7 +2,7 @@
 # Home Manager configuration for NiXOA admin user
 # Manages user-specific settings: shell, packages, dotfiles
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, osConfig ? {}, ... }:
 
 let
   # Get admin username and shell from system config via the top-level config
@@ -32,7 +32,7 @@ in
   home.packages = with pkgs; (
     # Base packages (always installed)
     []
-  ) ++ lib.optionals (config.nixoa.admin.shell == "zsh") [
+  ) ++ lib.optionals (osConfig.nixoa.admin.shell == "zsh") [
     # Enhanced terminal tools (included only if extrasEnabled is true)
     oh-my-posh    # Themable shell prompt program
     bat           # Cat replacement with syntax highlighting
@@ -76,7 +76,7 @@ in
   # ==========================================================================
 
   # Always enable zsh when admin shell is zsh, and configure all options when enabled
-  programs.zsh = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.zsh = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;         # Zsh autosuggestions (typeahead suggestions)
@@ -159,7 +159,7 @@ in
   # TOOL CONFIGURATIONS (when zsh is enabled)
   # ==========================================================================
 
-  programs.bat = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.bat = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     config = {
       theme = "Dracula";                   # Set bat's color theme
@@ -171,7 +171,7 @@ in
     };
   };
 
-  programs.git = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.git = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     settings = {
       init.defaultBranch = "main";         # Use 'main' as default branch name for new repos
@@ -187,18 +187,18 @@ in
     };
   };
 
-  programs.direnv = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.direnv = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     nix-direnv.enable = true;             # Integrate direnv with Nix (nix-direnv)
     enableZshIntegration = true;          # Hook direnv into Zsh shell
   };
 
-  programs.zoxide = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.zoxide = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     enableZshIntegration = true;          # Enable zoxide and auto-initialize it in Zsh
   };
 
-  programs.fzf = lib.mkIf (config.nixoa.admin.shell == "zsh") {
+  programs.fzf = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
     enable = true;
     enableZshIntegration = true;
     # Use fd for default file search (Ctrl-T and general fzf) and bat for preview in fzf
