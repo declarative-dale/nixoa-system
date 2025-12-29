@@ -49,15 +49,15 @@
           # Home Manager NixOS module
           home-manager.nixosModules.home-manager
 
-          # Import snitch home-manager module
-          snitch.homeManagerModules.default
-
           # Home Manager configuration
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               backupFileExtension = "bak";
+
+              # Import snitch home-manager module for xoa user
+              sharedModules = [ snitch.homeManagerModules.default ];
 
               # Configure home for the admin user
               users.xoa = import ./modules/home.nix;
