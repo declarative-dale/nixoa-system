@@ -17,9 +17,12 @@
 
     # Get home-manager from nixoa-vm to ensure consistency
     home-manager.follows = "nixoa-vm/home-manager";
+
+    # Snitch - network traffic monitoring tool
+    snitch.url = "github:karol-broda/snitch";
   };
 
-  outputs = { self, nixpkgs, nixoa-vm, home-manager }:
+  outputs = { self, nixpkgs, nixoa-vm, home-manager, snitch }:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
@@ -54,7 +57,7 @@
               backupFileExtension = "bak";
 
               # Configure home for the admin user
-              users.xoa = import ./modules/home.nix;
+              users.xoa = import ./modules/home.nix { inherit snitch; };
             };
           }
         ];
