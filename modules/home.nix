@@ -2,7 +2,7 @@
 # Home Manager configuration for NiXOA admin user
 # Manages user-specific settings: shell, packages, dotfiles
 
-{ config, lib, pkgs, osConfig ? {}, snitch ? null, ... }:
+{ config, lib, pkgs, osConfig ? {}, ... }:
 
 let
   # Get admin username and shell from system config via the top-level config
@@ -221,19 +221,4 @@ in
 
   # Let Home Manager manage itself (allows using the `home-manager` command for this user)
   programs.home-manager.enable = true;
-
-  # ==========================================================================
-  # SNITCH - NETWORK TRAFFIC MONITORING
-  # ==========================================================================
-
-  programs.snitch = lib.mkIf (snitch != null) {
-    enable = true;
-    settings = {
-      defaults = {
-        theme = "dracula";
-        interval = "2s";
-        resolve = true;
-      };
-    };
-  };
 }

@@ -57,7 +57,21 @@
               backupFileExtension = "bak";
 
               # Configure home for the admin user
-              users.xoa = import ./modules/home.nix { inherit snitch; };
+              users.xoa = import ./modules/home.nix;
+            };
+          }
+
+          # Snitch configuration (Home Manager module)
+          {
+            home-manager.users.xoa.programs.snitch = {
+              enable = true;
+              settings = {
+                defaults = {
+                  theme = "dracula";
+                  interval = "2s";
+                  resolve = true;
+                };
+              };
             };
           }
         ];
