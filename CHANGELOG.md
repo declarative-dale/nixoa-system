@@ -1,3 +1,40 @@
+# user-config v1.1.0 - Feature Enhancement Release
+
+**Release Date:** December 29, 2025
+
+## ✨ Added
+
+- `configNixoaFile` option to link `config.nixoa.toml` to `/etc/xo-server/`
+- Snitch network monitor integration in home.nix for real-time connection tracking
+- Boot toggle option with systemd-boot as default (bios possible but untested)
+- Meta attributes to flake apps for better discoverability
+
+## 🔄 Changed
+
+- Migrated snitch from system-level to user-level configuration (home.nix)
+- Enhanced home.nix conditional configuration logic for better maintainability
+- Improved extras toggle handling with proper shell initialization
+- Simplified home.nix to remove obsolete `systemSettings.userPackages` pattern
+
+## 🐛 Fixed
+
+- Home Manager syntax issues in configuration
+- Interactive diffFilter line causing errors during diffs
+- FZF preview configuration now properly initialized through shell
+- Nested configuration structure issues in home.nix
+
+## 🗑️ Removed
+
+- Unnecessary `xoSrc` and `libvhdiSrc` from specialArgs
+- Problematic interactive.diffFilter configuration
+
+## 📚 Documentation
+
+- Updated all references: `system-settings.toml` → `configuration.nix`
+- Updated all references: `xo-server-settings.toml` → `config.nixoa.toml`
+
+---
+
 # user-config v1.0.0 - Architecture Release Notes
 
 **Release Date:** December 24, 2025
