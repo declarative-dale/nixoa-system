@@ -25,6 +25,18 @@ ls -la ~/user-config/
 
 NixOS generated a hardware config during installation. Copy it:
 
+**Note** make sure you have already enabled a 4GB swap file using the NixOS installer, if you didn't, add this to your `hardware-configuration.nix` BEFORE copying it over.
+
+```bash
+swapDevices = [
+             {
+               device = "/swapfile";
+               size = 4096;  # in MB (4GB)
+             }
+         ];
+```
+
+Now, copy the config over
 ```bash
 sudo cp /etc/nixos/hardware-configuration.nix ~/user-config/
 sudo chown $USER:$USER ~/user-config/hardware-configuration.nix
