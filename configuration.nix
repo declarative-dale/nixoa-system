@@ -37,6 +37,20 @@
   # };
 
   # ============================================================================
+  # KERNEL & NETWORKING PARAMETERS
+  # ============================================================================
+
+  # Increase socket buffer sizes to support large file uploads (ISOs, backups, etc.)
+  # Default rmem_max was 208KB, causing connection resets on large uploads.
+  # Increased to 2GB to accommodate xo-server multipart form uploads.
+  boot.kernel.sysctl = {
+    "net.core.rmem_max" = 2147483647;          # 2GB max receive buffer
+    "net.core.wmem_max" = 2147483647;          # 2GB max send buffer
+    "net.ipv4.tcp_rmem" = "4096 87380 2147483647";      # min, default, max (2GB)
+    "net.ipv4.tcp_wmem" = "4096 65536 2147483647";      # min, default, max (2GB)
+  };
+
+  # ============================================================================
   # ADMIN USER & XO SERVICE ACCOUNT
   # ============================================================================
 
