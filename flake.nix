@@ -5,8 +5,14 @@
   description = "User configuration flake for NixOA - Entry point for system config";
 
   inputs = {
+    #Determinate Nix
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+    
     # NixOS packages
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    
+    # Flakehub Mirror
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # NixOS, current stable
 
     # nixoa-vm from Codeberg repository
     nixoa-vm = {
@@ -21,7 +27,7 @@
     snitch.url = "github:karol-broda/snitch";
   };
 
-  outputs = { self, nixpkgs, nixoa-vm, home-manager, snitch }:
+  outputs = { self, nixpkgs, determinate, nixoa-vm, home-manager, snitch }:
     let
       system = "x86_64-linux";
       lib = nixpkgs.lib;
@@ -40,7 +46,9 @@
 
           # User configuration - defines all nixoa.* options
           ./configuration.nix
-
+          
+          # Determinate Nix Module
+          determinate.nixosModules.default
           # Import nixoa-vm module library
           # This provides all system modules (core/, xo/)
           nixoa-vm.nixosModules.default

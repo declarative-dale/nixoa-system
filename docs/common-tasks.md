@@ -268,18 +268,6 @@ timedatectl
 
 ## Enabling Automated Updates
 
-### Garbage Collection
-
-Clean up unused packages weekly:
-
-```nix
-systemSettings.updates.gc = {
-  enable = true;
-  schedule = "Sun 04:00";    # Sunday at 4 AM UTC
-  keepGenerations = 7;       # Keep 7 old generations
-};
-```
-
 ### NixPkgs Updates
 
 Automatically update packages:
@@ -301,28 +289,6 @@ systemSettings.updates.xoa = {
   enable = true;
   schedule = "Tue 04:00";
   keepGenerations = 7;
-};
-```
-
-### All Updates Enabled
-
-```nix
-systemSettings.updates = {
-  gc = {
-    enable = true;
-    schedule = "Sun 04:00";
-    keepGenerations = 7;
-  };
-  nixpkgs = {
-    enable = true;
-    schedule = "Mon 04:00";
-    keepGenerations = 7;
-  };
-  xoa = {
-    enable = true;
-    schedule = "Tue 04:00";
-    keepGenerations = 7;
-  };
 };
 ```
 

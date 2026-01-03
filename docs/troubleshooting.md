@@ -93,12 +93,6 @@ sudo journalctl -xe
 df -h
 ```
 
-If `/nix/store` is full:
-```bash
-sudo nix-collect-garbage -d
-sudo nixos-rebuild switch --flake .#HOSTNAME
-```
-
 ### Network Timeout
 
 Downloading packages failed. Try again:
@@ -451,9 +445,6 @@ top
 **Fix:**
 
 ```bash
-# Clean up unused packages
-sudo nix-collect-garbage -d
-
 # Restart services
 sudo systemctl restart xo-server.service
 ```
