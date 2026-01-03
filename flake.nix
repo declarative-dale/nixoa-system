@@ -8,10 +8,9 @@
     # NixOS packages
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    # Note: nixoa-vm should be at /etc/nixos/nixoa-vm
-    # If path doesn't exist, clone it: sudo git clone https://codeberg.org/nixoa/nixoa-vm.git /etc/nixos/nixoa-vm
+    # nixoa-vm from Codeberg repository
     nixoa-vm = {
-      url = "path:/etc/nixos/nixoa-vm";
+      url = "git+https://codeberg.org/NiXOA/nixoa-vm?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
