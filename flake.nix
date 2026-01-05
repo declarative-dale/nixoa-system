@@ -16,7 +16,7 @@
 
     # nixoa-vm from Codeberg repository
     nixoa-vm = {
-      url = "git+https://codeberg.org/NiXOA/nixoa-vm?ref=main";
+      url = "git+https://codeberg.org/NiXOA/core?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
