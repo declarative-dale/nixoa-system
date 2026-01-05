@@ -40,9 +40,10 @@
         # ========================================================================
 
         nixosConfigurations.nixoa = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-
           modules = [
+            # Set the host platform (replaces deprecated 'system' attribute)
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+
             # Hardware configuration - local to this flake
             ./hardware-configuration.nix
 

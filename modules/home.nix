@@ -183,20 +183,20 @@ in
   programs.direnv = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
     nix-direnv.enable = true;             # Integrate direnv with Nix (nix-direnv)
-    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
-    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
+    enableZshIntegration = true;
+    enableBashIntegration = true;
   };
 
   programs.zoxide = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
-    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
-    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
+    enableZshIntegration = true;
+    enableBashIntegration = true;
   };
 
   programs.fzf = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
-    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
-    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
+    enableZshIntegration = true;
+    enableBashIntegration = true;
     # Use fd for default file search (Ctrl-T and general fzf) and bat for preview in fzf
     defaultCommand = fdSearchCmd;         # FZF_DEFAULT_COMMAND (list files using fd)
     fileWidgetCommand = fdSearchCmd;      # FZF_CTRL_T_COMMAND (also use fd for Ctrl-T)
@@ -224,9 +224,9 @@ in
 
   programs.oh-my-posh = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
-    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
-    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
-    settings = builtins.fromJSON (builtins.readFile "${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json");
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+    useTheme = "night-owl";
   };
 
   # Let Home Manager manage itself (allows using the `home-manager` command for this user)
