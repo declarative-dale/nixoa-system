@@ -11,11 +11,11 @@
         "xoSrc": "xoSrc"
       },
       "locked": {
-        "lastModified": 1767594232,
-        "narHash": "sha256-e6t/cSDDWoWe2jGoX1e1eaEnvKkaovMekFzBDZIm3TA=",
+        "lastModified": 1767600251,
+        "narHash": "sha256-hRx45POI1Vi1AckQns9KqrJ0npkB11kMYZxfVoJFeKI=",
         "ref": "beta",
-        "rev": "1c948e257d67e88653b1bdf06456d9cd7baf2dcf",
-        "revCount": 271,
+        "rev": "284183581e5e763b8ace84b9e0e9e55f02829568",
+        "revCount": 272,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/core"
       },
