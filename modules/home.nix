@@ -32,9 +32,8 @@ in
   home.packages = with pkgs; (
     # Base packages (always installed)
     []
-  ) ++ lib.optionals (osConfig.nixoa.admin.shell == "zsh") [
-    # Enhanced terminal tools (included only if extrasEnabled is true)
-    oh-my-posh    # Themable shell prompt program
+  ) ++ lib.optionals (osConfig.nixoa.extras.enable or false) [
+    # Enhanced terminal tools (included when extras are enabled)
     bat           # Cat replacement with syntax highlighting
     eza           # Modern ls replacement
     fd            # Find replacement (used for fzf default search)
@@ -59,7 +58,6 @@ in
     #   htop          # system monitor
     #   tmux          # terminal multiplexer
     #   neovim        # text editor
-    #   ripgrep       # fast search tool
   ];
 
   # ==========================================================================
@@ -137,14 +135,9 @@ in
     };
 
     # Zsh initialization commands
-    initContent = ''
-      # Initialize the shell prompt with oh-my-posh (Night Owl theme for a nice look)
-      eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json)"
-
+    initExtra = ''
       # Configure FZF with preview (set here to avoid shell export issues with complex arguments)
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview '${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}'"
-
-      # (No manual zoxide init needed here — Home Manager's zoxide module takes care of it)
 
       # Bind Up/Down arrows to history substring search (from oh-my-zsh plugin)
       bindkey '^[[A' history-substring-search-up
@@ -156,10 +149,10 @@ in
   };
 
   # ==========================================================================
-  # TOOL CONFIGURATIONS (when zsh is enabled)
+  # TOOL CONFIGURATIONS (when extras are enabled)
   # ==========================================================================
 
-  programs.bat = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.bat = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
     config = {
       theme = "Dracula";                   # Set bat's color theme
@@ -171,7 +164,7 @@ in
     };
   };
 
-  programs.git = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.git = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
     settings = {
       init.defaultBranch = "main";         # Use 'main' as default branch name for new repos
@@ -187,20 +180,23 @@ in
     };
   };
 
-  programs.direnv = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.direnv = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
     nix-direnv.enable = true;             # Integrate direnv with Nix (nix-direnv)
-    enableZshIntegration = true;          # Hook direnv into Zsh shell
+    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
+    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
   };
 
-  programs.zoxide = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.zoxide = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
-    enableZshIntegration = true;          # Enable zoxide and auto-initialize it in Zsh
+    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
+    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
   };
 
-  programs.fzf = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.fzf = lib.mkIf (osConfig.nixoa.extras.enable or false) {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
+    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
     # Use fd for default file search (Ctrl-T and general fzf) and bat for preview in fzf
     defaultCommand = fdSearchCmd;         # FZF_DEFAULT_COMMAND (list files using fd)
     fileWidgetCommand = fdSearchCmd;      # FZF_CTRL_T_COMMAND (also use fd for Ctrl-T)
@@ -211,12 +207,26 @@ in
     ];
   };
 
-  # Bash configuration - always enabled for login shells
+  # ==========================================================================
+  # BASH CONFIGURATION
+  # ==========================================================================
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
     # Shell aliases only in interactive mode (not during login shell initialization)
     # This prevents syntax errors with aliases containing --flags during SSH login
+  };
+
+  # ==========================================================================
+  # OH-MY-POSH CONFIGURATION (when extras are enabled)
+  # ==========================================================================
+
+  programs.oh-my-posh = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+    enable = true;
+    enableBashIntegration = (osConfig.nixoa.admin.shell == "bash");
+    enableZshIntegration = (osConfig.nixoa.admin.shell == "zsh");
+    settings = builtins.fromJSON (builtins.readFile "${pkgs.oh-my-posh}/share/oh-my-posh/themes/night-owl.omp.json");
   };
 
   # Let Home Manager manage itself (allows using the `home-manager` command for this user)

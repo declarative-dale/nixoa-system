@@ -43,7 +43,23 @@
   nixoa.admin = {
     username = "xoa";
     sshKeys = [];  # Example: [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample user@example.com" ]
-    shell = "bash";  # Options: "bash" or "zsh", selecting zsh will trigger numerous terminal enhancements
+    shell = "bash";  # Options: "bash" or "zsh"
+  };
+
+  # ============================================================================
+  # ENHANCED TERMINAL EXPERIENCE
+  # ============================================================================
+
+  nixoa.extras = {
+    enable = false;  # Enable enhanced terminal tools (oh-my-posh, bat, eza, fzf, etc.)
+  };
+
+  # ============================================================================
+  # XEN GUEST AGENT (for VMs running on Xen hypervisor)
+  # ============================================================================
+
+  nixoa.xen-guest = {
+    enable = true;  # Enable Xen guest agent for better VM integration (disable if not running on Xen)
   };
 
   nixoa.xo.service = {
@@ -103,7 +119,7 @@
   # ============================================================================
 
   updates = {
-    repoDir = "~/user-config";  # Path to user-config flake (~ expands to admin user home)
+    repoDir = "~/projects/NiXOA/system";  # Path to system flake (~ expands to admin user home)
 
     # ========================================================================
     # UPDATE MONITORING & NOTIFICATIONS
@@ -134,7 +150,7 @@
     autoUpgrade = {
       enable = false;
       schedule = "Sun 04:00";
-      flake = "";  # Example: "github:yourusername/user-config"
+      flake = "";  # Example: "github:yourusername/nixoa-system"
     };
 
     # ========================================================================

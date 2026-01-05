@@ -1,5 +1,29 @@
 {
   "nodes": {
+    "core": {
+      "inputs": {
+        "home-manager": "home-manager",
+        "libvhdiSrc": "libvhdiSrc",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "xoSrc": "xoSrc"
+      },
+      "locked": {
+        "lastModified": 1767433183,
+        "narHash": "sha256-Xa4tcG8wVyyIoMJxGZcq2R0Hnc5azvsikZzn0wuEL2w=",
+        "ref": "beta",
+        "rev": "da5afc47d11589eb72c8201c6f49e55eef76a4e7",
+        "revCount": 270,
+        "type": "git",
+        "url": "https://codeberg.org/NiXOA/core"
+      },
+      "original": {
+        "ref": "beta",
+        "type": "git",
+        "url": "https://codeberg.org/NiXOA/core"
+      }
+    },
     "determinate": {
       "inputs": {
         "determinate-nixd-aarch64-darwin": "determinate-nixd-aarch64-darwin",
@@ -94,6 +118,24 @@
         "url": "https://flakehub.com/f/hercules-ci/flake-parts/0.1"
       }
     },
+    "flake-parts_2": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1765835352,
+        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
     "git-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -123,7 +165,7 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "nixoa-vm",
+          "core",
           "nixpkgs"
         ]
       },
@@ -176,30 +218,6 @@
         "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%2A"
       }
     },
-    "nixoa-vm": {
-      "inputs": {
-        "home-manager": "home-manager",
-        "libvhdiSrc": "libvhdiSrc",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "xoSrc": "xoSrc"
-      },
-      "locked": {
-        "lastModified": 1767433183,
-        "narHash": "sha256-Xa4tcG8wVyyIoMJxGZcq2R0Hnc5azvsikZzn0wuEL2w=",
-        "ref": "beta",
-        "rev": "da5afc47d11589eb72c8201c6f49e55eef76a4e7",
-        "revCount": 270,
-        "type": "git",
-        "url": "https://codeberg.org/NiXOA/core"
-      },
-      "original": {
-        "ref": "beta",
-        "type": "git",
-        "url": "https://codeberg.org/NiXOA/core"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1761597516,
@@ -227,6 +245,21 @@
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "a62e6edd6d5e1fa0329b8653c801147986f8d446",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1765674936,
+        "narHash": "sha256-k00uTP4JNfmejrCLJOwdObYC9jHRrr/5M/a/8L2EIdo=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "2075416fcb47225d9b68ac469a5c4801a9c4dd85",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
         "type": "github"
       }
     },
@@ -292,12 +325,13 @@
     },
     "root": {
       "inputs": {
+        "core": "core",
         "determinate": "determinate",
+        "flake-parts": "flake-parts_2",
         "home-manager": [
-          "nixoa-vm",
+          "core",
           "home-manager"
         ],
-        "nixoa-vm": "nixoa-vm",
         "nixpkgs": "nixpkgs_3",
         "snitch": "snitch"
       }
