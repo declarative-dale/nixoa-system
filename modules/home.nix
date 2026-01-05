@@ -135,7 +135,7 @@ in
     };
 
     # Zsh initialization commands
-    initExtra = ''
+    initContent = ''
       # Configure FZF with preview (set here to avoid shell export issues with complex arguments)
       export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview '${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}'"
 
