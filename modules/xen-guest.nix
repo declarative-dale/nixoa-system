@@ -1,7 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # Xen Guest Agent configuration for better VM integration
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib) mkEnableOption mkIf;

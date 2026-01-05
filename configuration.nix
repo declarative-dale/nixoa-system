@@ -2,7 +2,12 @@
 # NixOA User Configuration - Direct option assignments
 # This file defines the system configuration using the config.nixoa.* option namespace
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # ============================================================================
   # SYSTEM IDENTIFICATION & LOCALE
@@ -42,8 +47,8 @@
 
   nixoa.admin = {
     username = "xoa";
-    sshKeys = [];  # Example: [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample user@example.com" ]
-    shell = "bash";  # Options: "bash" or "zsh"
+    sshKeys = [ ]; # Example: [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample user@example.com" ]
+    shell = "bash"; # Options: "bash" or "zsh"
   };
 
   # ============================================================================
@@ -51,7 +56,7 @@
   # ============================================================================
 
   nixoa.extras = {
-    enable = false;  # Enable enhanced terminal tools (oh-my-posh, bat, eza, fzf, etc.)
+    enable = false; # Enable enhanced terminal tools (oh-my-posh, bat, eza, fzf, etc.)
   };
 
   # ============================================================================
@@ -59,7 +64,7 @@
   # ============================================================================
 
   nixoa.xen-guest = {
-    enable = true;  # Enable Xen guest agent for better VM integration (disable if not running on Xen)
+    enable = true; # Enable Xen guest agent for better VM integration (disable if not running on Xen)
   };
 
   nixoa.xo.service = {
@@ -103,7 +108,10 @@
   # NETWORKING & FIREWALL
   # ============================================================================
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
 
   # ============================================================================
   # PACKAGE MANAGEMENT
@@ -119,13 +127,13 @@
   # ============================================================================
 
   updates = {
-    repoDir = "~/projects/NiXOA/system";  # Path to system flake (~ expands to admin user home)
+    repoDir = "~/projects/NiXOA/system"; # Path to system flake (~ expands to admin user home)
 
     # ========================================================================
     # UPDATE MONITORING & NOTIFICATIONS
     # ========================================================================
     monitoring = {
-      notifyOnSuccess = false;  # Send notifications for successful updates
+      notifyOnSuccess = false; # Send notifications for successful updates
 
       email = {
         enable = false;
@@ -140,7 +148,7 @@
 
       webhook = {
         enable = false;
-        url = "";  # Example: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+        url = ""; # Example: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
       };
     };
 
@@ -150,7 +158,7 @@
     autoUpgrade = {
       enable = false;
       schedule = "Sun 04:00";
-      flake = "";  # Example: "github:yourusername/nixoa-system"
+      flake = ""; # Example: "github:yourusername/nixoa-system"
     };
 
     # ========================================================================

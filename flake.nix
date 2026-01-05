@@ -30,7 +30,13 @@
     snitch.url = "github:karol-broda/snitch";
   };
 
-  outputs = inputs @ { self, flake-parts, nixpkgs, ... }:
+  outputs =
+    inputs@{
+      self,
+      flake-parts,
+      nixpkgs,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
 
@@ -79,69 +85,89 @@
             }
 
             # Snitch configuration (Home Manager module)
-            ({ pkgs, ... }: {
-              home-manager.users.xoa.programs.snitch = {
-                enable = true;
-                package = inputs.snitch.packages.${pkgs.system}.default;
-                settings = {
-                  defaults = {
-                    theme = "dracula";
-                    interval = "2s";
-                    resolve = true;
+            (
+              { pkgs, ... }:
+              {
+                home-manager.users.xoa.programs.snitch = {
+                  enable = true;
+                  package = inputs.snitch.packages.${pkgs.system}.default;
+                  settings = {
+                    defaults = {
+                      theme = "dracula";
+                      interval = "2s";
+                      resolve = true;
+                    };
                   };
                 };
-              };
-            })
+              }
+            )
           ];
         };
       };
 
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        # ========================================================================
-        # HELPER APPS
-        # ========================================================================
+      perSystem =
+        {
+          config,
+          self',
+          inputs',
+          pkgs,
+          system,
+          ...
+        }:
+        {
+          # ========================================================================
+          # HELPER APPS
+          # ========================================================================
 
-        apps = {
-          commit = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "commit-config" ''
-              ${builtins.readFile ./scripts/commit-config.sh}
-            '');
-            meta = {
-              description = "Commit configuration changes to git";
+          apps = {
+            commit = {
+              type = "app";
+              program = toString (
+                pkgs.writeShellScript "commit-config" ''
+                  ${builtins.readFile ./scripts/commit-config.sh}
+                ''
+              );
+              meta = {
+                description = "Commit configuration changes to git";
+              };
             };
-          };
 
-          apply = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "apply-config" ''
-              ${builtins.readFile ./scripts/apply-config.sh}
-            '');
-            meta = {
-              description = "Apply configuration changes to the system";
+            apply = {
+              type = "app";
+              program = toString (
+                pkgs.writeShellScript "apply-config" ''
+                  ${builtins.readFile ./scripts/apply-config.sh}
+                ''
+              );
+              meta = {
+                description = "Apply configuration changes to the system";
+              };
             };
-          };
 
-          diff = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "show-diff" ''
-              ${builtins.readFile ./scripts/show-diff.sh}
-            '');
-            meta = {
-              description = "Show configuration differences";
+            diff = {
+              type = "app";
+              program = toString (
+                pkgs.writeShellScript "show-diff" ''
+                  ${builtins.readFile ./scripts/show-diff.sh}
+                ''
+              );
+              meta = {
+                description = "Show configuration differences";
+              };
             };
-          };
 
-          history = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "history" ''
-              ${builtins.readFile ./scripts/history.sh}
-            '');
-            meta = {
-              description = "Show configuration commit history";
+            history = {
+              type = "app";
+              program = toString (
+                pkgs.writeShellScript "history" ''
+                  ${builtins.readFile ./scripts/history.sh}
+                ''
+              );
+              meta = {
+                description = "Show configuration commit history";
+              };
             };
           };
         };
-      };
     };
 }
