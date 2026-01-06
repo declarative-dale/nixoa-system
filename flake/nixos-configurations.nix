@@ -51,7 +51,7 @@
           # Use username from vars instead of hardcoding "xoa"
           home-manager.users.${vars.username}.programs.snitch = {
             enable = true;
-            package = inputs.snitch.packages.${pkgs.system}.default;
+            package = inputs.snitch.packages.${pkgs.stdenv.hostPlatform.system}.default;
             settings = {
               defaults = {
                 theme = "dracula";
