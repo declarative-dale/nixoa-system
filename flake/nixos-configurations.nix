@@ -26,9 +26,6 @@
         # Xen guest agent configuration (system-specific)
         ../modules/xen-guest.nix
 
-        # Autocert configuration (system-specific)
-        ../modules/autocert.nix
-
         # Home Manager NixOS module
         inputs.home-manager.nixosModules.home-manager
 

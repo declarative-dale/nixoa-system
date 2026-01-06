@@ -48,10 +48,10 @@
         xoHttpPort = 80;
         xoHttpsPort = 443;
 
-        # TLS configuration
+        # TLS/HTTPS configuration
         enableTLS = true;
         redirectToHttps = true;
-        autoGenerateCerts = true;
+        enableAutoCert = true; # Automatic self-signed certificate generation
 
         # Storage backends
         enableNFS = true;
