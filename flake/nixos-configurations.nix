@@ -11,6 +11,9 @@
         # Set the host platform
         { nixpkgs.hostPlatform = "x86_64-linux"; }
 
+        # Apply core overlay to make nixoa packages available via pkgs.nixoa.*
+        { nixpkgs.overlays = [ inputs.core.overlays.default ]; }
+
         # Hardware configuration
         ../hardware-configuration.nix
 
