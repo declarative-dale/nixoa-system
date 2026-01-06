@@ -16,7 +16,8 @@
     snitch.url = "github:karol-broda/snitch";
   };
 
-  outputs = inputs:
+  outputs =
+    inputs:
     let
       # =====================================================================
       # SYSTEM CONFIGURATION VARIABLES
@@ -66,7 +67,10 @@
         grubDevice = ""; # Set to device path if using GRUB
 
         # Firewall
-        allowedTCPPorts = [ 80 443 ];
+        allowedTCPPorts = [
+          80
+          443
+        ];
 
         # Updates configuration
         updatesRepoDir = "~/projects/NiXOA/system";

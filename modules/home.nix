@@ -10,7 +10,6 @@
   ...
 }:
 
-
 let
   # Command for fzf to use fd (a fast find alternative) for file searching
   fdSearchCmd = "${pkgs.fd}/bin/fd --type f --hidden --follow --exclude .git";
