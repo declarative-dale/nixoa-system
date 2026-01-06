@@ -6,23 +6,12 @@
   config,
   lib,
   pkgs,
-  osConfig ? { },
+  vars,
   ...
 }:
 
-let
-  # Get admin username and shell from system config via the top-level config
-  adminUsername =
-    if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "admin" config.nixoa) then
-      config.nixoa.admin.username
-    else
-      "xoa";
-  stateVersion =
-    if (builtins.hasAttr "nixoa" config) && (builtins.hasAttr "system" config.nixoa) then
-      config.nixoa.system.stateVersion
-    else
-      "25.11";
 
+let
   # Command for fzf to use fd (a fast find alternative) for file searching
   fdSearchCmd = "${pkgs.fd}/bin/fd --type f --hidden --follow --exclude .git";
 in
@@ -31,9 +20,9 @@ in
   # HOME MANAGER BASIC SETUP
   # ==========================================================================
 
-  home.username = adminUsername;
-  home.homeDirectory = "/home/${adminUsername}";
-  home.stateVersion = stateVersion;
+  home.username = vars.username;
+  home.homeDirectory = "/home/${vars.username}";
+  home.stateVersion = vars.stateVersion;
 
   # ==========================================================================
   # USER PACKAGES
@@ -45,7 +34,7 @@ in
       # Base packages (always installed)
       [ ]
     )
-    ++ lib.optionals (osConfig.nixoa.extras.enable or false) [
+    ++ lib.optionals vars.enableExtras [
       # Enhanced terminal tools (included when extras are enabled)
       bat # Cat replacement with syntax highlighting
       eza # Modern ls replacement
@@ -79,7 +68,7 @@ in
 
   home.sessionVariables = {
     # Expose the Xen Orchestra mounts directory as an environment variable
-    XO_MOUNTS = "/var/lib/xo/mounts";
+    XO_MOUNTS = vars.mountsDir;
   };
 
   # ==========================================================================
@@ -87,7 +76,7 @@ in
   # ==========================================================================
 
   # Always enable zsh when admin shell is zsh, and configure all options when enabled
-  programs.zsh = lib.mkIf (osConfig.nixoa.admin.shell == "zsh") {
+  programs.zsh = lib.mkIf (vars.shell == "zsh") {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true; # Zsh autosuggestions (typeahead suggestions)
@@ -165,7 +154,7 @@ in
   # TOOL CONFIGURATIONS (when extras are enabled)
   # ==========================================================================
 
-  programs.bat = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.bat = lib.mkIf vars.enableExtras {
     enable = true;
     config = {
       theme = "Dracula"; # Set bat's color theme
@@ -177,7 +166,7 @@ in
     };
   };
 
-  programs.git = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.git = lib.mkIf vars.enableExtras {
     enable = true;
     settings = {
       init.defaultBranch = "main"; # Use 'main' as default branch name for new repos
@@ -193,20 +182,20 @@ in
     };
   };
 
-  programs.direnv = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.direnv = lib.mkIf vars.enableExtras {
     enable = true;
     nix-direnv.enable = true; # Integrate direnv with Nix (nix-direnv)
     enableZshIntegration = true;
     enableBashIntegration = true;
   };
 
-  programs.zoxide = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.zoxide = lib.mkIf vars.enableExtras {
     enable = true;
     enableZshIntegration = true;
     enableBashIntegration = true;
   };
 
-  programs.fzf = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.fzf = lib.mkIf vars.enableExtras {
     enable = true;
     enableZshIntegration = true;
     enableBashIntegration = true;
@@ -235,7 +224,7 @@ in
   # OH-MY-POSH CONFIGURATION (when extras are enabled)
   # ==========================================================================
 
-  programs.oh-my-posh = lib.mkIf (osConfig.nixoa.extras.enable or false) {
+  programs.oh-my-posh = lib.mkIf vars.enableExtras {
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;

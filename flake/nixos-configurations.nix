@@ -1,17 +1,18 @@
 # NixOS system configurations
-{ inputs, ... }:
+{ inputs, vars, ... }:
 {
   flake = {
-    nixosConfigurations.nixoa = inputs.nixpkgs.lib.nixosSystem {
+    # Use hostname from vars instead of hardcoding "nixoa"
+    nixosConfigurations.${vars.hostname} = inputs.nixpkgs.lib.nixosSystem {
+      # Pass vars to all modules via specialArgs
+      specialArgs = { inherit vars; };
+
       modules = [
         # Set the host platform
         { nixpkgs.hostPlatform = "x86_64-linux"; }
 
         # Hardware configuration
         ../hardware-configuration.nix
-
-        # User configuration
-        ../configuration.nix
 
         # Determinate Nix Module
         inputs.determinate.nixosModules.default
@@ -22,6 +23,9 @@
         # Xen guest agent configuration (system-specific)
         ../modules/xen-guest.nix
 
+        # Autocert configuration (system-specific)
+        ../modules/autocert.nix
+
         # Home Manager NixOS module
         inputs.home-manager.nixosModules.home-manager
 
@@ -31,14 +35,21 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "bak";
+
+            # Pass vars to home-manager modules
+            extraSpecialArgs = { inherit vars; };
+
             sharedModules = [ inputs.snitch.homeManagerModules.default ];
-            users.xoa = import ../modules/home.nix;
+
+            # Use username from vars instead of hardcoding "xoa"
+            users.${vars.username} = import ../modules/home.nix;
           };
         }
 
         # Snitch configuration
         ({ pkgs, ... }: {
-          home-manager.users.xoa.programs.snitch = {
+          # Use username from vars instead of hardcoding "xoa"
+          home-manager.users.${vars.username}.programs.snitch = {
             enable = true;
             package = inputs.snitch.packages.${pkgs.system}.default;
             settings = {
@@ -50,6 +61,11 @@
             };
           };
         })
+
+        # Additional networking configuration from vars
+        {
+          networking.firewall.allowedTCPPorts = vars.allowedTCPPorts;
+        }
       ];
     };
   };

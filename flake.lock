@@ -13,11 +13,11 @@
       "locked": {
         "lastModified": 1767654725,
         "narHash": "sha256-dNHdbT0PCwtbxi3A2NOgICVvs3z6O9kyvRYwEczzkew=",
-        "ref": "refs/heads/beta",
+        "ref": "beta",
         "rev": "b2252da0e1ad1b433eb161da53517297f01d3a4e",
         "revCount": 280,
         "type": "git",
-        "url": "file:///home/nixos/projects/NiXOA/core"
+        "url": "https://codeberg.org/NiXOA/core"
       },
       "original": {
         "ref": "beta",
@@ -142,11 +142,11 @@
         "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
-        "lastModified": 1765835352,
-        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
+        "lastModified": 1767609335,
+        "narHash": "sha256-feveD98mQpptwrAEggBQKJTYbvwwglSbOv53uCfH9PY=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
+        "rev": "250481aafeb741edfe23d29195671c19b36b6dca",
         "type": "github"
       },
       "original": {

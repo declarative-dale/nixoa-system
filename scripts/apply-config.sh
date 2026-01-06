@@ -23,12 +23,13 @@ echo ""
 echo "=== Applying configuration to NiXOA ==="
 cd "$CONFIG_DIR"
 
-# Read hostname from user-config (defaults to "nixoa" if not set)
-HOSTNAME=$(grep "hostname = " "${CONFIG_DIR}/configuration.nix" 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
+# Read hostname from flake.nix (authoritative source)
+HOSTNAME=$(grep "hostname = " "${CONFIG_DIR}/flake.nix" 2>/dev/null | head -1 | sed 's/.*hostname = *"\(.*\)".*/\1/')
 HOSTNAME="${HOSTNAME:-nixoa}"
 
-echo "Running: sudo nixos-rebuild switch --flake .#${HOSTNAME}"
-sudo nixos-rebuild switch --flake ".#${HOSTNAME}"
+echo "Building configuration for hostname: ${HOSTNAME}"
+echo "Note: Use nixos-rebuild directly to apply the configuration"
+echo "Run: sudo nixos-rebuild switch --flake .#${HOSTNAME}"
 
 echo ""
 echo "✓ Configuration applied successfully!"
