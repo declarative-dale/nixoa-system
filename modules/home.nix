@@ -71,18 +71,6 @@ in
   };
 
   # ==========================================================================
-  # SSH CONFIGURATION
-  # ==========================================================================
-
-  # Manage SSH authorized_keys through home-manager
-  # This ensures .ssh directory is created even when vars.sshKeys is empty
-  # Home-manager automatically creates .ssh with mode 700
-  home.file.".ssh/authorized_keys" = {
-    text = lib.concatStringsSep "\n" vars.sshKeys;
-    mode = "0600"; # rw------- (read/write for user only)
-  };
-
-  # ==========================================================================
   # ZSH CONFIGURATION
   # ==========================================================================
 
