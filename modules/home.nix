@@ -76,12 +76,10 @@ in
 
   # Manage SSH authorized_keys through home-manager
   # This ensures .ssh directory is created even when vars.sshKeys is empty
+  # Home-manager automatically creates .ssh with mode 700
   home.file.".ssh/authorized_keys" = {
     text = lib.concatStringsSep "\n" vars.sshKeys;
-    onChange = ''
-      chmod 700 ${config.home.homeDirectory}/.ssh
-      chmod 600 ${config.home.homeDirectory}/.ssh/authorized_keys
-    '';
+    mode = "0600"; # rw------- (read/write for user only)
   };
 
   # ==========================================================================
