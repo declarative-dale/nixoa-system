@@ -39,14 +39,13 @@
         # Admin user configuration
         username = "xoa";
         sshKeys = [ ]; # Add your SSH public keys here
-        shell = "bash"; # Options: "bash" or "zsh"
 
         # XO service account
         xoUser = "xo";
         xoGroup = "xo";
 
         # Feature toggles
-        enableExtras = false; # Enhanced terminal tools
+        enableExtras = false; # Enhanced terminal tools with zsh shell (bash used when disabled)
         enableXenGuest = true; # Xen guest agent
         enableXO = true; # Xen Orchestra service
 

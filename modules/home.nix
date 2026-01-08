@@ -74,8 +74,8 @@ in
   # ZSH CONFIGURATION
   # ==========================================================================
 
-  # Always enable zsh when admin shell is zsh, and configure all options when enabled
-  programs.zsh = lib.mkIf (vars.shell == "zsh") {
+  # Enable zsh when extras are enabled (provides enhanced terminal experience)
+  programs.zsh = lib.mkIf vars.enableExtras {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true; # Zsh autosuggestions (typeahead suggestions)
@@ -105,35 +105,37 @@ in
       ];
     };
 
-    shellAliases = {
-      # Modern replacements for common commands
-      ls = "eza --icons --group-directories-first";
-      ll = "eza -l --icons --group-directories-first --git";
-      la = "eza -la --icons --group-directories-first --git";
-      lt = "eza --tree --level=2 --icons";
-      cat = "bat --style=changes,header"; # Use bat for viewing files with changes highlighted
-      catn = "bat --style=numbers,changes,header"; # Bat with line numbers
+    shellAliases =
+      {
+        # Navigation shortcuts
+        ".." = "cd ..";
+        "..." = "cd ../..";
 
-      # Navigation shortcuts (using zoxide under the hood)
-      ".." = "cd ..";
-      "..." = "cd ../..";
-      cd = "z"; # Use zoxide's 'z' to jump to frequently used dirs
-      cdi = "zi"; # Use zoxide's 'zi' for interactive directory selection (fzf)
+        # Git command shortcuts
+        gs = "git status";
+        ga = "git add";
+        gc = "git commit";
+        gp = "git push";
+        gl = "git log --oneline --graph --decorate";
+        gd = "git diff";
 
-      # Git command shortcuts
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git log --oneline --graph --decorate";
-      gd = "git diff";
-
-      # System management shortcuts
-      syslog = "journalctl -xe"; # View system log errors
-      sysfail = "systemctl --failed"; # Show failed systemd units
-      sysrestart = "sudo systemctl restart"; # Restart a systemd service (usage: sysrestart <unit>)
-      sysstatus = "sudo systemctl status"; # Check status of a systemd service (usage: sysstatus <unit>)
-    };
+        # System management shortcuts
+        syslog = "journalctl -xe"; # View system log errors
+        sysfail = "systemctl --failed"; # Show failed systemd units
+        sysrestart = "sudo systemctl restart"; # Restart a systemd service (usage: sysrestart <unit>)
+        sysstatus = "sudo systemctl status"; # Check status of a systemd service (usage: sysstatus <unit>)
+      }
+      // lib.optionalAttrs vars.enableExtras {
+        # Modern replacements for common commands (only when extras are enabled)
+        ls = "eza --icons --group-directories-first";
+        ll = "eza -l --icons --group-directories-first --git";
+        la = "eza -la --icons --group-directories-first --git";
+        lt = "eza --tree --level=2 --icons";
+        cat = "bat --style=changes,header"; # Use bat for viewing files with changes highlighted
+        catn = "bat --style=numbers,changes,header"; # Bat with line numbers
+        cd = "z"; # Use zoxide's 'z' to jump to frequently used dirs
+        cdi = "zi"; # Use zoxide's 'zi' for interactive directory selection (fzf)
+      };
 
     # Zsh initialization commands
     initContent = ''
