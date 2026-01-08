@@ -15,7 +15,14 @@
     home-manager.follows = "core/home-manager";
     snitch.url = "github:karol-broda/snitch";
   };
-
+  nixConfig = {
+    extra-substituters = [
+      "https://xen-orchestra-ce.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
+    ];
+  };
   outputs =
     inputs:
     let
