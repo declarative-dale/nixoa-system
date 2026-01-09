@@ -30,8 +30,8 @@ in
   home.packages =
     with pkgs;
     (
-      # Base packages (always installed)
-      [ ]
+      # User packages from settings.nix
+      vars.userPackages
     )
     ++ lib.optionals vars.enableExtras [
       # Enhanced terminal tools (included when extras are enabled)
@@ -53,12 +53,6 @@ in
       tealdeer # Tldr pages viewer
       lazygit # Terminal UI for git
       gh # GitHub CLI
-
-      # To add additional user packages, edit this section directly.
-      # Examples:
-      #   htop          # system monitor
-      #   tmux          # terminal multiplexer
-      #   neovim        # text editor
     ];
 
   # ==========================================================================

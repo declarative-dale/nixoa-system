@@ -68,6 +68,11 @@
         {
           networking.firewall.allowedTCPPorts = vars.allowedTCPPorts;
         }
+
+        # System packages from settings.nix
+        {
+          environment.systemPackages = vars.systemPackages;
+        }
       ];
     };
   };

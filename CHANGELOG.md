@@ -1,9 +1,18 @@
-# user-config v1.2.0 - Flake-Parts Architecture & Package Availability
+# system v1.2.0 - Centralized Settings & Architecture Improvements
 
 **Release Date:** January 9, 2026
 
 ## ✨ Added
 
+- **Centralized settings.nix** - All user configuration now in single root-level settings.nix file
+  - System identification (hostname, timezone, stateVersion)
+  - User accounts and SSH keys
+  - Feature toggles (enableExtras, enableXenGuest, enableXO)
+  - System and user packages (directly configurable)
+  - Networking & firewall settings
+  - Xen Orchestra configuration
+  - Boot configuration
+  - Storage backends (NFS, CIFS, VHD)
 - **Flake-parts modular architecture** - Converted flake.nix to flake-parts structure with dynamic imports
   - Extracted nixosConfigurations into dedicated flake-parts module
   - Extracted apps into separate module for better organization
@@ -16,14 +25,29 @@
 
 ## 🔄 Changed
 
+- **Flake renamed** - user-config → system (reflects role as primary system configuration entry point)
+- **Configuration architecture**:
+  - Centralized all settings in settings.nix (imported by flake.nix)
+  - System packages configurable via vars.systemPackages
+  - User packages configurable via vars.userPackages
+  - Removed inline vars definition from flake.nix
 - **Configuration simplification**:
+  - Removed unused variables: xoHttpPort, xoHttpsPort, redirectToHttps (defined in config.nixoa.toml)
   - Replaced three variables (enableTLS + redirectToHttps + autoGenerateCerts) → single enableAutoCert option
   - Removed shell = "bash" variable (enableExtras now controls both enhanced tools and zsh)
 - **Home Manager refinements**:
   - Removed home-manager SSH configuration (now handled at NixOS system level)
   - ZSH configuration now controlled by vars.enableExtras
   - Cleaned up oh-my-posh options when extras are enabled
+  - User packages now read from settings.nix (vars.userPackages)
 - **Hardware configuration** - Fixed and committed hardware-configuration.nix for proper Xen VM setup
+
+## 🗑️ Removed
+
+- **Automatic updates** - All update automation removed from system flake
+  - Updates now managed via core git releases (stable, beta branches)
+  - Future release will include TUI-based update management
+  - Removed all updatesAutoUpgrade*, updatesNixpkgs*, updatesXoa*, updatesLibvhdi* variables
 
 ## 🐛 Fixed
 
@@ -37,6 +61,7 @@
   - Includes automatic garbage collection for old generations
   - Better binary cache integration
 - **Flake inputs** - Updated core input path after core repository refactoring
+- **Settings migration** - Edit settings.nix instead of flake.nix for all configuration changes
 
 ---
 
