@@ -1,3 +1,45 @@
+# user-config v1.2.0 - Flake-Parts Architecture & Package Availability
+
+**Release Date:** January 9, 2026
+
+## ✨ Added
+
+- **Flake-parts modular architecture** - Converted flake.nix to flake-parts structure with dynamic imports
+  - Extracted nixosConfigurations into dedicated flake-parts module
+  - Extracted apps into separate module for better organization
+  - Extracted systems definitions for modularity
+- **Direct package exports** - libvhdi and xen-orchestra-ce now available as pkgs.nixoa.* packages
+- **Cachix precompiled packages** - Binary cache support for libvhdi and xen-orchestra-ce
+  - Eliminates 45+ minute build time for Xen Orchestra
+  - Downloads precompiled binaries in seconds
+- **Core package overlay** - Automatic availability of pkgs.nixoa.* packages system-wide
+
+## 🔄 Changed
+
+- **Configuration simplification**:
+  - Replaced three variables (enableTLS + redirectToHttps + autoGenerateCerts) → single enableAutoCert option
+  - Removed shell = "bash" variable (enableExtras now controls both enhanced tools and zsh)
+- **Home Manager refinements**:
+  - Removed home-manager SSH configuration (now handled at NixOS system level)
+  - ZSH configuration now controlled by vars.enableExtras
+  - Cleaned up oh-my-posh options when extras are enabled
+- **Hardware configuration** - Fixed and committed hardware-configuration.nix for proper Xen VM setup
+
+## 🐛 Fixed
+
+- Deprecated system references updated throughout codebase
+- Flake lock file updated to use beta branch of nixoa-core
+- nixfmt optimizations applied for consistent code formatting
+
+## 📚 Migration
+
+- **Determinate Nix** - Migrated to Determinate Nix with stable nixpkgs channel
+  - Includes automatic garbage collection for old generations
+  - Better binary cache integration
+- **Flake inputs** - Updated core input path after core repository refactoring
+
+---
+
 # user-config v1.1.0 - Feature Enhancement Release
 
 **Release Date:** December 29, 2025
