@@ -38,7 +38,7 @@
       # SYSTEM CONFIGURATION VARIABLES
       # Import settings from centralized settings.nix file
       # =====================================================================
-      vars = import ../settings.nix { inherit (inputs.nixpkgs) lib; pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; };
+      vars = import ./settings.nix { inherit (inputs.nixpkgs) lib; pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; };
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [ ./flake ];
