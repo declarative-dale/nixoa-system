@@ -6,7 +6,6 @@
     nixosConfigurations.${vars.hostname} = inputs.nixpkgs.lib.nixosSystem {
       # Pass vars to all modules via specialArgs
       specialArgs = { inherit vars; };
-
       modules = [
         # Set the host platform
         { nixpkgs.hostPlatform = "x86_64-linux"; }

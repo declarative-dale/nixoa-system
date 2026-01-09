@@ -15,12 +15,16 @@
     home-manager.follows = "core/home-manager";
     snitch.url = "github:karol-broda/snitch";
   };
+  
+  ## You will be prompted to trust these keys at first rebuild 
+  ## Selecting yes bypasses the need to build XO and libvhdi from source and pulls from cachix
+  ## Selecting no requires building both from source (20+ minutes extra)
   nixConfig = {
-    extra-substituters = [
-      "https://xen-orchestra-ce.cachix.org"
+    extra-substituters = [ 
+      "https://nixoa.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
+      "nixoa.cachix.org-1:N+GsSSd2yKgj2hx01fMG6Oe7tLfbxEi/V0oZFEB721g="
     ];
   };
   outputs =
