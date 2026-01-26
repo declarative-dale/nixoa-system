@@ -72,7 +72,7 @@ It walks you through setup and first deployment in about 5 minutes.
 
 - **configuration.nix** - Your system settings (the main file)
 - **config.nixoa.toml** - Optional XO server overrides (rarely needed)
-- **modules/home.nix** - Your shell and user environment (less common)
+- **modules/features/user/home.nix** - Your shell and user environment (less common)
 
 ## Files You Won't Touch
 

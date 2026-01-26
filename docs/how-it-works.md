@@ -39,7 +39,9 @@ NiXOA is split into two git repositories with different purposes:
 ├── config.nixoa.toml           ← Optional XO overrides
 ├── flake.nix                   ← Entry point
 ├── modules/
-│   └── home.nix                ← Home Manager config
+│   └── features/
+│       └── user/
+│           └── home.nix         ← Home Manager config
 ├── scripts/
 │   ├── apply-config.sh
 │   ├── commit-config.sh
@@ -72,19 +74,11 @@ NiXOA is split into two git repositories with different purposes:
 /etc/nixos/nixoa-vm/
 ├── flake.nix                  ← Library entry point
 ├── modules/
-│   ├── core/                  ← System modules
-│   │   ├── base.nix
-│   │   ├── boot.nix
-│   │   ├── users.nix
-│   │   ├── networking.nix
-│   │   ├── packages.nix
-│   │   └── services.nix
-│   └── xo/                    ← XO-specific modules
-│       ├── xoa.nix
-│       ├── storage.nix
-│       ├── autocert.nix
-│       ├── extras.nix
-│       └── ... more ...
+│   └── features/              ← Feature modules
+│       ├── system/            ← System features
+│       ├── virtualization/    ← VM hardware features
+│       ├── xo/                ← XO features
+│       └── shared/args.nix     ← Shared module args
 ├── pkgs/                      ← Package definitions
 │   ├── xen-orchestra-ce/
 │   └── libvhdi/
@@ -180,15 +174,17 @@ configuration.nix (your settings)
   │        - Dotfiles (.bashrc, .config/, etc.)
   │
   └─ systemSettings
-     └─ flows to nixoa-vm modules
-        ├─ core/base.nix uses: hostname, stateVersion
-        ├─ core/users.nix uses: username, sshKeys
-        ├─ core/networking.nix uses: networking, firewall
-        ├─ core/packages.nix uses: system packages
-        ├─ core/services.nix uses: custom services
-        ├─ xo/xoa.nix uses: xo.* settings
+     └─ flows to nixoa-vm features
+        ├─ system/identity.nix uses: hostname, timezone, stateVersion
+        ├─ system/boot.nix uses: boot loader settings
+        ├─ system/users.nix uses: username, sshKeys
+        ├─ system/networking.nix uses: firewall, network defaults
+        ├─ system/packages.nix uses: system packages
+        ├─ system/services.nix uses: custom services
+        ├─ virtualization/xen-hardware.nix uses: Xen guest defaults
+        ├─ xo/service.nix uses: xo.* settings
         ├─ xo/storage.nix uses: storage.* settings
-        ├─ xo/autocert.nix uses: tls settings
+        ├─ xo/tls.nix uses: tls settings
         ├─ xo/extras.nix uses: extras settings
         └─ ... more ...
 ```
@@ -211,13 +207,14 @@ Each module defines:
 Example:
 
 ```nix
-# In nixoa-vm/modules/xo/xoa.nix
+# In nixoa-vm/modules/features/xo/options.nix
 options.nixoa.xo.port = mkOption {
   type = types.int;
   default = 80;
   description = "XO HTTP port";
 };
 
+# In nixoa-vm/modules/features/xo/service.nix
 config.systemd.services.xo-server = {
   serviceConfig.ExecStart = "xo-server --port ${cfg.xo.port}";
 };

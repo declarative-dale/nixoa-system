@@ -346,7 +346,7 @@ Then apply:
 
 ### Static IP Address
 
-In `modules/home.nix` or in system configuration:
+In `modules/features/user/home.nix` or in system configuration:
 
 ```nix
 networking.interfaces.eth0.ipv4.addresses = [

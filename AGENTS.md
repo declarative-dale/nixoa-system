@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is the NiXOA user configuration layer. Primary files are `configuration.nix`, `hardware-configuration.nix`, and optional `config.nixoa.toml`. Home Manager settings live in `modules/home.nix`. Helper scripts are in `scripts/`, and documentation is under `docs/`.
+This repository is the NiXOA user configuration layer. Primary files are `configuration.nix`, `hardware-configuration.nix`, and optional `config.nixoa.toml`. Home Manager settings live in `modules/features/user/home.nix`. Helper scripts are in `scripts/`, and documentation is under `docs/`.
 
 ## Build, Test, and Development Commands
 - `./scripts/show-diff.sh`: Show pending changes to config files.
