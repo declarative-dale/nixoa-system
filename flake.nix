@@ -26,8 +26,10 @@
     };
     import-tree.url = "github:vic/import-tree";
     nixoaCore = {
-      inputs.home-manager.follows = "home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        home-manager.follows = "home-manager";
+        nixpkgs.follows = "nixpkgs";
+      };
       url = "git+https://codeberg.org/NiXOA/core?ref=beta";
     };
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
@@ -36,4 +38,5 @@
       url = "github:karol-broda/snitch";
     };
   };
+
 }
