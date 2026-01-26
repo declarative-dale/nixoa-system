@@ -163,11 +163,11 @@
     },
     "flake-file_2": {
       "locked": {
-        "lastModified": 1769318604,
-        "narHash": "sha256-WiYZgy0AHz0HuKByS2ZSYh1BMZUQcpAjiclPLZNS6hQ=",
+        "lastModified": 1769416693,
+        "narHash": "sha256-pPNc9y+Vhgf5qw9Qvb+8L7iWedX7dQ/7oRH0QWzwJkg=",
         "owner": "vic",
         "repo": "flake-file",
-        "rev": "fa1846d84fdfa4ff2cc79c1e79eddef55959d14d",
+        "rev": "c09729628983ed1e35c8dd43aa3df91a06f80e65",
         "type": "github"
       },
       "original": {
@@ -429,11 +429,11 @@
         "xoSrc": "xoSrc"
       },
       "locked": {
-        "lastModified": 1769420576,
-        "narHash": "sha256-BnkfrPru+T16V0R5BRn3h+mQi/ckUGGSQ24HX/OWeRY=",
+        "lastModified": 1769424826,
+        "narHash": "sha256-Qi2jXSeszO7Xh97WDiHQSN+K2g8J5dDyY2dI/eFVZm8=",
         "ref": "beta",
-        "rev": "9a39e0f13a731b4274e58ccbf6df71395d41e8b2",
-        "revCount": 314,
+        "rev": "942c67874ecb74e290a68cf0c4c69165183f0d80",
+        "revCount": 317,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/core"
       },
