@@ -5,15 +5,24 @@
   description = "User configuration flake for NixOA - Entry point for system config";
 
   inputs = {
-    flake-parts.url = "github:hercules-ci/flake-parts";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    core = {
-      url = "git+https://codeberg.org/NiXOA/core?ref=beta";
+    home-manager = {
+      url = "https://flakehub.com/f/nix-community/home-manager/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager.follows = "core/home-manager";
-    snitch.url = "github:karol-broda/snitch";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-file.url = "github:vic/flake-file";
+    import-tree.url = "github:vic/import-tree";
+    nixoaCore = {
+      url = "git+https://codeberg.org/NiXOA/core?ref=beta";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+    snitch = {
+      url = "github:karol-broda/snitch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   ## You will be prompted to trust these keys at first rebuild
@@ -31,19 +40,5 @@
       "nixoa.cachix.org-1:N+GsSSd2yKgj2hx01fMG6Oe7tLfbxEi/V0oZFEB721g="
     ];
   };
-  outputs =
-    inputs:
-    let
-      # =====================================================================
-      # SYSTEM CONFIGURATION VARIABLES
-      # Import settings from centralized settings.nix file
-      # =====================================================================
-      vars = import ./settings.nix { inherit (inputs.nixpkgs) lib; pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; };
-    in
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ./flake ];
-
-      # Make vars available to all flake outputs
-      _module.args = { inherit vars; };
-    };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./parts);
 }
