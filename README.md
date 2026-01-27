@@ -55,6 +55,16 @@ nix flake check .
 sudo nixos-rebuild switch --flake .#HOSTNAME -L
 ```
 
+## First Rebuild (Determinate Cache)
+
+On a fresh host, use Determinate's install cache for the first switch:
+
+```bash
+sudo nixos-rebuild switch --flake .#HOSTNAME \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
+```
+
 ## Notes
 
 - `config/` is the **single source of truth** for host settings.

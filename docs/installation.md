@@ -37,6 +37,16 @@ sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
 ./scripts/apply-config.sh "Initial NiXOA install"
 ```
 
+### First Rebuild (Determinate Cache)
+
+On a fresh host, use Determinate's install cache for the first switch:
+
+```bash
+sudo nixos-rebuild switch --flake .#HOSTNAME \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
+```
+
 ## Validation
 
 ```bash

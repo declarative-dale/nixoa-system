@@ -33,6 +33,16 @@ Update the files under `config/`:
 ./scripts/apply-config.sh "Initial NiXOA setup"
 ```
 
+### First Rebuild (Determinate Cache)
+
+On a fresh host, run the first switch with Determinate's install cache:
+
+```bash
+sudo nixos-rebuild switch --flake .#HOSTNAME \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
+```
+
 ## 5) Verify
 
 ```bash

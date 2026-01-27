@@ -5,7 +5,6 @@
   nix.settings = {
     # Determinate Nix provides its own cache; use extra-* to append.
     extra-substituters = [
-      "https://install.determinate.systems"
       "https://nixoa.cachix.org"
     ];
 

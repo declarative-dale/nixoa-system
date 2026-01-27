@@ -7,7 +7,6 @@
 
   flake-file.nixConfig = {
     extra-substituters = [
-      "https://install.determinate.systems"
       "https://nixoa.cachix.org"
     ];
     extra-trusted-public-keys = [
