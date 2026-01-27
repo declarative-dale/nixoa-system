@@ -13,6 +13,7 @@ let
     "foundation-platform"
     "foundation-overlays"
     "foundation-determinate"
+    "foundation-nix-settings"
   ];
 
   coreFeatures = [
@@ -45,6 +46,7 @@ in
       foundation-platform = feature ../../../modules/features/foundation/platform.nix;
       foundation-overlays = feature ../../../modules/features/foundation/overlays.nix;
       foundation-determinate = feature ../../../modules/features/foundation/determinate.nix;
+      foundation-nix-settings = feature ../../../modules/features/foundation/nix-settings.nix;
       core-appliance = feature ../../../modules/features/core/appliance.nix;
       host-hardware = feature ../../../modules/features/host/hardware.nix;
       host-packages = feature ../../../modules/features/host/packages.nix;
