@@ -22,6 +22,14 @@ The default stack is `vm`, composed from:
 Edit `parts/nix/registry/features.nix` to add/remove features or define new
 stacks.
 
+## Where to Edit Basics
+
+- `config/identity.nix`: hostname, timezone, stateVersion
+- `config/users.nix`: username, sshKeys, xoUser/xoGroup
+
+Important: add at least one SSH key in `config/users.nix` before rebuilding,
+or you may lock yourself out of the host.
+
 ## Full Tree (System)
 
 ```
