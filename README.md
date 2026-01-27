@@ -24,7 +24,7 @@ stacks.
 
 ## Where to Edit Basics
 
-- `config/identity.nix`: hostname, timezone, stateVersion
+- `config/host.nix`: hostname, timezone, stateVersion
 - `config/users.nix`: username, sshKeys, xoUser/xoGroup
 
 Important: add at least one SSH key in `config/users.nix` before rebuilding,
@@ -45,7 +45,7 @@ system/
 ├── config/                            # host settings (edit these)
 │   ├── boot.nix
 │   ├── features.nix
-│   ├── identity.nix
+│   ├── host.nix
 │   ├── networking.nix
 │   ├── packages.nix
 │   ├── storage.nix

@@ -9,7 +9,7 @@ NiXOA system settings are composed from `configuration.nix` and the files under
 system/
 ├── configuration.nix          # Aggregates config files
 ├── config/
-│   ├── identity.nix           # hostname, timezone, stateVersion
+│   ├── host.nix           # hostname, timezone, stateVersion
 │   ├── users.nix              # username, sshKeys, xoUser/xoGroup
 │   ├── features.nix           # enableXO, enableXenGuest, enableExtras
 │   ├── packages.nix           # systemPackages, userPackages
@@ -22,7 +22,7 @@ system/
 
 ## Key Files and Options
 
-### config/identity.nix
+### config/host.nix
 
 ```nix
 {

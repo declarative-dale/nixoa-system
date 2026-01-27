@@ -2,7 +2,7 @@
 
 ## Rebuild fails with missing hostname
 
-Ensure `config/identity.nix` defines `hostname`:
+Ensure `config/host.nix` defines `hostname`:
 
 ```nix
 { hostname = "nixoa"; }

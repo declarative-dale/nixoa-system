@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
-IDENTITY_FILE="${CONFIG_DIR}/config/identity.nix"
+IDENTITY_FILE="${CONFIG_DIR}/config/host.nix"
 
 # Get commit message from argument or use default
 if [ $# -eq 0 ]; then
@@ -24,7 +24,7 @@ echo ""
 echo "=== Applying configuration to NiXOA ==="
 cd "$CONFIG_DIR"
 
-# Read hostname from config/identity.nix
+# Read hostname from config/host.nix
 HOSTNAME=$(grep "hostname = " "$IDENTITY_FILE" 2>/dev/null | head -1 | sed 's/.*hostname = *"\(.*\)".*/\1/')
 HOSTNAME="${HOSTNAME:-nixoa}"
 

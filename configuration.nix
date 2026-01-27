@@ -11,7 +11,7 @@
 let
   importConfig = path: import path { inherit lib pkgs; };
   parts = [
-    (importConfig ./config/identity.nix)
+    (importConfig ./config/host.nix)
     (importConfig ./config/users.nix)
     (importConfig ./config/features.nix)
     (importConfig ./config/packages.nix)

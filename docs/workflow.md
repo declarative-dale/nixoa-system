@@ -6,7 +6,7 @@ A simple day-to-day workflow for NiXOA system changes.
 
 Update files under `config/`:
 
-- `config/identity.nix`
+- `config/host.nix`
 - `config/users.nix`
 - `config/features.nix`
 - `config/packages.nix`

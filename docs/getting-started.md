@@ -22,7 +22,7 @@ sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
 
 Update the files under `config/`:
 
-- `config/identity.nix` (hostname, timezone, stateVersion)
+- `config/host.nix` (hostname, timezone, stateVersion)
 - `config/users.nix` (username, sshKeys)
 - `config/features.nix` (enableXO, enableExtras)
 - `config/packages.nix` (systemPackages, userPackages)

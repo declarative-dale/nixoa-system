@@ -26,7 +26,7 @@ sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
 
 3) Configure your host settings in `config/`:
 
-- `config/identity.nix` (hostname, timezone)
+- `config/host.nix` (hostname, timezone)
 - `config/users.nix` (username, sshKeys)
 - `config/features.nix` (enableXO, enableExtras)
 - `config/packages.nix` (systemPackages, userPackages)
