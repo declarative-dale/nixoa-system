@@ -6,7 +6,7 @@ let
   feature = module: { inherit module; };
 
   commonModules = [
-    ../../../modules/features/shared/args.nix
+    ../../../modules/features/foundation/args.nix
   ];
 
   foundationFeatures = [
@@ -15,15 +15,14 @@ let
     "foundation-determinate"
   ];
 
-  systemFeatures = [
+  coreFeatures = [
     "core-appliance"
-    "hardware"
-    "system-packages"
-    "system-firewall"
   ];
 
-  virtualizationFeatures = [
-    "virtualization-xen-guest"
+  hostFeatures = [
+    "host-hardware"
+    "host-packages"
+    "host-firewall"
   ];
 
   userFeatures = [
@@ -43,20 +42,19 @@ in
     };
 
     features = {
-      foundation-platform = feature ../../../modules/features/system/platform.nix;
-      foundation-overlays = feature ../../../modules/features/system/overlays.nix;
-      foundation-determinate = feature ../../../modules/features/system/determinate.nix;
-      core-appliance = feature ../../../modules/features/system/core-appliance.nix;
-      hardware = feature ../../../modules/features/system/hardware.nix;
-      system-packages = feature ../../../modules/features/system/packages.nix;
-      system-firewall = feature ../../../modules/features/system/firewall.nix;
-      virtualization-xen-guest = feature ../../../modules/features/virtualization/xen-guest.nix;
+      foundation-platform = feature ../../../modules/features/foundation/platform.nix;
+      foundation-overlays = feature ../../../modules/features/foundation/overlays.nix;
+      foundation-determinate = feature ../../../modules/features/foundation/determinate.nix;
+      core-appliance = feature ../../../modules/features/core/appliance.nix;
+      host-hardware = feature ../../../modules/features/host/hardware.nix;
+      host-packages = feature ../../../modules/features/host/packages.nix;
+      host-firewall = feature ../../../modules/features/host/firewall.nix;
       user-home-manager = feature ../../../modules/features/user/home-manager.nix;
       user-snitch = feature ../../../modules/features/user/snitch.nix;
     };
 
     stacks = {
-      vm = foundationFeatures ++ systemFeatures ++ virtualizationFeatures ++ userFeatures;
+      vm = foundationFeatures ++ coreFeatures ++ hostFeatures ++ userFeatures;
     };
   };
 }

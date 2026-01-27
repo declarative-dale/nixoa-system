@@ -1,84 +1,85 @@
-# User Config
+# NiXOA System (Host Configuration)
 
-Your personal configuration repository for NiXOA. This is where you define your system settings and manage deployments.
+This repo is the **user-editable, host-specific** layer for NiXOA. You edit it
+to define your machine, and it imports the immutable `core/` library.
 
-## Quick Links
+- **Edit here**: hostname, users, packages, firewall, Home Manager, XO config.
+- **Do not edit here**: core library modules and packages.
 
-- **Getting Started**: [Setup in 5 Minutes](./docs/getting-started.md)
-- **Installation**: [Complete Setup Guide](./docs/installation.md)
-- **Configuration**: [Understanding Your Settings](./docs/configuration.md)
-- **Daily Workflow**: [Making Changes](./docs/workflow.md)
-- **Common Tasks**: [Configuration Examples](./docs/common-tasks.md)
-- **Troubleshooting**: [Problem Solving](./docs/troubleshooting.md)
-- **How It Works**: [Architecture Overview](./docs/how-it-works.md)
+## Relationship to `core/`
 
-## What is This?
+`core/` provides reusable modules and packages. This repo imports the core
+`appliance` stack and adds host-specific features on top.
 
-This repository is your **configuration entry point** for NiXOA. You edit your configuration here, then run system rebuilds from this directory. Think of it as the "configuration layer" that defines what your NiXOA system looks like.
-
-## First Time Here?
-
-**Start with:** [Getting Started Guide](./docs/getting-started.md)
-
-It walks you through setup and first deployment in about 5 minutes.
-
-## Already Set Up?
-
-**Check:** [Daily Workflow](./docs/workflow.md) for how to make changes
-
-## Features
-
-- ✅ Version-controlled configuration (git)
-- ✅ Declarative system settings (pure Nix)
-- ✅ Home Manager integration (your user environment)
-- ✅ Easy configuration updates
-- ✅ Automatic system rebuilds
-- ✅ Rollback capability
-
-## Need Specific Help?
-
-- **Configuration examples**: [Common Tasks](./docs/common-tasks.md)
-- **How to make changes**: [Daily Workflow](./docs/workflow.md)
-- **Something broken?**: [Troubleshooting](./docs/troubleshooting.md)
-- **Understand the system**: [How It Works](./docs/how-it-works.md)
-
-## Repository Structure
+## Layout (Dendritic)
 
 ```
-~/user-config/
-├── README2.md                      ← This file
-├── configuration.nix               ← Your settings (edit this!)
-├── hardware-configuration.nix      ← Your hardware (copy once)
-├── config.nixoa.toml               ← Optional overrides
-├── flake.nix                       ← Entry point
+system/
+├── configuration.nix          ← aggregates config/* (edit the files below)
+├── config/                    ← host settings (edit these)
+│   ├── identity.nix
+│   ├── users.nix
+│   ├── features.nix
+│   ├── packages.nix
+│   ├── networking.nix
+│   ├── xo.nix
+│   ├── boot.nix
+│   └── storage.nix
+├── hardware-configuration.nix ← generated once (do not edit; may be moved)
+├── config.nixoa.toml          ← optional XO overrides
+├── flake.nix                  ← generated entrypoint
+├── parts/                     ← dendritic flake-parts modules
+│   ├── flake/                 ← outputs (nixosConfigurations, apps)
+│   └── nix/                   ← inputs + registry helpers
 ├── modules/
-│   └── home.nix                    ← Home Manager config
-├── scripts/
-│   ├── apply-config.sh             ← Commit + rebuild
-│   ├── commit-config.sh            ← Just commit
-│   ├── show-diff                   ← Show changes
-│   └── history                     ← View git history
-└── docs/                           ← Documentation
-    ├── getting-started.md
-    ├── installation.md
-    ├── configuration.md
-    ├── workflow.md
-    ├── common-tasks.md
-    ├── troubleshooting.md
-    └── how-it-works.md
+│   └── features/
+│       ├── foundation/        ← base wiring (platform, overlays, determinate)
+│       ├── core/              ← core appliance import wrapper
+│       ├── host/              ← host-only modules (hardware, packages, firewall)
+│       └── user/              ← user environment (Home Manager, snitch)
+├── scripts/                   ← apply/commit/diff helpers
+└── docs/                      ← user docs
 ```
 
-## Files You'll Edit
+## Feature Sets
 
-- **configuration.nix** - Your system settings (the main file)
-- **config.nixoa.toml** - Optional XO server overrides (rarely needed)
-- **modules/features/user/home.nix** - Your shell and user environment (less common)
+The default stack is `vm`, composed from:
 
-## Files You Won't Touch
+- **foundation**: platform selection, overlays, Determinate Nix
+- **core**: NiXOA appliance stack (from `core/`)
+- **host**: hardware import, package list, firewall ports
+- **user**: Home Manager configuration and optional tools
 
-- **flake.nix** - Entry point (don't edit)
-- **hardware-configuration.nix** - Generated once, then left alone
+Edit `parts/nix/registry/features.nix` to add/remove features or define new
+stacks.
+
+## Quick Start
+
+```nix
+# config/features.nix
+{ enableXO = true; }
+```
+
+Apply changes:
+
+```bash
+./scripts/apply-config.sh "Update host config"
+```
+
+## Useful Commands
+
+- `./scripts/show-diff.sh`
+- `./scripts/commit-config.sh "Message"`
+- `./scripts/apply-config.sh "Message"`
+- `nix flake check .`
+- `sudo nixos-rebuild switch --flake .#HOSTNAME -L`
+
+## Notes
+
+- `config/` is the **single source of truth** for host settings.
+- `hardware-configuration.nix` is generated by NixOS; keep it unchanged.
+- This repo is safe to edit; core is not.
 
 ## License
 
-Apache 2.0
+Apache-2.0

@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is the NiXOA user configuration layer. Primary files are `configuration.nix`, `hardware-configuration.nix`, and optional `config.nixoa.toml`. Home Manager settings live in `modules/features/user/home.nix`. Helper scripts are in `scripts/`, and documentation is under `docs/`.
+This repository is the NiXOA user configuration layer. Primary files are `configuration.nix` (aggregates `config/`), `hardware-configuration.nix`, and optional `config.nixoa.toml`. Home Manager settings live in `modules/features/user/home.nix`. Helper scripts are in `scripts/`, and documentation is under `docs/`.
 
 ## Build, Test, and Development Commands
 - `./scripts/show-diff.sh`: Show pending changes to config files.
@@ -11,8 +11,8 @@ This repository is the NiXOA user configuration layer. Primary files are `config
 - `sudo nixos-rebuild switch --flake .#HOSTNAME -L`: Rebuild manually when needed.
 
 ## Coding Style & Naming Conventions
-- Nix files use 2-space indentation; keep settings grouped under `systemSettings` and `nixoa.*` where appropriate.
-- File naming is fixed: `configuration.nix` is the primary entry point; avoid renaming it.
+- Nix files use 2-space indentation; keep host settings in `config/` and module wiring under `modules/features/`.
+- File naming is fixed: `configuration.nix` is the primary entry point and must remain.
 - `hardware-configuration.nix` is generated once and should not be edited manually.
 
 ## Testing Guidelines

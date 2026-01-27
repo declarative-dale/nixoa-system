@@ -1,3 +1,46 @@
+# system v1.4.0 - Config Composition Split
+
+**Release Date:** January 27, 2026
+
+## ✨ Added
+
+- **config/** directory with focused settings files (identity, users, features, packages, etc.)
+- **Home shell submodules** under `modules/features/user/home/shell/`
+- **UDP firewall ports** support in host firewall module
+
+## 🔄 Changed
+
+- **configuration.nix** now aggregates `config/` fragments
+- **Docs/README** updated to reflect the dendritic layout and config composition
+
+---
+
+# system v1.3.0 - Dendritic Host Reorg
+
+**Release Date:** January 27, 2026
+
+## ✨ Added
+
+- **Feature categories** for the host layer: foundation, core, host, user
+- **Dendritic module layout** aligned with core's feature registry
+
+## 🔄 Changed
+
+- **configuration.nix** is now the single source of truth (renamed from settings.nix)
+- **Tooling packages** moved from core into `configuration.nix` (codex, claude-code)
+- **Module layout** reorganized:
+  - `modules/features/system/*` → `modules/features/host/*`
+  - `modules/features/shared/args.nix` → `modules/features/foundation/args.nix`
+  - `modules/features/system/core-appliance.nix` → `modules/features/core/appliance.nix`
+- **Core/host boundary** clarified; Xen guest support moved into core virtualization features
+- **README + docs** refreshed for the new layout
+
+## 🗑️ Removed
+
+- **System-local xen-guest module** (now provided by core)
+
+---
+
 # system v1.2.0 - Centralized Settings & Architecture Improvements
 
 **Release Date:** January 9, 2026
@@ -119,15 +162,15 @@ This release represents a fundamental restructuring of the user-config flake, el
 user-config (data repository)
 ├── Exports: Configuration data (specialArgs only)
 ├── Contains: configuration.nix, config.nixoa.toml
-├── Location: /etc/nixos/nixoa/user-config
-└── Usage: Imported by nixoa-vm as input
+├── Location: /etc/nixos/nixoa-core
+└── Usage: Imported by nixoa-core as input
 ```
 
 ### After (v1.0 - Entry Point Role)
 ```
 user-config (configuration entry point) ✅
 ├── Exports: nixosConfigurations (system configurations)
-├── Imports: nixoa-vm as module library
+├── Imports: nixoa-core as module library
 ├── Contains: home-manager config, system settings
 ├── Location: ~/user-config (your home directory)
 └── Usage: Primary flake for system rebuilds
@@ -138,9 +181,9 @@ user-config (configuration entry point) ✅
 ## Key Changes in This Release
 
 ### 🆕 New Flake Exports
-- **`nixosConfigurations.${hostname}`** - System configuration (exported from here now, not nixoa-vm)
+- **`nixosConfigurations.${hostname}`** - System configuration (exported from here now, not nixoa-core)
 - Full NixOS system definition combining:
-  - nixoa-vm modules (core, xo system modules)
+  - nixoa-core modules (core, xo system modules)
   - Home Manager configuration (local modules/home.nix)
   - Hardware configuration (local hardware-configuration.nix)
   - User settings (configuration.nix)
@@ -149,7 +192,7 @@ user-config (configuration entry point) ✅
 ```
 user-config/
 ├── modules/
-│   └── home.nix           # NEW: Home-manager config (moved from nixoa-vm)
+│   └── home.nix           # NEW: Home-manager config (moved from nixoa-core)
 ├── flake.nix              # CHANGED: Now entry point
 ├── configuration.nix      # User settings (unchanged)
 ├── hardware-configuration.nix
@@ -164,19 +207,19 @@ user-config/
 inputs = {
   nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-  # NEW: Import nixoa-vm as module library
-  nixoa-vm = {
-    url = "path:/etc/nixos/nixoa-vm";
+  # NEW: Import nixoa-core as module library
+  nixoa-core = {
+    url = "path:/etc/nixos/nixoa-core";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  # NEW: Get home-manager from nixoa-vm
-  home-manager.follows = "nixoa-vm/home-manager";
+  # NEW: Get home-manager from nixoa-core
+  home-manager.follows = "nixoa-core/home-manager";
 };
 ```
 
 ### 🆕 New Home-Manager Module Location
-- **Before**: `nixoa-vm/modules/home/home.nix` (system-wide)
+- **Before**: `nixoa-core/modules/home/home.nix` (system-wide)
 - **After**: `user-config/modules/home.nix` (personal configuration)
 - **Benefit**: Your shell, packages, and tools are part of user-config, not system
 
@@ -198,113 +241,3 @@ inputs = {
 - Added notes about flake.nix being the entry point
 
 ---
-
-## How This Affects Your Workflow
-
-### System Rebuild (The Big Change)
-
-**Old Workflow (v0.x):**
-```bash
-# Edit your configuration
-cd /etc/nixos/nixoa/user-config
-nano configuration.nix
-
-# Commit changes
-./scripts/commit-config.sh "My changes"
-
-# Rebuild FROM nixoa-vm directory
-cd /etc/nixos/nixoa-vm
-sudo nixos-rebuild switch --flake .#<hostname>
-```
-
-**New Workflow (v1.0):**
-```bash
-# Edit your configuration in home directory
-cd ~/user-config
-nano configuration.nix
-
-# Commit changes
-./scripts/commit-config.sh "My changes"
-
-# Rebuild FROM user-config directory (same directory!)
-cd ~/user-config
-sudo nixos-rebuild switch --flake .#<hostname>
-
-# Or use the convenience script
-./scripts/apply-config.sh "My changes"  # Does both commit and rebuild
-```
-
-### Configuration Location
-
-**Old:**
-```
-/etc/nixos/nixoa/user-config/
-├── configuration.nix
-├── hardware-configuration.nix
-└── config.nixoa.toml
-```
-
-**New:**
-```
-~/user-config/                    # Your home directory!
-├── configuration.nix
-├── hardware-configuration.nix
-├── config.nixoa.toml
-├── modules/
-│   └── home.nix                 # Your home-manager config
-└── scripts/
-```
-
-### Flake Entry Point
-
-**Old:**
-- **Entry point**: `/etc/nixos/nixoa-vm/flake.nix`
-- **Configuration data in**: `/etc/nixos/nixoa/user-config/flake.nix`
-- Confusing: two flakes with unclear relationship
-
-**New:**
-- **Entry point**: `~/user-config/flake.nix` ✅
-- **System definition here**: Imports nixoa-vm modules + local config
-- Clear: one entry point, modules from library
-
----
-
-## What's New: Home-Manager in user-config
-
-Your home-manager configuration is now part of user-config, not a system-wide module!
-
-### Before (v0.x)
-```nix
-# In /etc/nixos/nixoa-vm/modules/home/home.nix
-# System-wide configuration
-# All users get the same home-manager config
-```
-
-### After (v1.0)
-```nix
-# In ~/user-config/modules/home.nix
-# Your personal configuration
-# You control your shell, packages, dotfiles
-```
-
-### What You Can Now Do
-- Customize shell (zsh, bash) per user
-- Personal package management in one place
-- Control tool configurations (git, vim, etc.)
-- Version control your home environment separately
-
-### Home-Manager Settings
-The home.nix still receives your settings:
-```nix
-# From ~/user-config/configuration.nix
-userSettings = {
-  packages.extra = [ "neovim" "tmux" ];
-  extras.enable = true;  # Enhanced terminal
-};
-
-systemSettings = {
-  username = "xoa";
-  timezone = "UTC";
-  # ... other system settings
-};
-```

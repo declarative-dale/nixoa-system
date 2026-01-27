@@ -6,4 +6,5 @@
 }:
 {
   networking.firewall.allowedTCPPorts = vars.allowedTCPPorts;
+  networking.firewall.allowedUDPPorts = vars.allowedUDPPorts;
 }

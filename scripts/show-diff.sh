@@ -6,6 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
+CONFIG_FILES=(configuration.nix config config.nixoa.toml)
 
 cd "$CONFIG_DIR"
 
@@ -15,8 +16,8 @@ if [ ! -d .git ]; then
 fi
 
 echo "=== Uncommitted Changes ==="
-git diff configuration.nix config.nixoa.toml
+git diff "${CONFIG_FILES[@]}"
 
-if git diff --quiet configuration.nix config.nixoa.toml; then
+if git diff --quiet "${CONFIG_FILES[@]}"; then
     echo "No uncommitted changes."
 fi

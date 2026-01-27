@@ -6,6 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
+CONFIG_FILES=(configuration.nix config config.nixoa.toml)
 
 cd "$CONFIG_DIR"
 
@@ -15,8 +16,8 @@ if [ ! -d .git ]; then
 fi
 
 echo "=== Configuration Change History ==="
-git log --oneline --decorate --graph -10 -- configuration.nix config.nixoa.toml
+git log --oneline --decorate --graph -10 -- "${CONFIG_FILES[@]}"
 
 echo ""
 echo "To see full diff for a commit: git show <commit-hash>"
-echo "To revert to a previous commit: git checkout <commit-hash> -- configuration.nix config.nixoa.toml"
+echo "To revert to a previous commit: git checkout <commit-hash> -- ${CONFIG_FILES[*]}"
