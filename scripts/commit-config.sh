@@ -53,6 +53,6 @@ echo "  1. Review changes: git log -1 -p"
 # Get configured hostname for rebuild command
 CONFIG_HOST=$(grep "hostname = " "$IDENTITY_FILE" 2>/dev/null | sed 's/.*= *"\\(.*\\)".*/\\1/' | head -1)
 CONFIG_HOST="${CONFIG_HOST:-nixoa}"
-echo "  2. Rebuild NiXOA: cd ~/user-config && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
+echo "  2. Rebuild NiXOA: cd ~/system && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
 echo ""
 echo "To undo this commit: git reset HEAD~1"

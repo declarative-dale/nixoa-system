@@ -6,8 +6,8 @@ flake input and defines your machine in `config/`.
 ## 1) Clone the repo
 
 ```bash
-git clone https://codeberg.org/NiXOA/system.git ~/user-config
-cd ~/user-config
+git clone https://codeberg.org/NiXOA/system.git ~/system
+cd ~/system
 ```
 
 ## 2) Add your hardware config

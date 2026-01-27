@@ -14,8 +14,8 @@ consumes `core` as a flake input; you do **not** clone core locally.
 1) Clone the system repo:
 
 ```bash
-git clone https://codeberg.org/NiXOA/system.git ~/user-config
-cd ~/user-config
+git clone https://codeberg.org/NiXOA/system.git ~/system
+cd ~/system
 ```
 
 2) Copy your hardware configuration (do not edit it):

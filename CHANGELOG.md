@@ -68,7 +68,7 @@
 
 ## 🔄 Changed
 
-- **Flake renamed** - user-config → system (reflects role as primary system configuration entry point)
+- **Flake renamed** - now standardized as the system flake (primary configuration entry point)
 - **Configuration architecture**:
   - Centralized all settings in settings.nix (imported by flake.nix)
   - System packages configurable via vars.systemPackages
@@ -108,7 +108,7 @@
 
 ---
 
-# user-config v1.1.0 - Feature Enhancement Release
+# system v1.1.0 - Feature Enhancement Release
 
 **Release Date:** December 29, 2025
 
@@ -145,13 +145,13 @@
 
 ---
 
-# user-config v1.0.0 - Architecture Release Notes
+# system v1.0.0 - Architecture Release Notes
 
 **Release Date:** December 24, 2025
 
 ## 🎉 Major Architectural Change: Becomes Primary Entry Point
 
-This release represents a fundamental restructuring of the user-config flake, elevating it from a data export repository to the **primary entry point** for system configuration and rebuilds.
+This release represents a fundamental restructuring of the system flake, elevating it from a data export repository to the **primary entry point** for system configuration and rebuilds.
 
 ---
 
@@ -159,7 +159,7 @@ This release represents a fundamental restructuring of the user-config flake, el
 
 ### Before (v0.x - Data Export Role)
 ```
-user-config (data repository)
+system (data repository)
 ├── Exports: Configuration data (specialArgs only)
 ├── Contains: configuration.nix, config.nixoa.toml
 ├── Location: /etc/nixos/nixoa-core
@@ -168,11 +168,11 @@ user-config (data repository)
 
 ### After (v1.0 - Entry Point Role)
 ```
-user-config (configuration entry point) ✅
+system (configuration entry point) ✅
 ├── Exports: nixosConfigurations (system configurations)
 ├── Imports: nixoa-core as module library
 ├── Contains: home-manager config, system settings
-├── Location: ~/user-config (your home directory)
+├── Location: ~/system (your home directory)
 └── Usage: Primary flake for system rebuilds
 ```
 
@@ -190,7 +190,7 @@ user-config (configuration entry point) ✅
 
 ### 🆕 New Directory Structure
 ```
-user-config/
+system/
 ├── modules/
 │   └── home.nix           # NEW: Home-manager config (moved from nixoa-core)
 ├── flake.nix              # CHANGED: Now entry point
@@ -198,7 +198,7 @@ user-config/
 ├── hardware-configuration.nix
 ├── config.nixoa.toml      # XO config (unchanged)
 └── scripts/
-    ├── apply-config.sh    # CHANGED: Rebuilds from ~/user-config
+    ├── apply-config.sh    # CHANGED: Rebuilds from ~/system
     └── commit-config.sh   # CHANGED: New rebuild location in output
 ```
 
@@ -220,17 +220,17 @@ inputs = {
 
 ### 🆕 New Home-Manager Module Location
 - **Before**: `nixoa-core/modules/home/home.nix` (system-wide)
-- **After**: `user-config/modules/home.nix` (personal configuration)
-- **Benefit**: Your shell, packages, and tools are part of user-config, not system
+- **After**: `system/modules/home.nix` (personal configuration)
+- **Benefit**: Your shell, packages, and tools are part of system, not system
 
 ### 🔄 Updated: Helper Scripts
-- **apply-config.sh**: Now rebuilds from current directory (~/user-config)
+- **apply-config.sh**: Now rebuilds from current directory (~/system)
 - **commit-config.sh**: Updated instructions reference new location
-- Both scripts now run `sudo nixos-rebuild switch --flake .#hostname` from user-config
+- Both scripts now run `sudo nixos-rebuild switch --flake .#hostname` from system
 
 ### 🔄 Updated: Installation Workflow
 - Removed symlink creation (no longer needed)
-- User-config clones directly to `~/user-config` (home directory)
+- System clones directly to `~/system` (home directory)
 - More intuitive: all user edits happen in one place
 
 ### 📚 Updated: Documentation

@@ -19,7 +19,7 @@ fi
 echo "=== Committing configuration changes ==="
 "$SCRIPT_DIR/commit-config.sh" "$COMMIT_MSG"
 
-# Apply the configuration from user-config directory
+# Apply the configuration from system directory
 echo ""
 echo "=== Applying configuration to NiXOA ==="
 cd "$CONFIG_DIR"
