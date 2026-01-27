@@ -5,16 +5,6 @@
   # Base inputs for the NiXOA system flake.
   flake-file.description = "User configuration flake for NixOA - Entry point for system config";
 
-  flake-file.nixConfig = {
-    extra-substituters = [
-      "https://xen-orchestra-ce.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      "xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
-    ];
-  };
-
   flake-file.inputs = {
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";

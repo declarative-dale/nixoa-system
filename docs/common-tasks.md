@@ -32,7 +32,7 @@ Edit `config/packages.nix`:
 
 ## Add SSH keys
 
-Edit `config/users.nix`:
+Edit `config/settings.nix`:
 
 ```nix
 {
@@ -44,7 +44,7 @@ Edit `config/users.nix`:
 
 ## Open firewall ports
 
-Edit `config/networking.nix`:
+Edit `config/settings.nix`:
 
 ```nix
 {
@@ -55,7 +55,7 @@ Edit `config/networking.nix`:
 
 ## Enable extras (zsh + tooling)
 
-Edit `config/features.nix`:
+Edit `config/settings.nix`:
 
 ```nix
 { enableExtras = true; }
@@ -75,7 +75,7 @@ Edit `config/storage.nix`:
 
 ## Switch boot loader
 
-Edit `config/boot.nix`:
+Edit `config/settings.nix`:
 
 ```nix
 { bootLoader = "grub"; }
@@ -89,5 +89,5 @@ Edit `config/boot.nix`:
 
 ## Advanced: extra NixOS options
 
-Add a new module under `modules/features/host/` and register it in
-`parts/nix/registry/features.nix` for clean, reusable overrides.
+Add a new module under `modules/host/` and register it in
+`parts/nix/registry/module-registry.nix` for clean, reusable overrides.

@@ -9,50 +9,36 @@ NiXOA system settings are composed from `configuration.nix` and the files under
 system/
 ├── configuration.nix          # Aggregates config files
 ├── config/
-│   ├── host.nix           # hostname, timezone, stateVersion
-│   ├── users.nix              # username, sshKeys, xoUser/xoGroup
-│   ├── features.nix           # enableXO, enableXenGuest, enableExtras
+│   ├── settings.nix           # host identity, user, extras, boot, firewall
 │   ├── packages.nix           # systemPackages, userPackages
-│   ├── networking.nix         # allowedTCPPorts/allowedUDPPorts
-│   ├── xo.nix                 # xoConfigFile, TLS options
-│   ├── boot.nix               # boot loader selection
+│   ├── xo.nix                 # XO toggles, service account, config paths, TLS
 │   └── storage.nix            # NFS/CIFS/VHD toggles
 └── config.nixoa.toml          # Optional XO overrides
 ```
 
 ## Key Files and Options
 
-### config/host.nix
+### config/settings.nix
 
 ```nix
 {
   hostname = "nixoa";
   timezone = "UTC";
   stateVersion = "25.11";
-}
-```
 
-### config/users.nix
-
-```nix
-{
   username = "xoa";
   sshKeys = [
     "ssh-ed25519 AAAA... user@host"
   ];
 
-  xoUser = "xo";
-  xoGroup = "xo";
-}
-```
-
-### config/features.nix
-
-```nix
-{
-  enableXO = true;
-  enableXenGuest = true;
   enableExtras = false;
+
+  bootLoader = "systemd-boot"; # or "grub"
+  efiCanTouchVariables = true;
+  grubDevice = "";
+
+  allowedTCPPorts = [ 22 80 443 ];
+  allowedUDPPorts = [ ];
 }
 ```
 
@@ -73,34 +59,21 @@ system/
 }
 ```
 
-### config/networking.nix
-
-```nix
-{
-  allowedTCPPorts = [ 22 80 443 ];
-  allowedUDPPorts = [ ];
-}
-```
-
 ### config/xo.nix
 
 ```nix
 {
+  enableXO = true;
+  enableXenGuest = true;
+
+  xoUser = "xo";
+  xoGroup = "xo";
+
   xoConfigFile = ../config.nixoa.toml;
   xoHttpHost = "0.0.0.0";
 
   enableTLS = true;
   enableAutoCert = true;
-}
-```
-
-### config/boot.nix
-
-```nix
-{
-  bootLoader = "systemd-boot"; # or "grub"
-  efiCanTouchVariables = true;
-  grubDevice = "";
 }
 ```
 
@@ -118,8 +91,8 @@ system/
 
 ## Advanced Customizations
 
-For additional NixOS settings, add a new module under `modules/features/host/`
-(or another feature folder) and register it in `parts/nix/registry/features.nix`.
+For additional NixOS settings, add a new module under `modules/host/`
+(or another module folder) and register it in `parts/nix/registry/module-registry.nix`.
 This keeps changes modular and easy to manage.
 
 ## Apply Changes

@@ -22,9 +22,8 @@ sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
 
 Update the files under `config/`:
 
-- `config/host.nix` (hostname, timezone, stateVersion)
-- `config/users.nix` (username, sshKeys)
-- `config/features.nix` (enableXO, enableExtras)
+- `config/settings.nix` (hostname, timezone, stateVersion, username, sshKeys, enableExtras, boot, firewall)
+- `config/xo.nix` (enableXO, enableXenGuest, xoUser/xoGroup)
 - `config/packages.nix` (systemPackages, userPackages)
 
 ## 4) Build/apply

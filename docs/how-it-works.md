@@ -20,13 +20,13 @@ config/* ─┐
 - **core/**: reusable module library and packages (imported as a flake input).
 
 System pulls `core` as `nixoaCore` and imports the `appliance` stack via a tiny
-wrapper module (`modules/features/core/appliance.nix`).
+wrapper module (`modules/core/appliance.nix`).
 
 ## Dendritic Feature Registry
 
 Feature modules and stacks are registered in:
 
-- `parts/nix/registry/features.nix`
+- `parts/nix/registry/module-registry.nix`
 
 Example stack:
 
@@ -39,7 +39,7 @@ The registry enables clean feature composition and keeps modules small.
 ## Special Args and Vars
 
 - `config/` files produce `vars`.
-- `vars` is injected into modules via `_module.args` and `specialArgs`.
+- `vars` is injected into modules via `specialArgs`.
 - Home Manager receives `homeArgs` via `extraSpecialArgs`.
 
 This keeps configuration centralized while modules remain composable.

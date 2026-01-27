@@ -5,12 +5,11 @@
 }:
 let
   registry = config.flake.registry or { };
-  commonModules = registry.modules.common or [ ];
   featureNames = builtins.attrNames (registry.features or { });
   stackNames = builtins.attrNames (registry.stacks or { });
   resolveFeature = name: registry.features.${name};
 
-  featureModules = names: commonModules ++ map (name: (resolveFeature name).module) names;
+  featureModules = names: map (name: (resolveFeature name).module) names;
   stackModules = name: featureModules registry.stacks.${name};
 
   mkFeatureModule = name: { imports = featureModules [ name ]; };

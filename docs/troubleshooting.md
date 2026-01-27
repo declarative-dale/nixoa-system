@@ -2,7 +2,7 @@
 
 ## Rebuild fails with missing hostname
 
-Ensure `config/host.nix` defines `hostname`:
+Ensure `config/settings.nix` defines `hostname`:
 
 ```nix
 { hostname = "nixoa"; }
@@ -10,7 +10,7 @@ Ensure `config/host.nix` defines `hostname`:
 
 ## SSH access not working
 
-Check `config/users.nix`:
+Check `config/settings.nix`:
 
 ```nix
 { sshKeys = [ "ssh-ed25519 AAAA... user@host" ]; }
@@ -24,7 +24,7 @@ Then rebuild:
 
 ## Firewall ports blocked
 
-Update `config/networking.nix`:
+Update `config/settings.nix`:
 
 ```nix
 {
@@ -40,7 +40,7 @@ systemctl status xo-server
 journalctl -u xo-server -n 200
 ```
 
-Verify `config/features.nix`:
+Verify `config/xo.nix`:
 
 ```nix
 { enableXO = true; }

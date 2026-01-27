@@ -1,10 +1,11 @@
 {
+  config,
   inputs,
   ...
 }:
 let
   lib = inputs.nixpkgs.lib;
-  pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
+  pkgs = inputs.nixpkgs.legacyPackages.${config.flake.registry.architecture};
   vars = import ../../../configuration.nix {
     inherit lib pkgs;
   };

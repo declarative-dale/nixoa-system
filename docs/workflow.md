@@ -6,13 +6,9 @@ A simple day-to-day workflow for NiXOA system changes.
 
 Update files under `config/`:
 
-- `config/host.nix`
-- `config/users.nix`
-- `config/features.nix`
+- `config/settings.nix`
 - `config/packages.nix`
-- `config/networking.nix`
 - `config/xo.nix`
-- `config/boot.nix`
 - `config/storage.nix`
 
 ## Review changes
@@ -42,8 +38,8 @@ nix flake update
 
 ## Add a custom module
 
-1) Create `modules/features/host/custom.nix`
-2) Register it in `parts/nix/registry/features.nix`
+1) Create `modules/host/custom.nix`
+2) Register it in `parts/nix/registry/module-registry.nix`
 3) Add it to the `vm` stack
 
 This keeps edits modular and easy to maintain.

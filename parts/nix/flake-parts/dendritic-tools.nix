@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   ...
 }:
@@ -20,6 +21,6 @@
   '';
 
   systems = [
-    "x86_64-linux"
+    config.flake.registry.architecture
   ];
 }
