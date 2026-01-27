@@ -10,6 +10,16 @@ Start with the ecosystem guide:
 
 It walks through cloning this repo, editing `config/`, and applying changes.
 
+## Quick Links
+
+- [Getting Started](./docs/getting-started.md)
+- [Installation](./docs/installation.md)
+- [Configuration](./docs/configuration.md)
+- [Workflow](./docs/workflow.md)
+- [Common Tasks](./docs/common-tasks.md)
+- [Troubleshooting](./docs/troubleshooting.md)
+- [How It Works](./docs/how-it-works.md)
+
 ## Feature Sets
 
 The default stack is `vm`, composed from:
@@ -29,6 +39,13 @@ stacks.
 
 Important: add at least one SSH key in `config/users.nix` before rebuilding,
 or you may lock yourself out of the host.
+
+## Highlights
+
+- Version-controlled host configuration (git)
+- Home Manager integration for the admin user
+- Determinate Nix integration
+- Simple diff/commit/apply scripts for daily use
 
 ## Full Tree (System)
 
@@ -139,6 +156,10 @@ sudo nixos-rebuild switch --flake .#HOSTNAME \
 - `config/` is the **single source of truth** for host settings.
 - `hardware-configuration.nix` must not be edited.
 - Core is not user-editable; treat it as a library input.
+
+## Important Notice
+
+This project is designed for homelab/testing environments. For production use,\nconsider the official Xen Orchestra Appliance from Vates.
 
 ## License
 
