@@ -17,6 +17,14 @@ Update files under `config/`:
 ./scripts/show-diff.sh
 ```
 
+## Dev shell (extras enabled)
+
+If `enableExtras = true` in `config/settings.nix`, you can enter the dev shell:
+
+```bash
+nix develop
+```
+
 ## Commit (optional)
 
 ```bash

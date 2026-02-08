@@ -131,6 +131,12 @@ nix flake check .
 sudo nixos-rebuild switch --flake .#HOSTNAME -L
 ```
 
+If `enableExtras = true`, a dev shell is available:
+
+```bash
+nix develop
+```
+
 ## First Rebuild (Determinate Cache)
 
 On a fresh host, use Determinate's install cache for the first switch:

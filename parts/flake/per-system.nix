@@ -3,8 +3,29 @@
 }:
 {
   perSystem =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
+    let
+      vars = config.flake.registry.vars;
+      lib = pkgs.lib;
+    in
     {
+      devShells = lib.optionalAttrs vars.enableExtras {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            jq
+            git
+            curl
+            nixos-rebuild
+            nix-tree
+            nix-diff
+          ];
+
+          shellHook = ''
+            echo "NiXOA system dev shell (extras enabled)"
+          '';
+        };
+      };
+
       apps = {
         commit = {
           type = "app";
