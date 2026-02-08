@@ -27,12 +27,12 @@ let
   ];
 in
 {
-  options.flake.registry = lib.mkOption {
+  options.nixoa.registry = lib.mkOption {
     type = lib.types.attrsOf lib.types.unspecified;
     default = { };
   };
 
-  config.flake.registry = {
+  config.nixoa.registry = {
     features = {
       foundation-overlays = feature ../../../modules/foundation/overlays.nix;
       foundation-determinate = feature ../../../modules/foundation/determinate.nix;

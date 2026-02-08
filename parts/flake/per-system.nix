@@ -3,10 +3,12 @@
 }:
 {
   perSystem =
-    { config, pkgs, ... }:
+    { pkgs, ... }:
     let
-      vars = config.flake.registry.vars;
       lib = pkgs.lib;
+      vars = import ../../configuration.nix {
+        inherit lib pkgs;
+      };
     in
     {
       devShells = lib.optionalAttrs vars.enableExtras {

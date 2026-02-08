@@ -12,8 +12,6 @@
     #   curl         # HTTP client
     #   htop         # system monitor
     #   tmux         # terminal multiplexer
-    codex
-    claude-code
   ];
 
   userPackages = with pkgs; [

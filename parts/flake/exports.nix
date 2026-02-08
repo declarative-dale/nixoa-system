@@ -4,10 +4,10 @@
   ...
 }:
 let
-  featureNames = config.flake.lib.featureNames;
-  stackNames = config.flake.lib.stackNames;
-  mkFeature = config.flake.lib.mkFeatureModule;
-  mkStack = config.flake.lib.mkStackModule;
+  featureNames = config.nixoa.lib.featureNames;
+  stackNames = config.nixoa.lib.stackNames;
+  mkFeature = config.nixoa.lib.mkFeatureModule;
+  mkStack = config.nixoa.lib.mkStackModule;
 in
 {
   flake = {

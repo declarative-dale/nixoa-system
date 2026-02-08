@@ -4,7 +4,7 @@
 }:
 let
   lib = inputs.nixpkgs.lib;
-  # Avoid depending on flake.registry during registry construction.
+  # Avoid depending on nixoa.registry during registry construction.
   architecture = "x86_64-linux";
   pkgs = inputs.nixpkgs.legacyPackages.${architecture};
   vars = import ../../../configuration.nix {
@@ -12,7 +12,7 @@ let
   };
 in
 {
-  config.flake.registry = {
+  config.nixoa.registry = {
     inherit vars pkgs lib;
   };
 }

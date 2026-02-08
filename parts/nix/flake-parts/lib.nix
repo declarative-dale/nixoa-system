@@ -4,7 +4,7 @@
   ...
 }:
 let
-  registry = config.flake.registry or { };
+  registry = config.nixoa.registry or { };
   featureNames = builtins.attrNames (registry.features or { });
   stackNames = builtins.attrNames (registry.stacks or { });
   resolveFeature = name: registry.features.${name};
@@ -17,12 +17,12 @@ let
 in
 {
   # Shared helpers for feature-centric composition.
-  options.flake.lib = lib.mkOption {
+  options.nixoa.lib = lib.mkOption {
     type = lib.types.attrsOf lib.types.unspecified;
     default = { };
   };
 
-  config.flake.lib = {
+  config.nixoa.lib = {
     inherit
       featureNames
       stackNames
