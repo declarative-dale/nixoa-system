@@ -1,5 +1,4 @@
 {
-  config,
   inputs,
   ...
 }:
@@ -20,7 +19,8 @@
     inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./parts)
   '';
 
+  # Keep systems independent from registry evaluation to avoid module recursion.
   systems = [
-    config.flake.registry.architecture
+    "x86_64-linux"
   ];
 }

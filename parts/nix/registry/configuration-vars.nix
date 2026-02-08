@@ -1,11 +1,12 @@
 {
-  config,
   inputs,
   ...
 }:
 let
   lib = inputs.nixpkgs.lib;
-  pkgs = inputs.nixpkgs.legacyPackages.${config.flake.registry.architecture};
+  # Avoid depending on flake.registry during registry construction.
+  architecture = "x86_64-linux";
+  pkgs = inputs.nixpkgs.legacyPackages.${architecture};
   vars = import ../../../configuration.nix {
     inherit lib pkgs;
   };
