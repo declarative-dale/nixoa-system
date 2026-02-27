@@ -26,7 +26,6 @@
       inputs = {
         home-manager.follows = "home-manager";
         nixpkgs.follows = "nixpkgs";
-        xen-orchestra-ce.follows = "xen-orchestra-ce";
       };
       url = "git+https://codeberg.org/NiXOA/core?ref=beta";
     };
@@ -35,7 +34,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:karol-broda/snitch";
     };
-    xen-orchestra-ce.url = "git+https://codeberg.org/NiXOA/xen-orchestra-ce.git?ref=refs/tags/v6.1.1";
   };
 
 }
