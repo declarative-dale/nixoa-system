@@ -45,23 +45,38 @@
         "xoSrc": "xoSrc"
       },
       "locked": {
-        "lastModified": 1766561879,
-        "narHash": "sha256-476VslHcBHA77OOeeQMHYgTo+eiEvk2NvVHZ8eKrK+w=",
-        "path": "/etc/nixos/nixoa/nixoa-vm",
+        "narHash": "sha256-T9+Z5LZJeYai/1uHCN/m4/+dCO4OrTrG4mTmtC8daJY=",
+        "path": "/etc/nixos/nixoa-vm",
         "type": "path"
       },
       "original": {
-        "path": "/etc/nixos/nixoa/nixoa-vm",
+        "path": "/etc/nixos/nixoa-vm",
         "type": "path"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1766473571,
-        "narHash": "sha256-5G1NDO2PulBx1RoaA6U1YoUDX0qZslpPxv+n5GX6Qto=",
+        "lastModified": 1772047000,
+        "narHash": "sha256-7DaQVv4R97cii/Qdfy4tmDZMB2xxtyIvNGSwXBBhSmo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "76701a179d3a98b07653e2b0409847499b2a07d3",
+        "rev": "1267bb4920d0fc06ea916734c11b0bf004bbe17e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1766201043,
+        "narHash": "sha256-eplAP+rorKKd0gNjV3rA6+0WMzb1X1i16F5m5pASnjA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b3aad468604d3e488d627c0b43984eb60e75e782",
         "type": "github"
       },
       "original": {
@@ -78,7 +93,26 @@
           "home-manager"
         ],
         "nixoa-vm": "nixoa-vm",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "snitch": "snitch"
+      }
+    },
+    "snitch": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1767297494,
+        "narHash": "sha256-Ylvs2bXDshwKA1O8dRFCOatXPGYg7yx17pLAj2o78mk=",
+        "owner": "karol-broda",
+        "repo": "snitch",
+        "rev": "57d592408de364bbbef3c89b85458e7cf61fd2e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "karol-broda",
+        "repo": "snitch",
+        "type": "github"
       }
     },
     "xoSrc": {
@@ -94,6 +128,7 @@
       "original": {
         "owner": "vatesfr",
         "repo": "xen-orchestra",
+        "rev": "b89c26459cfd301bb92adf0a98a0b2dbab57e487",
         "type": "github"
       }
     }
