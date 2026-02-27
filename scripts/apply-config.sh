@@ -6,6 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
+IDENTITY_FILE="${CONFIG_DIR}/config/settings.nix"
 
 # Get commit message from argument or use default
 if [ $# -eq 0 ]; then
@@ -18,17 +19,18 @@ fi
 echo "=== Committing configuration changes ==="
 "$SCRIPT_DIR/commit-config.sh" "$COMMIT_MSG"
 
-# Apply the configuration from user-config directory
+# Apply the configuration from system directory
 echo ""
 echo "=== Applying configuration to NiXOA ==="
 cd "$CONFIG_DIR"
 
-# Read hostname from user-config (defaults to "nixoa" if not set)
-HOSTNAME=$(grep "hostname = " "${CONFIG_DIR}/configuration.nix" 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
+# Read hostname from config/settings.nix
+HOSTNAME=$(grep "hostname = " "$IDENTITY_FILE" 2>/dev/null | head -1 | sed 's/.*hostname = *"\(.*\)".*/\1/')
 HOSTNAME="${HOSTNAME:-nixoa}"
 
-echo "Running: sudo nixos-rebuild switch --flake .#${HOSTNAME}"
-sudo nixos-rebuild switch --flake ".#${HOSTNAME}"
+echo "Building configuration for hostname: ${HOSTNAME}"
+echo "Note: Use nixos-rebuild directly to apply the configuration"
+echo "Run: sudo nixos-rebuild switch --flake .#${HOSTNAME}"
 
 echo ""
 echo "✓ Configuration applied successfully!"

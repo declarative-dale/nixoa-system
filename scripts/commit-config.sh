@@ -6,6 +6,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
+CONFIG_FILES=(modules/user-configuration.nix config config.nixoa.toml)
+IDENTITY_FILE="${CONFIG_DIR}/config/settings.nix"
 
 cd "$CONFIG_DIR"
 
@@ -29,25 +31,28 @@ COMMIT_MSG="$1"
 
 # Show what's changed
 echo "=== Configuration Changes ==="
-git diff --stat configuration.nix config.nixoa.toml 2>/dev/null || true
+git diff --stat "${CONFIG_FILES[@]}" 2>/dev/null || true
 echo ""
 
 # Check if there are changes to commit
-if git diff --quiet configuration.nix config.nixoa.toml 2>/dev/null; then
+if git diff --quiet "${CONFIG_FILES[@]}" 2>/dev/null; then
     echo "No changes to commit."
     exit 0
 fi
 
-# Commit the changes (auto-stages tracked files)
-git commit -a -m "$COMMIT_MSG"
+# Stage configuration files (including new config fragments)
+git add "${CONFIG_FILES[@]}"
+
+# Commit the changes
+git commit -m "$COMMIT_MSG"
 
 echo "✓ Configuration committed successfully!"
 echo ""
 echo "Next steps:"
 echo "  1. Review changes: git log -1 -p"
 # Get configured hostname for rebuild command
-CONFIG_HOST=$(grep "hostname = " configuration.nix 2>/dev/null | sed 's/.*= *"\(.*\)".*/\1/' | head -1)
+CONFIG_HOST=$(grep "hostname = " "$IDENTITY_FILE" 2>/dev/null | sed 's/.*= *"\\(.*\\)".*/\\1/' | head -1)
 CONFIG_HOST="${CONFIG_HOST:-nixoa}"
-echo "  2. Rebuild NiXOA: cd ~/user-config && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
+echo "  2. Rebuild NiXOA: cd ~/system && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
 echo ""
 echo "To undo this commit: git reset HEAD~1"

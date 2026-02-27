@@ -1,7 +1,8 @@
 # Nix build results
 result
 result-*
-
+.direnv/
+.envrc
 
 user-config-bundle.md
 
