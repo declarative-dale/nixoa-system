@@ -17,7 +17,6 @@
   flake-file.inputs = {
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    xen-orchestra-ce.url = "git+https://codeberg.org/NiXOA/xen-orchestra-ce.git?ref=refs/tags/v6.1.1";
     home-manager = {
       url = "https://flakehub.com/f/nix-community/home-manager/0";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,7 +25,6 @@
       url = "git+https://codeberg.org/NiXOA/core?ref=beta";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
-      inputs.xen-orchestra-ce.follows = "xen-orchestra-ce";
     };
     snitch = {
       url = "github:karol-broda/snitch";
