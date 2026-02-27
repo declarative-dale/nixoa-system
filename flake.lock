@@ -148,11 +148,11 @@
     },
     "flake-file": {
       "locked": {
-        "lastModified": 1772165555,
-        "narHash": "sha256-gdhMbsxVHLAVjePPIydGX3bXRhgxj6vdhVd8nQZCcCA=",
+        "lastModified": 1772176329,
+        "narHash": "sha256-8MmT7QcVsRPlaJOSnJobqyDf3E/0q3kcgs6CJ6NkBw0=",
         "owner": "vic",
         "repo": "flake-file",
-        "rev": "c9d91bd7e79c45d8b14967e7cb2db410ab7f3530",
+        "rev": "1bf87eeb57ea517d4a6a96b4529f4f5d78a49e84",
         "type": "github"
       },
       "original": {
@@ -163,11 +163,11 @@
     },
     "flake-file_2": {
       "locked": {
-        "lastModified": 1772165555,
-        "narHash": "sha256-gdhMbsxVHLAVjePPIydGX3bXRhgxj6vdhVd8nQZCcCA=",
+        "lastModified": 1772176329,
+        "narHash": "sha256-8MmT7QcVsRPlaJOSnJobqyDf3E/0q3kcgs6CJ6NkBw0=",
         "owner": "vic",
         "repo": "flake-file",
-        "rev": "c9d91bd7e79c45d8b14967e7cb2db410ab7f3530",
+        "rev": "1bf87eeb57ea517d4a6a96b4529f4f5d78a49e84",
         "type": "github"
       },
       "original": {
@@ -438,18 +438,18 @@
         "xen-orchestra-ce": "xen-orchestra-ce"
       },
       "locked": {
-        "lastModified": 1772182080,
-        "narHash": "sha256-8IKSdeB+RxJ/7wFhj+HlPlr9aZhu/FBFvxOqSp+Mki0=",
-        "ref": "beta",
-        "rev": "10edce276f669a6d6ecf07345aa27265a9190f9a",
-        "revCount": 341,
+        "lastModified": 1772186429,
+        "narHash": "sha256-ZRba46zosBc3ngPE1rtrM36sZ18HbVJBE/WYwzzzhdM=",
+        "ref": "refs/tags/latest",
+        "rev": "61d41a455817f2787584ae4586f27f1be6a1a6fc",
+        "revCount": 357,
         "type": "git",
-        "url": "https://codeberg.org/NiXOA/core"
+        "url": "https://codeberg.org/NiXOA/core.git"
       },
       "original": {
-        "ref": "beta",
+        "ref": "refs/tags/latest",
         "type": "git",
-        "url": "https://codeberg.org/NiXOA/core"
+        "url": "https://codeberg.org/NiXOA/core.git"
       }
     },
     "nixpkgs": {
@@ -657,16 +657,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1772169602,
-        "narHash": "sha256-+WDMziKHv3gtrqM6F9K0JKOeyH+EW2CGMwfPaRhRwaM=",
-        "ref": "beta",
-        "rev": "d700deb52205ec415cc82dc5fcdde13b3b3969a5",
-        "revCount": 23,
+        "lastModified": 1772185000,
+        "narHash": "sha256-lNuclQ8xDNkgiVoTBe033LttzE7xMd6lJb5gUwjrNuQ=",
+        "ref": "refs/tags/latest",
+        "rev": "c29069ca653c28c9e4fae03b35e4be387847a88a",
+        "revCount": 26,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/xen-orchestra-ce.git"
       },
       "original": {
-        "ref": "beta",
+        "ref": "refs/tags/latest",
         "type": "git",
         "url": "https://codeberg.org/NiXOA/xen-orchestra-ce.git"
       }
