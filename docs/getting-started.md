@@ -50,5 +50,5 @@ systemctl status xo-server
 
 ## Notes
 
-- `configuration.nix` is an aggregator; edit the files in `config/` instead.
+- `modules/user-configuration.nix` is an aggregator; edit the files in `config/` instead.
 - Core is pulled as a flake input; you do not need to clone it locally.

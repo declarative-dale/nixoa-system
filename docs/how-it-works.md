@@ -7,7 +7,7 @@ immutable `core` library and produces `nixosConfigurations.<hostname>`.
 
 ```
 config/* ─┐
-          ├─ configuration.nix (aggregator)
+          ├─ modules/user-configuration.nix (aggregator)
           └─ vars (specialArgs)
                  │
                  ├─ system feature stack (foundation + core + host + user)

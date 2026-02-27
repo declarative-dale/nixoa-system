@@ -10,11 +10,11 @@
 
 let
   importConfig = path: import path { inherit lib pkgs; };
-  parts = [
-    (importConfig ./config/settings.nix)
-    (importConfig ./config/packages.nix)
-    (importConfig ./config/xo.nix)
-    (importConfig ./config/storage.nix)
+  configParts = [
+    (importConfig ../config/settings.nix)
+    (importConfig ../config/packages.nix)
+    (importConfig ../config/xo.nix)
+    (importConfig ../config/storage.nix)
   ];
 in
-lib.foldl' lib.recursiveUpdate { } parts
+lib.foldl' lib.recursiveUpdate { } configParts

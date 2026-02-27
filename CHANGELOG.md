@@ -1,17 +1,29 @@
 # system v1.4.0 - Config Composition Split
 
-**Release Date:** January 27, 2026
+**Release Date:** February 27, 2026
 
 ## ✨ Added
 
-- **config/** directory with focused settings files (identity, users, features, packages, etc.)
-- **Home shell submodules** under `modules/features/user/home/shell/`
+- **config/settings.nix** to consolidate host identity, user, feature, boot, and networking settings
+- **Directory-based Home Manager imports** for `modules/user/home/` and `modules/user/home/shell/`
+- **Redis to Valkey migration helper** at `scripts/migrate-redis-to-valkey.sh`
+- **Optional extras dev shell** (`nix develop`) when `enableExtras = true`
 - **UDP firewall ports** support in host firewall module
 
 ## 🔄 Changed
 
-- **configuration.nix** now aggregates `config/` fragments
-- **Docs/README** updated to reflect the dendritic layout and config composition
+- **Config composition** now comes from `config/settings.nix`, `config/packages.nix`, `config/xo.nix`, and `config/storage.nix`
+- **Feature registry/lib namespace** moved to `config.nixoa.registry` and `config.nixoa.lib`
+- **Flake input source-of-truth** kept in `parts/nix/inputs/core.nix`; regenerated `flake.nix` from `flake-file`
+- **Direct `xen-orchestra-ce` system input** removed; now handled through the core input graph
+- **Input locking and transport** refreshed (beta updates for `nixoaCore`/`xen-orchestra-ce`, URL normalization to HTTPS)
+- **Docs/README/workflow** updated for layout, dev shell, and composition flow
+
+## 🐛 Fixed
+
+- **Infinite recursion** in flake-parts/registry evaluation by decoupling systems and vars bootstrap from registry self-reference
+- **Input follow wiring** and generated flake consistency after input graph changes
+- **Extras gating** now controls `snitch` and `yq-go`; removed standalone `modules/user/snitch.nix`
 
 ---
 

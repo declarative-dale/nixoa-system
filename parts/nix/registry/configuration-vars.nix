@@ -7,7 +7,7 @@ let
   # Avoid depending on nixoa.registry during registry construction.
   architecture = "x86_64-linux";
   pkgs = inputs.nixpkgs.legacyPackages.${architecture};
-  vars = import ../../../configuration.nix {
+  vars = import ../../../modules/user-configuration.nix {
     inherit lib pkgs;
   };
 in

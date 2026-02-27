@@ -6,7 +6,7 @@
     { pkgs, ... }:
     let
       lib = pkgs.lib;
-      vars = import ../../configuration.nix {
+      vars = import ../../modules/user-configuration.nix {
         inherit lib pkgs;
       };
     in

@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
-CONFIG_FILES=(configuration.nix config config.nixoa.toml)
+CONFIG_FILES=(modules/user-configuration.nix config config.nixoa.toml)
 IDENTITY_FILE="${CONFIG_DIR}/config/settings.nix"
 
 cd "$CONFIG_DIR"
