@@ -13,7 +13,7 @@ in
     };
 
     homeArgs = {
-      inherit vars;
+      inherit vars inputs;
     };
   };
 }
