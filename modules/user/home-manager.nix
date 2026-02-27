@@ -14,7 +14,6 @@
     useUserPackages = true;
     backupFileExtension = "bak";
     extraSpecialArgs = homeArgs;
-    sharedModules = [ inputs.snitch.homeManagerModules.default ];
     users.${vars.username} = import ./home.nix;
   };
 }

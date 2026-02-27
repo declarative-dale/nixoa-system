@@ -23,7 +23,6 @@ let
 
   userFeatures = [
     "user-home-manager"
-    "user-snitch"
   ];
 in
 {
@@ -42,7 +41,6 @@ in
       host-packages = feature ../../../modules/host/packages.nix;
       host-firewall = feature ../../../modules/host/firewall.nix;
       user-home-manager = feature ../../../modules/user/home-manager.nix;
-      user-snitch = feature ../../../modules/user/snitch.nix;
     };
 
     stacks = {
