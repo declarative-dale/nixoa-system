@@ -22,7 +22,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixoaCore = {
-      url = "git+https://codeberg.org/NiXOA/core?ref=beta";
+      url = "git+https://codeberg.org/NiXOA/core.git?ref=refs/tags/latest";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };

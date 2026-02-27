@@ -27,7 +27,7 @@
         home-manager.follows = "home-manager";
         nixpkgs.follows = "nixpkgs";
       };
-      url = "git+https://codeberg.org/NiXOA/core?ref=beta";
+      url = "git+https://codeberg.org/NiXOA/core.git?ref=refs/tags/latest";
     };
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     snitch = {
