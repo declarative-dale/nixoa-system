@@ -54,5 +54,5 @@ nix flake check .
 
 ## Notes
 
-- `modules/user-configuration.nix` aggregates the files under `config/`.
+- `config/default.nix` aggregates the files under `config/`.
 - Core is fetched via flake inputs; update with `nix flake update` when ready.

@@ -47,7 +47,7 @@ nix flake update
 ## Add a custom module
 
 1) Create `modules/host/custom.nix`
-2) Register it in `parts/nix/registry/module-registry.nix`
+2) Wire it into `modules/host.nix` or `modules/user.nix`
 3) Add it to the `vm` stack
 
 This keeps edits modular and easy to maintain.

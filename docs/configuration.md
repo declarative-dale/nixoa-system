@@ -1,13 +1,13 @@
 # Configuration Guide
 
-NiXOA system settings are composed from `modules/user-configuration.nix` and the files under
+NiXOA system settings are composed from `config/default.nix` and the files under
 `config/`. Edit the files in `config/` to change your host configuration.
 
 ## Layout
 
 ```
 system/
-├── modules/user-configuration.nix # Aggregates config files
+├── config/default.nix            # Aggregates config files
 ├── config/
 │   ├── settings.nix           # host identity, user, extras, boot, firewall
 │   ├── packages.nix           # systemPackages, userPackages
@@ -92,7 +92,7 @@ system/
 ## Advanced Customizations
 
 For additional NixOS settings, add a new module under `modules/host/`
-(or another module folder) and register it in `parts/nix/registry/module-registry.nix`.
+(or another dendritic module file) and include it from `modules/host.nix` or `modules/user.nix`.
 This keeps changes modular and easy to manage.
 
 ## Apply Changes

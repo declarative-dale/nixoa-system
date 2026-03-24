@@ -90,4 +90,4 @@ Edit `config/settings.nix`:
 ## Advanced: extra NixOS options
 
 Add a new module under `modules/host/` and register it in
-`parts/nix/registry/module-registry.nix` for clean, reusable overrides.
+the dendritic `modules/host.nix` or `modules/user.nix` files for clean, reusable overrides.

@@ -7,11 +7,13 @@ immutable `core` library and produces `nixosConfigurations.<hostname>`.
 
 ```
 config/* ─┐
-          ├─ modules/user-configuration.nix (aggregator)
-          └─ vars (specialArgs)
+          ├─ config/default.nix (aggregator)
+          └─ modules/vars.nix
                  │
-                 ├─ system feature stack (foundation + core + host + user)
-                 └─ nixosSystem -> NixOS config
+                 ├─ modules/hosts.nix      -> den.hosts.x86_64-linux.<hostname>
+                 ├─ modules/host.nix       -> host NixOS aspect
+                 ├─ modules/user.nix       -> user Home Manager aspect
+                 └─ den -> nixosConfigurations.<hostname>
 ```
 
 ## The Relationship Between System and Core
@@ -19,27 +21,13 @@ config/* ─┐
 - **system/**: user-editable, host-specific configuration.
 - **core/**: reusable module library and packages (imported as a flake input).
 
-System pulls `core` as `nixoaCore` and imports the `appliance` stack via a tiny
-wrapper module (`modules/core/appliance.nix`).
-
-## Dendritic Feature Registry
-
-Feature modules and stacks are registered in:
-
-- `parts/nix/registry/module-registry.nix`
-
-Example stack:
-
-```
-vm = foundation + core + host + user
-```
-
-The registry enables clean feature composition and keeps modules small.
+System pulls `core` as `nixoaCore` and imports the curated
+`nixoaCore.nixosModules.appliance` stack from the host aspect.
 
 ## Special Args and Vars
 
 - `config/` files produce `vars`.
-- `vars` is injected into modules via `specialArgs`.
-- Home Manager receives `homeArgs` via `extraSpecialArgs`.
+- `vars` is injected into NixOS modules via the host's custom `instantiate`.
+- Home Manager receives `vars` and `inputs` via `home-manager.extraSpecialArgs`.
 
 This keeps configuration centralized while modules remain composable.
