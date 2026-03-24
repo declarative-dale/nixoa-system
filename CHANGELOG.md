@@ -1,3 +1,31 @@
+# system v2.0.0 - Release Surface And Public Core Tracking Cleanup
+
+**Release Date:** March 24, 2026
+
+## ⚠️ Breaking Changes
+
+- **Config entrypoint renamed** from `config/default.nix` to `config/compose.nix`
+- **Host policy split** from `config/settings.nix` into `site.nix`, `platform.nix`, and `features.nix`
+- **Top-level dendritic module entrypoints renamed and regrouped** under `config`, `topology`, `aspects`, and `outputs`
+- **Operational scripts changed behavior** so apply/commit/bootstrap follow the new repository-local workflow
+
+## ✨ Added
+
+- **Versioned release documentation** for the post-refactor system layout
+- **Bootstrap-first README flow** condensed around the copy-paste installer path
+
+## 🔄 Changed
+
+- **README and onboarding docs** condensed around the new config/topology/aspect/output structure
+- **System release series** advanced for the stabilized dendritic host layout
+- **`nixoaCore` consumption** prepared to track the pushed public `beta` branch revision
+
+## 🐛 Fixed
+
+- **Documentation drift** after the topology/aspect/output refactor by aligning the release docs with the current tree and bootstrap workflow
+
+---
+
 # system v1.5.0 - Topology/Aspect Split And Bootstrap Workflow
 
 **Release Date:** March 24, 2026

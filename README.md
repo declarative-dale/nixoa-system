@@ -4,6 +4,8 @@ NiXOA system is the **host-specific** flake. It keeps editable site policy in
 `config/`, declares the host topology with den, and imports the immutable
 `nixoaCore` appliance stack.
 
+Current release series: `v2.0.0`
+
 ## Quick Start
 
 Fresh NixOS VM:
@@ -28,7 +30,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 '
 ```
 
-## Where To Edit
+## Edit Surface
 
 - `config/site.nix`: hostname, timezone, state version, username, SSH keys
 - `config/platform.nix`: boot loader and firewall ports
@@ -38,7 +40,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 - `config/storage.nix`: NFS, CIFS, VHD, and mount behavior
 - `config/overrides.nix`: optional local overrides applied last
 
-## Dendritic Layout
+## Dendritic Shape
 
 - `config/compose.nix` merges the editable config fragments into `vars`
 - `modules/config/vars.nix` exposes `vars` to the rest of the flake
@@ -64,38 +66,24 @@ First install without the bootstrap helper:
 ./scripts/apply-config.sh --hostname nixoa --first-install
 ```
 
-## Repository Shape
+## Layout
 
 ```text
 system/
 ├── config/
 │   ├── compose.nix
-│   ├── features.nix
-│   ├── overrides.nix.example
-│   ├── packages.nix
-│   ├── platform.nix
-│   ├── site.nix
-│   ├── storage.nix
-│   └── xo.nix
-├── docs/
+│   └── *.nix             # editable host policy
 ├── modules/
-│   ├── aspects/
-│   ├── config/
-│   ├── outputs/
-│   ├── topology/
-│   ├── _homeManager/
-│   └── _nixos/
+│   ├── topology/         # den schema + host declarations
+│   ├── aspects/          # stable host/user policy aspects
+│   ├── outputs/          # apps + dev shell
+│   ├── _nixos/           # plain NixOS modules
+│   └── _homeManager/     # plain Home Manager modules
 ├── scripts/
-│   ├── apply-config.sh
 │   ├── bootstrap.sh
-│   ├── commit-config.sh
-│   ├── history.sh
-│   ├── lib/common.sh
-│   └── show-diff.sh
-├── config.nixoa.toml
-├── flake.lock
-├── flake.nix
-└── hardware-configuration.nix
+│   ├── apply-config.sh
+│   └── *.sh
+└── flake.nix
 ```
 
 ## Notes
