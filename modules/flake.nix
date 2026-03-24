@@ -9,62 +9,66 @@ let
   pkgs = inputs.nixpkgs.legacyPackages.${system};
 in
 {
-  flake.devShells.${system} = lib.mkIf vars.enableExtras {
-    default = pkgs.mkShell {
-      packages = with pkgs; [
-        jq
-        git
-        curl
-        nixos-rebuild
-        nix-tree
-        nix-diff
-      ];
+  flake = lib.mkMerge [
+    {
+      apps.${system} = {
+        commit = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "commit-config" ''
+              ${builtins.readFile ../scripts/commit-config.sh}
+            ''
+          );
+          meta.description = "Commit configuration changes to git";
+        };
 
-      shellHook = ''
-        echo "NiXOA system dev shell (extras enabled)"
-      '';
-    };
-  };
+        apply = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "apply-config" ''
+              ${builtins.readFile ../scripts/apply-config.sh}
+            ''
+          );
+          meta.description = "Apply configuration changes to the system";
+        };
 
-  flake.apps.${system} = {
-    commit = {
-      type = "app";
-      program = toString (
-        pkgs.writeShellScript "commit-config" ''
-          ${builtins.readFile ../scripts/commit-config.sh}
-        ''
-      );
-      meta.description = "Commit configuration changes to git";
-    };
+        diff = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "show-diff" ''
+              ${builtins.readFile ../scripts/show-diff.sh}
+            ''
+          );
+          meta.description = "Show configuration differences";
+        };
 
-    apply = {
-      type = "app";
-      program = toString (
-        pkgs.writeShellScript "apply-config" ''
-          ${builtins.readFile ../scripts/apply-config.sh}
-        ''
-      );
-      meta.description = "Apply configuration changes to the system";
-    };
+        history = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "history" ''
+              ${builtins.readFile ../scripts/history.sh}
+            ''
+          );
+          meta.description = "Show configuration commit history";
+        };
+      };
+    }
 
-    diff = {
-      type = "app";
-      program = toString (
-        pkgs.writeShellScript "show-diff" ''
-          ${builtins.readFile ../scripts/show-diff.sh}
-        ''
-      );
-      meta.description = "Show configuration differences";
-    };
+    (lib.optionalAttrs vars.enableExtras {
+      devShells.${system}.default = pkgs.mkShell {
+        packages = with pkgs; [
+          jq
+          git
+          curl
+          nixos-rebuild
+          nix-tree
+          nix-diff
+        ];
 
-    history = {
-      type = "app";
-      program = toString (
-        pkgs.writeShellScript "history" ''
-          ${builtins.readFile ../scripts/history.sh}
-        ''
-      );
-      meta.description = "Show configuration commit history";
-    };
-  };
+        shellHook = ''
+          echo "NiXOA system dev shell (extras enabled)"
+        '';
+      };
+    })
+  ];
 }

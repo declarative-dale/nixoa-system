@@ -34,13 +34,15 @@ Update the files under `config/`:
 
 ### First Rebuild (Determinate Cache)
 
-On a fresh host, run the first switch with Determinate's install cache:
+On a fresh host, run the first switch with Determinate's install cache only:
 
 ```bash
 sudo nixos-rebuild switch --flake .#HOSTNAME \
   --option extra-substituters https://install.determinate.systems \
   --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
 ```
+
+That cache is only needed as a command-line override for initial installation.
 
 ## 5) Verify
 

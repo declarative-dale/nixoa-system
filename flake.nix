@@ -3,15 +3,18 @@
 
   outputs =
     inputs:
-    (inputs.nixpkgs.lib.evalModules {
-      modules = [ (inputs.import-tree ./modules) ];
-      specialArgs = { inherit inputs; };
-    }).config.flake;
+    builtins.removeAttrs
+      (
+        (inputs.nixpkgs.lib.evalModules {
+          modules = [ (inputs.import-tree ./modules) ];
+          specialArgs = { inherit inputs; };
+        }).config.flake
+      )
+      [ "denful" ];
 
   nixConfig = {
     extra-substituters = [ "https://xen-orchestra-ce.cachix.org" ];
     extra-trusted-public-keys = [
-      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
     ];
   };
