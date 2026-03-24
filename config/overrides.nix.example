@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copy this file to overrides.nix for host-local overrides that should win last.
+{ ... }:
+{
+  # hostname = "nixoa";
+  # username = "xoa";
+  # timezone = "UTC";
+  # sshKeys = [
+  #   "ssh-ed25519 AAAA... user@host"
+  # ];
+}

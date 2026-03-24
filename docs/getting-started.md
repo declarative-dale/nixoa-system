@@ -1,56 +1,48 @@
 # Getting Started
 
-This repo is the host-specific NiXOA configuration. It pulls in `core` as a
-flake input and defines your machine in `config/`.
+## Fastest Path
 
-## 1) Clone the repo
+On a fresh NixOS VM, run:
 
 ```bash
-git clone https://codeberg.org/NiXOA/system.git ~/system
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
+  --hostname nixoa \
+  --username xoa \
+  --ssh-key "$(cat ~/.ssh/id_ed25519.pub)" \
+  --first-switch
+```
+
+The bootstrap script will:
+
+- clone or update the `system` repo on the `beta` branch
+- copy `hardware-configuration.nix`
+- optionally write `config/overrides.nix`
+- run `nix flake check --no-write-lock-file`
+- optionally run the first switch with Determinate’s install cache override
+
+## Manual Path
+
+```bash
+git clone --branch beta https://codeberg.org/NiXOA/system.git ~/system
 cd ~/system
-```
-
-## 2) Add your hardware config
-
-Copy your generated hardware config into this repo (do not edit it):
-
-```bash
 sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
+cp config/overrides.nix.example config/overrides.nix
 ```
 
-## 3) Edit settings
+Then edit:
 
-Update the files under `config/`:
+- `config/site.nix`
+- `config/platform.nix`
+- `config/features.nix`
+- `config/packages.nix`
+- `config/xo.nix`
+- `config/storage.nix`
+- optionally `config/overrides.nix`
 
-- `config/settings.nix` (hostname, timezone, stateVersion, username, sshKeys, enableExtras, boot, firewall)
-- `config/xo.nix` (enableXO, enableXenGuest, xoUser/xoGroup)
-- `config/packages.nix` (systemPackages, userPackages)
-
-## 4) Build/apply
+Apply the first switch:
 
 ```bash
-./scripts/apply-config.sh "Initial NiXOA setup"
+./scripts/apply-config.sh --hostname nixoa --first-install
 ```
 
-### First Rebuild (Determinate Cache)
-
-On a fresh host, run the first switch with Determinate's install cache only:
-
-```bash
-sudo nixos-rebuild switch --flake .#HOSTNAME \
-  --option extra-substituters https://install.determinate.systems \
-  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
-```
-
-That cache is only needed as a command-line override for initial installation.
-
-## 5) Verify
-
-```bash
-systemctl status xo-server
-```
-
-## Notes
-
-- `config/default.nix` is the aggregator; edit the files in `config/` instead.
-- Core is pulled as a flake input; you do not need to clone it locally.
+After that, normal rebuilds can omit `--first-install`.

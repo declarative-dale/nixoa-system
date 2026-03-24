@@ -1,50 +1,18 @@
 # Common Tasks
 
-Quick edits for typical NiXOA changes. Most settings live under `config/`.
+## Add SSH Keys
 
-## Add system packages
-
-Edit `config/packages.nix`:
-
-```nix
-{ pkgs, ... }:
-{
-  systemPackages = with pkgs; [
-    vim
-    htop
-  ];
-}
-```
-
-## Add user packages
-
-Edit `config/packages.nix`:
-
-```nix
-{ pkgs, ... }:
-{
-  userPackages = with pkgs; [
-    neovim
-    git
-  ];
-}
-```
-
-## Add SSH keys
-
-Edit `config/settings.nix`:
+Edit `config/site.nix` or `config/overrides.nix`:
 
 ```nix
 {
-  sshKeys = [
-    "ssh-ed25519 AAAA... user@host"
-  ];
+  sshKeys = [ "ssh-ed25519 AAAA... user@host" ];
 }
 ```
 
-## Open firewall ports
+## Open Firewall Ports
 
-Edit `config/settings.nix`:
+Edit `config/platform.nix`:
 
 ```nix
 {
@@ -53,15 +21,27 @@ Edit `config/settings.nix`:
 }
 ```
 
-## Enable extras (zsh + tooling)
+## Enable Extras
 
-Edit `config/settings.nix`:
+Edit `config/features.nix`:
 
 ```nix
 { enableExtras = true; }
 ```
 
-## Enable storage backends
+## Add Packages
+
+Edit `config/packages.nix`:
+
+```nix
+{ pkgs, ... }:
+{
+  systemPackages = with pkgs; [ htop ];
+  userPackages = with pkgs; [ git ];
+}
+```
+
+## Toggle Storage Backends
 
 Edit `config/storage.nix`:
 
@@ -73,21 +53,16 @@ Edit `config/storage.nix`:
 }
 ```
 
-## Switch boot loader
+## Switch Boot Loader
 
-Edit `config/settings.nix`:
+Edit `config/platform.nix`:
 
 ```nix
 { bootLoader = "grub"; }
 ```
 
-## Apply changes
+## Apply
 
 ```bash
-./scripts/apply-config.sh "Update settings"
+./scripts/apply-config.sh --hostname nixoa
 ```
-
-## Advanced: extra NixOS options
-
-Add a new module under `modules/host/` and register it in
-the dendritic `modules/host.nix` or `modules/user.nix` files for clean, reusable overrides.

@@ -1,10 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
-# Xen Orchestra configuration
+# Xen Orchestra service account and runtime configuration
 { ... }:
 {
-  enableXO = true; # Xen Orchestra service
-  enableXenGuest = true; # Xen guest agent for better VM integration
-
   # XO service account (usually no need to change)
   xoUser = "xo";
   xoGroup = "xo";

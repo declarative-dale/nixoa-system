@@ -6,7 +6,13 @@
     builtins.removeAttrs
       (
         (inputs.nixpkgs.lib.evalModules {
-          modules = [ (inputs.import-tree ./modules) ];
+          modules = [
+            ./modules/dendritic.nix
+            ./modules/config.nix
+            ./modules/topology.nix
+            ./modules/aspects.nix
+            ./modules/outputs.nix
+          ];
           specialArgs = { inherit inputs; };
         }).config.flake
       )

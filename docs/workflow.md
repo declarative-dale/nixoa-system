@@ -1,53 +1,49 @@
 # Workflow
 
-A simple day-to-day workflow for NiXOA system changes.
-
-## Edit settings
+## Edit Host Policy
 
 Update files under `config/`:
 
-- `config/settings.nix`
-- `config/packages.nix`
-- `config/xo.nix`
-- `config/storage.nix`
+- `site.nix`
+- `platform.nix`
+- `features.nix`
+- `packages.nix`
+- `xo.nix`
+- `storage.nix`
+- optionally `overrides.nix`
 
-## Review changes
+## Review Changes
 
 ```bash
 ./scripts/show-diff.sh
 ```
 
-## Dev shell (extras enabled)
+## Dev Shell
 
-If `enableExtras = true` in `config/settings.nix`, you can enter the dev shell:
+If `enableExtras = true` in `config/features.nix`:
 
 ```bash
 nix develop
 ```
 
-## Commit (optional)
+## Commit
 
 ```bash
-./scripts/commit-config.sh "Describe your change"
+./scripts/commit-config.sh "Describe the host change"
 ```
 
 ## Apply
 
 ```bash
-./scripts/apply-config.sh "Apply config"
+./scripts/apply-config.sh --hostname nixoa
 ```
 
-## Update inputs
+Use `--dry-run` for a preview or `--build` for a build-only pass.
 
-```bash
-nix flake update
-./scripts/apply-config.sh "Update inputs"
-```
+## Extend The Host
 
-## Add a custom module
+- Add NixOS implementation modules under `modules/_nixos/`
+- Import them from `modules/aspects/nixoa-host.nix`
+- Add Home Manager features under `modules/_homeManager/profile/features/`
 
-1) Create `modules/host/custom.nix`
-2) Wire it into `modules/host.nix` or `modules/user.nix`
-3) Add it to the `vm` stack
-
-This keeps edits modular and easy to maintain.
+This keeps the host topology stable while policy evolves in small modules.

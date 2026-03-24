@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
-# Show configuration change history
+# Show NiXOA repository history for tracked configuration paths
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
-CONFIG_FILES=(config/default.nix config config.nixoa.toml)
-
-cd "$CONFIG_DIR"
-
-if [ ! -d .git ]; then
-    echo "Error: Not a git repository."
-    exit 1
-fi
+. "$SCRIPT_DIR/lib/common.sh"
+nixoa_require_git_repo
+nixoa_cd_root
 
 echo "=== Configuration Change History ==="
-git log --oneline --decorate --graph -10 -- "${CONFIG_FILES[@]}"
+git log --oneline --decorate --graph -10 -- "${NIXOA_TRACKED_PATHS[@]}"
 
 echo ""
 echo "To see full diff for a commit: git show <commit-hash>"
-echo "To revert to a previous commit: git checkout <commit-hash> -- ${CONFIG_FILES[*]}"
+echo "To restore paths from a commit: git restore --source <commit-hash> -- ${NIXOA_TRACKED_PATHS[*]}"

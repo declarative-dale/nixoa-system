@@ -1,6 +1,5 @@
 {
   inputs,
-  lib,
   vars,
   ...
 }:
@@ -8,9 +7,10 @@ let
   system = "x86_64-linux";
 in
 {
-  den.schema.user.classes = lib.mkDefault [ "homeManager" ];
-
   den.hosts.${system}.${vars.hostname} = {
+    aspect = "nixoaHost";
+    hostName = vars.hostname;
+
     instantiate =
       { modules, ... }:
       inputs.nixpkgs.lib.nixosSystem {
@@ -20,6 +20,9 @@ in
         };
       };
 
-    users.${vars.username} = { };
+    users.${vars.username} = {
+      aspect = "nixoaUser";
+      userName = vars.username;
+    };
   };
 }

@@ -1,33 +1,40 @@
 # How It Works
 
-NiXOA system is the **host entrypoint**. It composes your settings with the
-immutable `core` library and produces `nixosConfigurations.<hostname>`.
+NiXOA system is the concrete den host flake. It takes editable config fragments,
+builds `vars`, attaches stable aspects, and emits
+`nixosConfigurations.<hostname>`.
 
 ## High-Level Flow
 
+```text
+config/*.nix
+   -> config/compose.nix
+   -> modules/config/vars.nix
+   -> modules/topology/schema.nix
+   -> modules/topology/hosts.nix
+   -> modules/aspects/nixoa-host.nix + modules/aspects/nixoa-user.nix
+   -> den host/user contexts
+   -> flake.nixosConfigurations.<hostname>
 ```
-config/* ─┐
-          ├─ config/default.nix (aggregator)
-          └─ modules/vars.nix
-                 │
-                 ├─ modules/hosts.nix      -> den.hosts.x86_64-linux.<hostname>
-                 ├─ modules/host.nix       -> host NixOS aspect
-                 ├─ modules/user.nix       -> user Home Manager aspect
-                 └─ den -> nixosConfigurations.<hostname>
-```
 
-## The Relationship Between System and Core
+## System/Core Boundary
 
-- **system/**: user-editable, host-specific configuration.
-- **core/**: reusable module library and packages (imported as a flake input).
+- `system/`: editable host policy, repo scripts, docs, and bootstrap flow
+- `core/`: immutable module stacks, overlays, and packages
 
-System pulls `core` as `nixoaCore` and imports the curated
-`nixoaCore.nixosModules.appliance` stack from the host aspect.
+The host aspect imports:
 
-## Special Args and Vars
+- `inputs.nixoaCore.nixosModules.appliance`
+- `inputs.nixoaCore.overlays.nixoa`
+- local runtime, hardware, package, and firewall modules
 
-- `config/` files produce `vars`.
-- `vars` is injected into NixOS modules via the host's custom `instantiate`.
-- Home Manager receives `vars` and `inputs` via `home-manager.extraSpecialArgs`.
+## Stable Aspect Names
 
-This keeps configuration centralized while modules remain composable.
+The host and user are declared with stable aspect names rather than reusing the
+mutable hostname and username:
+
+- host aspect: `nixoaHost`
+- user aspect: `nixoaUser`
+
+That keeps topology identity separate from policy identity, which is closer to
+den’s intended structure.

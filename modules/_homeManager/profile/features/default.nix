@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-# Home Manager feature set (directory import)
+# Home Manager profile features bundle
 { lib, ... }:
 let
   dir = ./.;

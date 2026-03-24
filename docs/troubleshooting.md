@@ -1,52 +1,41 @@
 # Troubleshooting
 
-## Rebuild fails with missing hostname
+## Host Output Not Found
 
-Ensure `config/settings.nix` defines `hostname`:
-
-```nix
-{ hostname = "nixoa"; }
-```
-
-## SSH access not working
-
-Check `config/settings.nix`:
-
-```nix
-{ sshKeys = [ "ssh-ed25519 AAAA... user@host" ]; }
-```
-
-Then rebuild:
+Make sure `hostname` is set in `config/site.nix` or `config/overrides.nix`, then
+run:
 
 ```bash
-./scripts/apply-config.sh "Fix SSH keys"
+nix flake check --no-write-lock-file
 ```
 
-## Firewall ports blocked
+## SSH Access Missing
 
-Update `config/settings.nix`:
+Check `sshKeys` in `config/site.nix` or `config/overrides.nix`, then rebuild:
 
-```nix
-{
-  allowedTCPPorts = [ 22 80 443 ];
-  allowedUDPPorts = [ 53 ];
-}
+```bash
+./scripts/apply-config.sh --hostname nixoa
 ```
 
-## XO service not running
+## Firewall Ports Still Closed
+
+Verify `config/platform.nix` contains the required ports and confirm the build
+actually switched on the host.
+
+## XO Service Not Running
 
 ```bash
 systemctl status xo-server
 journalctl -u xo-server -n 200
 ```
 
-Verify `config/xo.nix`:
+Then verify:
 
-```nix
-{ enableXO = true; }
-```
+- `enableXO = true` in `config/features.nix`
+- runtime/TLS settings in `config/xo.nix`
 
-## Core input update issues
+## Bootstrap Problems
 
-If `nix flake update` fails, check your network and try again. You can pin a
-specific core ref in `flake.nix` if needed.
+If the raw bootstrap one-liner fails because `curl` or `git` are missing, use
+the documented `nix shell nixpkgs#curl nixpkgs#git ...` variant from the
+README.

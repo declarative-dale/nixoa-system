@@ -5,54 +5,39 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIR="$(dirname "$SCRIPT_DIR")"
-CONFIG_FILES=(config/default.nix config config.nixoa.toml)
-IDENTITY_FILE="${CONFIG_DIR}/config/settings.nix"
+. "$SCRIPT_DIR/lib/common.sh"
+nixoa_require_git_repo
+nixoa_cd_root
 
-cd "$CONFIG_DIR"
-
-# Check if we're in a git repository
-if [ ! -d .git ]; then
-    echo "Error: Not a git repository. Initializing..."
-    git init
-    git add .
-    git commit -m "Initial commit"
-    echo "Git repository initialized."
-fi
-
-# Get commit message from argument or prompt
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <commit message>"
-    echo "Example: $0 'Updated XO ports and TLS settings'"
-    exit 1
+  echo "Usage: $0 <commit message>" >&2
+  echo "Example: $0 'Adjust XO TLS and firewall defaults'" >&2
+  exit 1
 fi
 
 COMMIT_MSG="$1"
 
-# Show what's changed
 echo "=== Configuration Changes ==="
-git diff --stat "${CONFIG_FILES[@]}" 2>/dev/null || true
+git diff --stat -- "${NIXOA_TRACKED_PATHS[@]}" 2>/dev/null || true
+if [ -n "$(nixoa_status_porcelain)" ]; then
+  echo ""
+  nixoa_status_porcelain
+fi
 echo ""
 
-# Check if there are changes to commit
-if git diff --quiet "${CONFIG_FILES[@]}" 2>/dev/null; then
-    echo "No changes to commit."
-    exit 0
+if [ -z "$(nixoa_status_porcelain)" ]; then
+  echo "No changes to commit."
+  exit 0
 fi
 
-# Stage configuration files (including new config fragments)
-git add "${CONFIG_FILES[@]}"
+git add -- "${NIXOA_TRACKED_PATHS[@]}"
 
-# Commit the changes
 git commit -m "$COMMIT_MSG"
 
 echo "✓ Configuration committed successfully!"
 echo ""
 echo "Next steps:"
 echo "  1. Review changes: git log -1 -p"
-# Get configured hostname for rebuild command
-CONFIG_HOST=$(grep "hostname = " "$IDENTITY_FILE" 2>/dev/null | sed 's/.*= *"\\(.*\\)".*/\\1/' | head -1)
-CONFIG_HOST="${CONFIG_HOST:-nixoa}"
-echo "  2. Rebuild NiXOA: cd ~/system && sudo nixos-rebuild switch --flake .#${CONFIG_HOST}"
+echo "  2. Apply the host config: ./scripts/apply-config.sh"
 echo ""
 echo "To undo this commit: git reset HEAD~1"

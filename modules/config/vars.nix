@@ -6,7 +6,7 @@
 let
   system = "x86_64-linux";
   pkgs = inputs.nixpkgs.legacyPackages.${system};
-  vars = import ../config/default.nix {
+  vars = import ../../config/compose.nix {
     inherit lib pkgs;
   };
 in

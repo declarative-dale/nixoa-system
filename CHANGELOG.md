@@ -1,3 +1,31 @@
+# system v1.5.0 - Topology/Aspect Split And Bootstrap Workflow
+
+**Release Date:** March 24, 2026
+
+## ✨ Added
+
+- **Explicit config split** with `config/site.nix`, `config/platform.nix`, `config/features.nix`, and `config/overrides.nix.example`
+- **Stable topology modules** under `modules/topology/` with a separate schema module
+- **Dedicated output modules** under `modules/outputs/` for apps and the extras-gated dev shell
+- **Bootstrap helper** at `scripts/bootstrap.sh` for fresh-host installation and first-switch automation
+- **Shared script helpers** in `scripts/lib/common.sh`
+
+## 🔄 Changed
+
+- **Policy/topology separation** by using stable `nixoaHost` and `nixoaUser` aspects instead of mutable hostname/username aspect names
+- **Apply workflow** so `scripts/apply-config.sh` now actually runs `nixos-rebuild`
+- **Commit workflow** so `scripts/commit-config.sh` only manages git commits and no longer initializes repositories
+- **Flake apps** now wrap checkout-local scripts instead of embedding store copies that lose repo context
+- **Docs and README** updated for the new dendritic naming scheme and one-line bootstrap flow
+
+## 🗑️ Removed
+
+- **`config/settings.nix`** in favor of the explicit config split
+- **Old `config/default.nix` naming** in favor of `config/compose.nix`
+- **Legacy `_user/` layout** in favor of `_homeManager/profile/`
+
+---
+
 # system v1.4.0 - Config Composition Split
 
 **Release Date:** February 27, 2026
