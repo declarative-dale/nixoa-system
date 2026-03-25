@@ -8,10 +8,10 @@
         (inputs.nixpkgs.lib.evalModules {
           modules = [
             ./modules/dendritic.nix
-            ./modules/config.nix
-            ./modules/topology.nix
-            ./modules/aspects.nix
-            ./modules/outputs.nix
+            ./modules/config
+            ./modules/topology
+            ./modules/aspects
+            ./modules/outputs
           ];
           specialArgs = { inherit inputs; };
         }).config.flake

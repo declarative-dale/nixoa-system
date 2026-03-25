@@ -1,4 +1,4 @@
 { ... }:
 {
-  imports = [ ./vars.nix ];
+  imports = [ ./values.nix ];
 }

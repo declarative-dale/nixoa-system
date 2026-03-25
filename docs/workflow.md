@@ -42,8 +42,8 @@ Use `--dry-run` for a preview or `--build` for a build-only pass.
 
 ## Extend The Host
 
-- Add NixOS implementation modules under `modules/_nixos/`
-- Import them from `modules/aspects/nixoa-host.nix`
-- Add Home Manager features under `modules/_homeManager/profile/features/`
+- Add NixOS implementation modules under `modules/nixos/`
+- Import them from `modules/aspects/host.nix`
+- Add Home Manager features under `modules/home/`
 
 This keeps the host topology stable while policy evolves in small modules.

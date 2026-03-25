@@ -1,8 +1,8 @@
 { ... }:
 {
   imports = [
-    ./home-manager-defaults.nix
-    ./nixoa-host.nix
-    ./nixoa-user.nix
+    ./defaults.nix
+    ./host.nix
+    ./user.nix
   ];
 }

@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./schema.nix
+    ./classes.nix
     ./hosts.nix
   ];
 }

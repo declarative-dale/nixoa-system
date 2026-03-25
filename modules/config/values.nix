@@ -4,7 +4,8 @@
   ...
 }:
 let
-  system = "x86_64-linux";
+  site = import ../../config/site.nix { };
+  system = site.hostSystem;
   pkgs = inputs.nixpkgs.legacyPackages.${system};
   vars = import ../../config/compose.nix {
     inherit lib pkgs;

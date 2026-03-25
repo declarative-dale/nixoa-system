@@ -1,3 +1,31 @@
+# system v3.0.0 - Den-Native Naming And Topology Cleanup
+
+**Release Date:** March 25, 2026
+
+## ⚠️ Breaking Changes
+
+- **Host and user aspect names now follow the actual topology names** instead of the old `nixoaHost` / `nixoaUser` aliases
+- **Plain module paths moved** from `modules/_nixos/` and `modules/_homeManager/` to `modules/nixos/` and `modules/home/`
+- **Top-level wrapper modules were removed**; `flake.nix` now imports the real dendritic directories directly
+
+## ✨ Added
+
+- **Host-owned account modules** for administrator account, SSH policy, and sudo policy under `modules/nixos/host/`
+- **`hostSystem` in `config/site.nix`** as the single source of truth for the host platform
+
+## 🔄 Changed
+
+- **Topology defaults naming** from `schema.nix` to `classes.nix`
+- **Config arg wiring naming** from `vars.nix` to `values.nix`
+- **Home Manager profile layout** from nested profile/features discovery to explicit imports under `modules/home/`
+- **README and operational docs** to match the current den wiring and tree names
+
+## 🐛 Fixed
+
+- **Core/system boundary drift** by moving hostname and administrator policy fully into `system`
+
+---
+
 # system v2.0.0 - Release Surface And Public Core Tracking Cleanup
 
 **Release Date:** March 24, 2026

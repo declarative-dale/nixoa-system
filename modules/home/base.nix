@@ -7,7 +7,6 @@
 {
   home.username = vars.username;
   home.homeDirectory = "/home/${vars.username}";
-  home.stateVersion = vars.stateVersion;
 
   programs.home-manager.enable = true;
 }

@@ -4,7 +4,7 @@ NiXOA system is the **host-specific** flake. It keeps editable site policy in
 `config/`, declares the host topology with den, and imports the immutable
 `nixoaCore` appliance stack.
 
-Current release series: `v2.0.0`
+Current release series: `v3.0.0`
 
 ## Quick Start
 
@@ -32,7 +32,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 
 ## Edit Surface
 
-- `config/site.nix`: hostname, timezone, state version, username, SSH keys
+- `config/site.nix`: system, hostname, timezone, state version, username, SSH keys
 - `config/platform.nix`: boot loader and firewall ports
 - `config/features.nix`: host feature toggles like `enableExtras`
 - `config/packages.nix`: system and user packages
@@ -43,12 +43,12 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 ## Dendritic Shape
 
 - `config/compose.nix` merges the editable config fragments into `vars`
-- `modules/config/vars.nix` exposes `vars` to the rest of the flake
-- `modules/topology/schema.nix` and `modules/topology/hosts.nix` declare den schema and hosts
-- `modules/aspects/nixoa-host.nix` defines the stable host aspect
-- `modules/aspects/nixoa-user.nix` defines the stable Home Manager user aspect
+- `modules/config/values.nix` exposes `vars` to the rest of the flake
+- `modules/topology/classes.nix` and `modules/topology/hosts.nix` declare den schema and hosts
+- `modules/aspects/defaults.nix` sets global den defaults like hostname wiring and HM state
+- `modules/aspects/host.nix` and `modules/aspects/user.nix` extend the actual host/user aspects created by den
 - `modules/outputs/` contains flake apps and the extras-gated dev shell
-- `modules/_nixos/` and `modules/_homeManager/` hold plain implementation modules
+- `modules/nixos/` and `modules/home/` hold plain implementation modules
 
 ## Common Commands
 
@@ -75,10 +75,10 @@ system/
 │   └── *.nix             # editable host policy
 ├── modules/
 │   ├── topology/         # den schema + host declarations
-│   ├── aspects/          # stable host/user policy aspects
+│   ├── aspects/          # den default + host/user aspect extensions
 │   ├── outputs/          # apps + dev shell
-│   ├── _nixos/           # plain NixOS modules
-│   └── _homeManager/     # plain Home Manager modules
+│   ├── nixos/            # plain NixOS modules
+│   └── home/             # plain Home Manager modules
 ├── scripts/
 │   ├── bootstrap.sh
 │   ├── apply-config.sh

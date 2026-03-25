@@ -4,11 +4,10 @@
   ...
 }:
 let
-  system = "x86_64-linux";
+  system = vars.hostSystem;
 in
 {
   den.hosts.${system}.${vars.hostname} = {
-    aspect = "nixoaHost";
     hostName = vars.hostname;
 
     instantiate =
@@ -21,7 +20,6 @@ in
       };
 
     users.${vars.username} = {
-      aspect = "nixoaUser";
       userName = vars.username;
     };
   };

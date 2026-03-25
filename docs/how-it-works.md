@@ -9,10 +9,10 @@ builds `vars`, attaches stable aspects, and emits
 ```text
 config/*.nix
    -> config/compose.nix
-   -> modules/config/vars.nix
-   -> modules/topology/schema.nix
+   -> modules/config/values.nix
+   -> modules/topology/classes.nix
    -> modules/topology/hosts.nix
-   -> modules/aspects/nixoa-host.nix + modules/aspects/nixoa-user.nix
+   -> modules/aspects/defaults.nix + modules/aspects/host.nix + modules/aspects/user.nix
    -> den host/user contexts
    -> flake.nixosConfigurations.<hostname>
 ```
@@ -26,15 +26,14 @@ The host aspect imports:
 
 - `inputs.nixoaCore.nixosModules.appliance`
 - `inputs.nixoaCore.overlays.nixoa`
-- local runtime, hardware, package, and firewall modules
+- local runtime, hardware, package, account, SSH, sudo, and firewall modules
 
-## Stable Aspect Names
+## Aspect Ownership
 
-The host and user are declared with stable aspect names rather than reusing the
-mutable hostname and username:
+Den already creates an aspect for the declared host and user. The local files
+extend those real aspect names directly:
 
-- host aspect: `nixoaHost`
-- user aspect: `nixoaUser`
+- `modules/aspects/host.nix` extends `den.aspects.${vars.hostname}`
+- `modules/aspects/user.nix` extends `den.aspects.${vars.username}`
 
-That keeps topology identity separate from policy identity, which is closer to
-den’s intended structure.
+That keeps the wiring den-native and removes the extra naming layer.

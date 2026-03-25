@@ -1,9 +1,10 @@
 {
   inputs,
+  vars,
   ...
 }:
 let
-  system = "x86_64-linux";
+  system = vars.hostSystem;
   pkgs = inputs.nixpkgs.legacyPackages.${system};
   mkRepoScriptApp =
     {

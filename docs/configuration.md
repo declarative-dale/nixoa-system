@@ -24,6 +24,7 @@ config/
 
 ```nix
 {
+  hostSystem = "x86_64-linux";
   hostname = "nixoa";
   timezone = "UTC";
   stateVersion = "25.11";
@@ -79,17 +80,19 @@ config/
 
 ## Topology And Aspect Wiring
 
-- `modules/config/vars.nix` imports `config/compose.nix`
-- `modules/topology/schema.nix` sets den defaults shared across users
+- `modules/config/values.nix` imports `config/compose.nix`
+- `modules/topology/classes.nix` sets den defaults shared across users
 - `modules/topology/hosts.nix` declares the concrete host and user from `vars`
-- `modules/aspects/nixoa-host.nix` imports the plain NixOS implementation modules
-- `modules/aspects/nixoa-user.nix` imports the Home Manager profile
+- `modules/aspects/defaults.nix` wires den-wide defaults like hostname and HM state
+- `modules/aspects/host.nix` extends the concrete host aspect
+- `modules/aspects/user.nix` extends the concrete user aspect
 
 ## Advanced Customization
 
-For extra NixOS behavior, add a module under `modules/_nixos/` and import it
-from [nixoa-host.nix](/home/nixos/projects/NiXOA/system/modules/aspects/nixoa-host.nix).
+For extra NixOS behavior, add a module under `modules/nixos/` and import it
+from [host.nix](/home/nixos/projects/NiXOA/system/modules/aspects/host.nix).
 
 For extra Home Manager behavior, add a file under
-[modules/_homeManager/profile/features](/home/nixos/projects/NiXOA/system/modules/_homeManager/profile/features).
-Directory imports will pull it in automatically.
+[modules/home](/home/nixos/projects/NiXOA/system/modules/home). Import it from
+[default.nix](/home/nixos/projects/NiXOA/system/modules/home/default.nix) if it
+belongs in the default profile.

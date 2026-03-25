@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is the NiXOA host configuration layer. Editable policy lives in `config/`, composed by `config/compose.nix`. Den topology lives under `modules/topology/`, stable host/user aspects live under `modules/aspects/`, flake outputs live under `modules/outputs/`, and plain implementation modules live under `modules/_nixos/` and `modules/_homeManager/`. `hardware-configuration.nix` is machine-generated and should be treated as host data, not as reusable module code.
+This repository is the NiXOA host configuration layer. Editable policy lives in `config/`, composed by `config/compose.nix`. Den topology lives under `modules/topology/`, den defaults and aspect extensions live under `modules/aspects/`, flake outputs live under `modules/outputs/`, and plain implementation modules live under `modules/nixos/` and `modules/home/`. `hardware-configuration.nix` is machine-generated and should be treated as host data, not as reusable module code.
 
 ## Build, Test, and Development Commands
 - `./scripts/show-diff.sh`: Show pending repository changes relevant to the host configuration.
@@ -13,8 +13,8 @@ This repository is the NiXOA host configuration layer. Editable policy lives in 
 
 ## Coding Style & Naming Conventions
 - Keep editable host values in `config/`; do not hardcode host-specific values into reusable implementation modules.
-- Use explicit names that describe role and scope, for example `modules/aspects/nixoa-host.nix` or `modules/_nixos/runtime/nix-daemon-settings.nix`.
-- Add new Home Manager features under `modules/_homeManager/profile/features/`. Add new NixOS implementation modules under `modules/_nixos/` and import them from `modules/aspects/nixoa-host.nix`.
+- Use short role-first names like `modules/aspects/host.nix`, `modules/nixos/runtime/nix-settings.nix`, or `modules/home/tools.nix`.
+- Add new Home Manager features under `modules/home/`. Add new NixOS implementation modules under `modules/nixos/` and import them from `modules/aspects/host.nix`.
 
 ## Testing Guidelines
 - Run `nix flake check --no-write-lock-file` before rebuilds.
