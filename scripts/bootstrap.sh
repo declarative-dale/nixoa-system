@@ -148,31 +148,19 @@ run_as_root() {
   exit 1
 }
 
-ensure_xoa_cache_access() {
-  local nix_conf="/etc/nix/nix.conf"
-  local existing=""
+bootstrap_flake_check() {
+  local flake_ref="path:$repo_dir"
 
-  if [ -f "$nix_conf" ]; then
-    existing="$(run_as_root cat "$nix_conf" 2>/dev/null || true)"
-  fi
-
-  if printf '%s\n' "$existing" | grep -Fq "extra-substituters = $xoa_cache_url" \
-    && printf '%s\n' "$existing" | grep -Fq "trusted-substituters = $xoa_cache_url" \
-    && printf '%s\n' "$existing" | grep -Fq "extra-trusted-public-keys = $xoa_cache_key"
-  then
-    echo "XOA Cachix access is already configured in $nix_conf"
-    return 0
-  fi
-
-  echo "Configuring XOA Cachix access in $nix_conf"
-  run_as_root install -d -m 0755 /etc/nix
-  run_as_root /bin/sh -c "cat >> '$nix_conf' <<'EOF'
-
-# Added by NiXOA bootstrap for pre-switch Xen Orchestra cache access
-extra-substituters = $xoa_cache_url
-trusted-substituters = $xoa_cache_url
-extra-trusted-public-keys = $xoa_cache_key
-EOF"
+  echo "Running nix flake check"
+  run_as_root env \
+    NIX_CONFIG='experimental-features = nix-command flakes' \
+    nix \
+    --accept-flake-config \
+    --option extra-substituters "$xoa_cache_url" \
+    --option extra-trusted-public-keys "$xoa_cache_key" \
+    flake check \
+    --no-write-lock-file \
+    "$flake_ref"
 }
 
 while [ $# -gt 0 ]; do
@@ -296,13 +284,10 @@ overrides_file="$repo_dir/config/overrides.nix"
 echo "Wrote $overrides_file"
 
 if [ "$skip_check" -eq 0 ]; then
-  ensure_xoa_cache_access
-  echo "Running nix flake check"
-  (cd "$repo_dir" && nix flake check --no-write-lock-file)
+  bootstrap_flake_check
 fi
 
 if [ "$first_switch" -eq 1 ]; then
-  ensure_xoa_cache_access
   switch_host="$hostname_arg"
   echo "Running first switch for ${switch_host}"
   "$repo_dir/scripts/apply-config.sh" --hostname "$switch_host" --first-install
