@@ -12,6 +12,7 @@ Options:
   --repo-dir PATH       Checkout directory. Defaults to $HOME/system.
   --repo-url URL        System repository URL.
   --branch NAME         Branch to clone or update. Defaults to beta.
+  --enable-flakes       Persist nix-command + flakes before validation.
   --hostname NAME       Hostname. Defaults to nixoa.
   --username NAME       Primary username. Defaults to nixoa.
   --timezone ZONE       Time zone. Defaults to Europe/Paris.
@@ -34,6 +35,7 @@ repo_dir="${HOME:-/root}/system"
 default_hostname="nixoa"
 default_username="nixoa"
 default_timezone="Europe/Paris"
+enable_flakes=0
 skip_check=0
 skip_hardware_copy=0
 first_switch=0
@@ -73,6 +75,62 @@ prompt_required() {
   printf '%s\n' "$reply"
 }
 
+flakes_are_enabled() {
+  if nix show-config experimental-features >/dev/null 2>&1; then
+    local features
+    features="$(nix show-config experimental-features 2>/dev/null || true)"
+    printf '%s' "$features" | grep -Eq 'nix-command' \
+      && printf '%s' "$features" | grep -Eq 'flakes'
+    return $?
+  fi
+
+  return 1
+}
+
+enable_flakes_now() {
+  local target_file
+  local target_dir
+
+  if flakes_are_enabled; then
+    if [ -n "${NIX_CONFIG:-}" ]; then
+      export NIX_CONFIG=$'experimental-features = nix-command flakes\n'"$NIX_CONFIG"
+    else
+      export NIX_CONFIG='experimental-features = nix-command flakes'
+    fi
+    echo "Flakes are already enabled."
+    return 0
+  fi
+
+  if [ "$(id -u)" -eq 0 ]; then
+    target_file="/etc/nix/nix.conf"
+    install -d -m 0755 /etc/nix
+  else
+    target_file="${XDG_CONFIG_HOME:-${HOME:-$repo_dir}/.config}/nix/nix.conf"
+    target_dir="$(dirname "$target_file")"
+    install -d -m 0755 "$target_dir"
+  fi
+
+  if [ -f "$target_file" ] \
+    && grep -Eq '^[[:space:]]*experimental-features[[:space:]]*=.*nix-command' "$target_file" \
+    && grep -Eq '^[[:space:]]*experimental-features[[:space:]]*=.*flakes' "$target_file"
+  then
+    echo "Flakes are already configured in $target_file"
+    return 0
+  fi
+
+  {
+    printf '\n# Added by NiXOA bootstrap\n'
+    printf 'experimental-features = nix-command flakes\n'
+  } >> "$target_file"
+
+  if [ -n "${NIX_CONFIG:-}" ]; then
+    export NIX_CONFIG=$'experimental-features = nix-command flakes\n'"$NIX_CONFIG"
+  else
+    export NIX_CONFIG='experimental-features = nix-command flakes'
+  fi
+  echo "Enabled flakes in $target_file"
+}
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --repo-dir)
@@ -86,6 +144,10 @@ while [ $# -gt 0 ]; do
     --branch)
       branch="$2"
       shift 2
+      ;;
+    --enable-flakes)
+      enable_flakes=1
+      shift
       ;;
     --hostname)
       hostname_arg="$2"
@@ -145,6 +207,10 @@ fi
 
 if [ "${#ssh_keys[@]}" -eq 0 ]; then
   ssh_keys+=( "$(prompt_required "SSH public key")" )
+fi
+
+if [ "$enable_flakes" -eq 1 ]; then
+  enable_flakes_now
 fi
 
 mkdir -p "$(dirname "$repo_dir")"

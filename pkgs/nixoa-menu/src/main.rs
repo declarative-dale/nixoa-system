@@ -39,6 +39,14 @@ struct ActionItem {
     detail: &'static str,
 }
 
+#[derive(Clone, Debug)]
+struct UpdateItem {
+    shortcut: char,
+    title: &'static str,
+    detail: &'static str,
+    backend: &'static str,
+}
+
 const ACTIONS: [ActionItem; 11] = [
     ActionItem {
         shortcut: '1',
@@ -77,8 +85,8 @@ const ACTIONS: [ActionItem; 11] = [
     },
     ActionItem {
         shortcut: '8',
-        title: "Update inputs + rebuild",
-        detail: "Update the flake inputs, commit the lock file, and run apply-config.sh interactively.",
+        title: "Updates",
+        detail: "Open the update menu for nixpkgs, Home Manager, Xen Orchestra, or a full flake update.",
     },
     ActionItem {
         shortcut: '9',
@@ -94,6 +102,33 @@ const ACTIONS: [ActionItem; 11] = [
         shortcut: 'g',
         title: "Collect garbage",
         detail: "Run nix-collect-garbage -d interactively for a full manual store cleanup.",
+    },
+];
+
+const UPDATE_ACTIONS: [UpdateItem; 4] = [
+    UpdateItem {
+        shortcut: '1',
+        title: "Update nixpkgs",
+        detail: "Refresh only the nixpkgs input lock and then choose whether to rebuild now or on reboot.",
+        backend: "update-nixpkgs",
+    },
+    UpdateItem {
+        shortcut: '2',
+        title: "Update Home Manager",
+        detail: "Refresh only the home-manager input lock and then choose whether to rebuild now or on reboot.",
+        backend: "update-home-manager",
+    },
+    UpdateItem {
+        shortcut: '3',
+        title: "Update XOA",
+        detail: "Check the latest xen-orchestra-ce tag, refresh that input lock, and then choose whether to rebuild now or on reboot.",
+        backend: "update-xoa",
+    },
+    UpdateItem {
+        shortcut: '4',
+        title: "Update all",
+        detail: "Run a full nix flake update across every direct input and then choose whether to rebuild now or on reboot.",
+        backend: "update-all",
     },
 ];
 
@@ -121,6 +156,7 @@ struct Snapshot {
     storage_used_bytes: u64,
     storage_used_percent: u32,
     primary_ip: Option<String>,
+    rebuild_queued: bool,
     rebuild_needed: bool,
     last_apply: Option<ApplyState>,
 }
@@ -160,6 +196,7 @@ enum UpdateStatus {
 enum Screen {
     Main,
     Keys,
+    Updates,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -188,6 +225,7 @@ struct App {
     update_status: UpdateStatus,
     update_rx: Option<Receiver<UpdateStatus>>,
     selected_action: usize,
+    selected_update: usize,
     selected_key: usize,
     screen: Screen,
     modal: Option<InputModal>,
@@ -205,6 +243,7 @@ impl App {
             update_status: UpdateStatus::Idle,
             update_rx: None,
             selected_action: 0,
+            selected_update: 0,
             selected_key: 0,
             screen: Screen::Main,
             modal: None,
@@ -284,6 +323,10 @@ impl App {
         &ACTIONS[self.selected_action]
     }
 
+    fn selected_update_item(&self) -> &'static UpdateItem {
+        &UPDATE_ACTIONS[self.selected_update]
+    }
+
     fn alerts(&self) -> Vec<String> {
         let mut alerts = Vec::new();
 
@@ -297,6 +340,10 @@ impl App {
         if self.snapshot.rebuild_needed {
             alerts
                 .push("Current repository state has not been switched onto the host.".to_string());
+        }
+
+        if self.snapshot.rebuild_queued {
+            alerts.push("A rebuild has been queued for the next boot.".to_string());
         }
 
         if self.snapshot.behind > 0 {
@@ -496,6 +543,7 @@ fn handle_key(terminal: &mut AppTerminal, app: &mut App, key: KeyEvent) -> Resul
     match app.screen {
         Screen::Main => handle_main_key(terminal, app, key),
         Screen::Keys => handle_keys_key(terminal, app, key),
+        Screen::Updates => handle_updates_key(terminal, app, key),
     }
 }
 
@@ -575,6 +623,45 @@ fn handle_keys_key(_terminal: &mut AppTerminal, app: &mut App, key: KeyEvent) ->
             if let Some(selected_key) = app.snapshot.ssh_keys.get(app.selected_key).cloned() {
                 run_action_capture(app, &["remove-ssh-key", selected_key.as_str()])?;
             }
+        }
+        _ => {}
+    }
+
+    Ok(())
+}
+
+fn handle_updates_key(terminal: &mut AppTerminal, app: &mut App, key: KeyEvent) -> Result<()> {
+    match key.code {
+        KeyCode::Esc | KeyCode::Char('h') | KeyCode::Char('b') => {
+            app.screen = Screen::Main;
+        }
+        KeyCode::Up | KeyCode::Char('k') => {
+            if app.selected_update == 0 {
+                app.selected_update = UPDATE_ACTIONS.len() - 1;
+            } else {
+                app.selected_update -= 1;
+            }
+        }
+        KeyCode::Down | KeyCode::Char('j') => {
+            app.selected_update = (app.selected_update + 1) % UPDATE_ACTIONS.len();
+        }
+        KeyCode::Enter => activate_selected_update(terminal, app)?,
+        KeyCode::Char('r') => {
+            app.refresh_snapshot()?;
+            app.start_update_check();
+            app.push_log("Refreshed repository snapshot.");
+        }
+        KeyCode::Char('u') => {
+            app.start_update_check();
+            app.push_log("Started a new flake input update check.");
+        }
+        KeyCode::Char('q') => {
+            app.should_open_shell = true;
+        }
+        KeyCode::Char(ch) if update_index_for_shortcut(ch).is_some() => {
+            app.selected_update =
+                update_index_for_shortcut(ch).expect("update shortcut checked above");
+            activate_selected_update(terminal, app)?;
         }
         _ => {}
     }
@@ -683,7 +770,7 @@ fn activate_selected_action(terminal: &mut AppTerminal, app: &mut App) -> Result
             "Enter a dotted NixOS service path such as tailscale or prometheus.exporters.node.",
             "",
         ),
-        7 => run_action_interactive(terminal, app, &["update-rebuild"])?,
+        7 => app.screen = Screen::Updates,
         8 => app.should_open_shell = true,
         9 => run_command_interactive(terminal, app, "Rollback system", {
             let mut command = Command::new(app.repo_root.join("scripts/apply-config.sh"));
@@ -699,6 +786,11 @@ fn activate_selected_action(terminal: &mut AppTerminal, app: &mut App) -> Result
     }
 
     Ok(())
+}
+
+fn activate_selected_update(terminal: &mut AppTerminal, app: &mut App) -> Result<()> {
+    let update = app.selected_update_item();
+    run_action_interactive(terminal, app, &[update.backend])
 }
 
 fn open_modal(app: &mut App, action: InputAction, title: &str, help: &str, initial: &str) {
@@ -839,6 +931,12 @@ fn action_index_for_shortcut(shortcut: char) -> Option<usize> {
         .position(|action| action.shortcut == shortcut)
 }
 
+fn update_index_for_shortcut(shortcut: char) -> Option<usize> {
+    UPDATE_ACTIONS
+        .iter()
+        .position(|action| action.shortcut == shortcut)
+}
+
 fn check_flake_updates(repo_root: &Path) -> UpdateStatus {
     let current_lock = repo_root.join("flake.lock");
     let nonce = SystemTime::now()
@@ -936,6 +1034,7 @@ fn render(frame: &mut Frame, app: &App) {
     match app.screen {
         Screen::Main => render_dashboard(frame, middle[1], app),
         Screen::Keys => render_keys(frame, middle[1], app),
+        Screen::Updates => render_updates(frame, middle[1], app),
     }
 
     let bottom = Layout::default()
@@ -982,22 +1081,26 @@ fn render_status_grid(frame: &mut Frame, area: Rect, app: &App) {
         (format!("{} dirty", app.snapshot.dirty_count), Color::Yellow)
     };
 
-    let (apply_text, apply_color) = match &app.snapshot.last_apply {
-        Some(last_apply)
-            if last_apply.result == "success"
-                && last_apply.action == "switch"
-                && !app.snapshot.rebuild_needed =>
-        {
-            (format!("synced {}", last_apply.timestamp), Color::Green)
+    let (apply_text, apply_color) = if app.snapshot.rebuild_queued {
+        ("queued for reboot".to_string(), Color::Cyan)
+    } else {
+        match &app.snapshot.last_apply {
+            Some(last_apply)
+                if last_apply.result == "success"
+                    && last_apply.action == "switch"
+                    && !app.snapshot.rebuild_needed =>
+            {
+                (format!("synced {}", last_apply.timestamp), Color::Green)
+            }
+            Some(last_apply) if last_apply.result != "success" => {
+                (format!("failed {}", last_apply.timestamp), Color::Red)
+            }
+            Some(last_apply) => (
+                format!("{} {}", last_apply.action, last_apply.timestamp),
+                Color::Yellow,
+            ),
+            None => ("not applied".to_string(), Color::Yellow),
         }
-        Some(last_apply) if last_apply.result != "success" => {
-            (format!("failed {}", last_apply.timestamp), Color::Red)
-        }
-        Some(last_apply) => (
-            format!("{} {}", last_apply.action, last_apply.timestamp),
-            Color::Yellow,
-        ),
-        None => ("not applied".to_string(), Color::Yellow),
     };
 
     let (upstream_text, upstream_color) = if app.snapshot.behind > 0 {
@@ -1136,7 +1239,7 @@ fn render_actions(frame: &mut Frame, area: Rect, app: &App) {
 fn render_dashboard(frame: &mut Frame, area: Rect, app: &App) {
     let sections = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(9), Constraint::Min(7)])
+        .constraints([Constraint::Length(10), Constraint::Min(7)])
         .split(area);
 
     let summary = vec![
@@ -1185,6 +1288,14 @@ fn render_dashboard(frame: &mut Frame, area: Rect, app: &App) {
             "Branch: {}    Head: {}",
             app.snapshot.branch,
             short_sha(&app.snapshot.head)
+        )),
+        Line::from(format!(
+            "Queued rebuild: {}",
+            if app.snapshot.rebuild_queued {
+                "next boot"
+            } else {
+                "no"
+            }
         )),
         Line::from(format!("Selected: {}", app.selected_item().detail)),
     ];
@@ -1287,6 +1398,90 @@ fn render_keys(frame: &mut Frame, area: Rect, app: &App) {
     frame.render_widget(help, sections[1]);
 }
 
+fn render_updates(frame: &mut Frame, area: Rect, app: &App) {
+    let sections = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(46), Constraint::Percentage(54)])
+        .split(area);
+
+    let items: Vec<ListItem> = UPDATE_ACTIONS
+        .iter()
+        .enumerate()
+        .map(|(index, action)| {
+            let marker = if index == app.selected_update {
+                "›"
+            } else {
+                " "
+            };
+            ListItem::new(Line::from(format!(
+                "{marker} {}. {}",
+                action.shortcut, action.title
+            )))
+        })
+        .collect();
+
+    let mut state = ListState::default();
+    state.select(Some(app.selected_update));
+
+    let updates = List::new(items)
+        .block(
+            Block::default()
+                .title("Update menu")
+                .title_bottom("Enter run  Esc back")
+                .borders(Borders::ALL)
+                .border_set(border::ROUNDED)
+                .border_type(BorderType::Rounded),
+        )
+        .highlight_style(
+            Style::default()
+                .fg(Color::Black)
+                .bg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        );
+
+    frame.render_stateful_widget(updates, sections[0], &mut state);
+
+    let detail_lines = vec![
+        Line::from(app.selected_update_item().detail),
+        Line::from(""),
+        Line::from(format!(
+            "Queued on boot: {}",
+            if app.snapshot.rebuild_queued {
+                "yes"
+            } else {
+                "no"
+            }
+        )),
+        Line::from(format!(
+            "Rebuild needed: {}",
+            if app.snapshot.rebuild_needed {
+                "yes"
+            } else {
+                "no"
+            }
+        )),
+        Line::from(""),
+        Line::from("Each update commits only flake.lock."),
+        Line::from(
+            "After a lock change, the console asks whether to rebuild now or on the next boot.",
+        ),
+        Line::from(
+            "The XOA updater checks the latest upstream tag before refreshing xen-orchestra-ce.",
+        ),
+    ];
+
+    let details = Paragraph::new(detail_lines)
+        .block(
+            Block::default()
+                .title("Update details")
+                .borders(Borders::ALL)
+                .border_set(border::ROUNDED)
+                .border_type(BorderType::Rounded),
+        )
+        .wrap(Wrap { trim: true });
+    frame.render_widget(details, sections[1]);
+}
+
 fn render_logs(frame: &mut Frame, area: Rect, app: &App) {
     let lines: Vec<Line> = app
         .logs
@@ -1324,6 +1519,13 @@ fn render_help(frame: &mut Frame, area: Rect, app: &App) {
             Line::from("e replace all keys"),
             Line::from("d or Backspace remove selected"),
             Line::from("Esc back to dashboard"),
+        ],
+        Screen::Updates => vec![
+            Line::from("Arrows/jk move"),
+            Line::from("Enter or 1-4 run updates"),
+            Line::from("r refresh snapshot"),
+            Line::from("u refresh flake input check"),
+            Line::from("Esc back to dashboard, q open shell"),
         ],
     };
 

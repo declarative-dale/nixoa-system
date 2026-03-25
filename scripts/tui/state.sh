@@ -47,6 +47,21 @@ load_apply_state() {
   fi
 }
 
+load_rebuild_queue() {
+  rebuild_queued=false
+  rebuild_queued_at=""
+  rebuild_queued_hostname=""
+
+  rebuild_queue_file="$(nixoa_rebuild_queue_file)"
+  if [ -f "$rebuild_queue_file" ]; then
+    rebuild_queued=true
+    # shellcheck source=/dev/null
+    . "$rebuild_queue_file"
+    rebuild_queued_at="${scheduled_at:-}"
+    rebuild_queued_hostname="${hostname:-}"
+  fi
+}
+
 load_upstream_state() {
   current_branch="$(git -C "$NIXOA_SYSTEM_ROOT" branch --show-current 2>/dev/null || printf '')"
   upstream_branch=""
@@ -111,6 +126,7 @@ mapfile -t user_packages < <(nixoa_tui_extra_user_packages)
 mapfile -t services < <(nixoa_tui_enabled_services)
 load_apply_state
 load_upstream_state
+load_rebuild_queue
 load_memory_state
 load_storage_state
 load_network_state
@@ -167,6 +183,7 @@ if [ "${1:-}" = "--json" ]; then
   else
     printf '  "primaryIp": null,\n'
   fi
+  printf '  "rebuildQueued": %s,\n' "$rebuild_queued"
   printf '  "rebuildNeeded": %s,\n' "$rebuild_needed"
   if [ "$last_apply_present" -eq 1 ]; then
     printf '  "lastApply": {\n'
@@ -205,4 +222,5 @@ printf 'storage_total_bytes=%s\n' "$storage_total_bytes"
 printf 'storage_used_bytes=%s\n' "$storage_used_bytes"
 printf 'storage_used_percent=%s\n' "$storage_used_percent"
 printf 'primary_ip=%s\n' "$primary_ip"
+printf 'rebuild_queued=%s\n' "$rebuild_queued"
 printf 'rebuild_needed=%s\n' "$rebuild_needed"

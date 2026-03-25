@@ -5,12 +5,15 @@
 On a fresh NixOS VM, run:
 
 ```bash
-bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) --first-switch
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
+  --enable-flakes \
+  --first-switch
 ```
 
 The bootstrap script will:
 
 - clone or update the `system` repo on the `beta` branch
+- persist `nix-command flakes` when `--enable-flakes` is used
 - copy `hardware-configuration.nix`
 - prompt for hostname, username, time zone, and an SSH public key
 - write `config/overrides.nix`
@@ -20,6 +23,7 @@ The bootstrap script will:
 ## Manual Path
 
 ```bash
+export NIX_CONFIG="experimental-features = nix-command flakes"
 git clone --branch beta https://codeberg.org/NiXOA/system.git ~/system
 cd ~/system
 sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix

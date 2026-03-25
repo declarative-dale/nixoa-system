@@ -31,6 +31,10 @@ nixoa_apply_state_file() {
   printf '%s\n' "${NIXOA_STATUS_FILE:-$(nixoa_state_dir)/apply-state.env}"
 }
 
+nixoa_rebuild_queue_file() {
+  printf '%s\n' "${NIXOA_REBUILD_QUEUE_FILE:-/var/lib/nixoa/rebuild-on-boot.env}"
+}
+
 nixoa_config_string() {
   local key="$1"
   local file
@@ -94,4 +98,31 @@ nixoa_write_apply_state() {
     printf 'last_apply_exit_code=%s\n' "$exit_code"
     printf 'last_apply_timestamp=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   } > "$state_file"
+}
+
+nixoa_schedule_rebuild_on_boot() {
+  local repo_root="$1"
+  local hostname="$2"
+  local queue_file
+  local queue_dir
+
+  queue_file="$(nixoa_rebuild_queue_file)"
+  queue_dir="$(dirname "$queue_file")"
+
+  if [ "$(id -u)" -eq 0 ]; then
+    install -d -m 0755 "$queue_dir"
+    {
+      printf 'repo_root=%q\n' "$repo_root"
+      printf 'hostname=%q\n' "$hostname"
+      printf 'scheduled_at=%q\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    } > "$queue_file"
+    return 0
+  fi
+
+  sudo install -d -m 0755 "$queue_dir"
+  {
+    printf 'repo_root=%q\n' "$repo_root"
+    printf 'hostname=%q\n' "$hostname"
+    printf 'scheduled_at=%q\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  } | sudo tee "$queue_file" >/dev/null
 }

@@ -6,11 +6,14 @@ NiXOA system is designed to be installed directly on the target NixOS host.
 ## Recommended One-Liner
 
 ```bash
-bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) --first-switch
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
+  --enable-flakes \
+  --first-switch
 ```
 
 The bootstrap script prompts for hostname, username, time zone, and at least
-one SSH public key.
+one SSH public key. `--enable-flakes` persists `nix-command flakes` first so
+the install works on a fresh NixOS VM.
 
 ## Manual Install
 
@@ -32,6 +35,7 @@ sudo cp /etc/nixos/hardware-configuration.nix ./hardware-configuration.nix
 4. Validate the flake.
 
 ```bash
+export NIX_CONFIG="experimental-features = nix-command flakes"
 nix flake check --no-write-lock-file
 ```
 

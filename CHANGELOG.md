@@ -1,3 +1,24 @@
+## v3.2.0 - Interactive Login TUI
+
+## ✨ Added
+
+- **Ratatui XS console update menu** with dedicated actions for `nixpkgs`, `home-manager`, `xen-orchestra-ce`, and full flake updates
+- **Queued rebuild-on-boot service** so update actions can defer the next host rebuild until reboot
+- **Bootstrap `--enable-flakes` option** for fresh NixOS installs that do not yet persist `nix-command flakes`
+
+## 🔄 Changed
+
+- **XOA update checks** now resolve the upstream source through the `nixoaCore` input graph instead of a system-local repository URL
+- **Console update flow** now commits `flake.lock` changes and prompts for rebuild now vs rebuild on reboot
+- **Console dashboard state** now includes queued rebuild status alongside repo drift, update availability, RAM, storage, and IP telemetry
+
+## 🐛 Fixed
+
+- **Fresh-VM bootstrap drift** where the documented one-liner could still assume flakes were already enabled
+- **Update boundary drift** by keeping `xen-orchestra-ce` ownership in `core` while still exposing update actions in `system`
+
+---
+
 # system v3.1.0 - Interactive Bootstrap And Den User Batteries
 
 **Release Date:** March 25, 2026
