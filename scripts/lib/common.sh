@@ -5,6 +5,7 @@ readonly NIXOA_SYSTEM_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 readonly NIXOA_DEFAULT_HOSTNAME="nixoa"
 readonly NIXOA_DEFAULT_USERNAME="nixoa"
 readonly NIXOA_DEFAULT_TIMEZONE="Europe/Paris"
+readonly NIXOA_MENU_FILE="$NIXOA_SYSTEM_ROOT/config/menu.nix"
 readonly -a NIXOA_TRACKED_PATHS=(
   AGENTS.md
   README.md
@@ -28,6 +29,7 @@ nixoa_config_string() {
   local value
 
   for file in \
+    "$NIXOA_MENU_FILE" \
     "$NIXOA_SYSTEM_ROOT/config/overrides.nix" \
     "$NIXOA_SYSTEM_ROOT/config/site.nix"
   do

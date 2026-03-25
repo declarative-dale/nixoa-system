@@ -14,6 +14,7 @@
       ../nixos/host/hardware.nix
       ../nixos/host/time.nix
       ../nixos/host/packages.nix
+      ../nixos/host/services.nix
       ../nixos/host/extras.nix
       ../nixos/host/firewall.nix
       ../nixos/host/accounts.nix

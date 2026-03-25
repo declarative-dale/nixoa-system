@@ -6,6 +6,7 @@
 let
   system = vars.hostSystem;
   pkgs = inputs.nixpkgs.legacyPackages.${system};
+  nixoaMenu = pkgs.callPackage ../../pkgs/nixoa-menu/package.nix { };
   mkRepoScriptApp =
     {
       appName,
@@ -70,6 +71,12 @@ in
       appName = "nixoa-history";
       scriptName = "history.sh";
       description = "Show NiXOA system repository history";
+    };
+
+    menu = {
+      type = "app";
+      program = "${nixoaMenu}/bin/nixoa-menu";
+      meta.description = "Launch the NiXOA SSH administration TUI";
     };
   };
 }

@@ -13,6 +13,12 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+    loginExtra = ''
+      if [[ -n "''${SSH_TTY:-}" ]] && [[ -o interactive ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ -z "''${NIXOA_TUI_BYPASS:-}" ]] && [[ -z "''${NIXOA_TUI_ACTIVE:-}" ]]; then
+        export NIXOA_TUI_ACTIVE=1
+        exec nixoa-menu
+      fi
+    '';
 
     history = {
       size = 50000;
@@ -53,6 +59,7 @@
       sysfail = "systemctl --failed";
       sysrestart = "sudo systemctl restart";
       sysstatus = "sudo systemctl status";
+      menu = "nixoa-menu";
     }
     // lib.optionalAttrs vars.enableExtras {
       ls = "eza --icons --group-directories-first";

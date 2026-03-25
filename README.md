@@ -37,7 +37,8 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 - `config/packages.nix`: system and user packages
 - `config/xo.nix`: XO config file and TLS settings
 - `config/storage.nix`: NFS, CIFS, VHD, and mount behavior
-- `config/overrides.nix`: optional local overrides applied last
+- `config/overrides.nix`: optional local overrides and bootstrap seed values
+- `config/menu.nix`: TUI-managed overrides for console changes, applied last
 
 ## Dendritic Shape
 
@@ -55,6 +56,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 ./scripts/show-diff.sh
 ./scripts/commit-config.sh "Describe the change"
 ./scripts/apply-config.sh
+nix run .#menu
 
 nix flake check --no-write-lock-file
 ```
@@ -90,3 +92,4 @@ system/
 - `hardware-configuration.nix` is machine-generated and should only be replaced by the bootstrap/manual install flow.
 - `nixoaCore` remains the immutable library input. Host-specific policy belongs here in `system/`.
 - No `denful` namespace is exported here because the flake is a concrete host configuration, not a reusable aspect library.
+- Interactive SSH logins for the managed user open an OPNsense-style numbered console menu. Use option `9` to drop into a normal shell.

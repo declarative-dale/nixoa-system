@@ -17,6 +17,10 @@ let
     (importConfig ./packages.nix)
     (importConfig ./xo.nix)
     (importConfig ./storage.nix)
-  ] ++ lib.optionals (builtins.pathExists ./overrides.nix) [ (importConfig ./overrides.nix) ];
+  ]
+  ++ lib.optionals (builtins.pathExists ./overrides.nix) [ (importConfig ./overrides.nix) ]
+  ++ [
+    (importConfig ./menu.nix)
+  ];
 in
 lib.foldl' lib.recursiveUpdate { } configParts
