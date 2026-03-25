@@ -4,28 +4,27 @@ NiXOA system is the **host-specific** flake. It keeps editable site policy in
 `config/`, declares the host topology with den, and imports the immutable
 `nixoaCore` appliance stack.
 
-Current release series: `v3.0.0`
+Current release series: `v3.1.0`
 
 ## Quick Start
 
 Fresh NixOS VM:
 
 ```bash
-bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
-  --hostname nixoa \
-  --username xoa \
-  --ssh-key "$(cat ~/.ssh/id_ed25519.pub)" \
-  --first-switch
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) --first-switch
 ```
+
+The bootstrap flow prompts for:
+- hostname, default `nixoa`
+- username, default `nixoa`
+- time zone, default `Europe/Paris`
+- at least one SSH public key, required
 
 If `curl` or `git` are missing, use:
 
 ```bash
 nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
   bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
-    --hostname nixoa \
-    --username xoa \
-    --ssh-key "$(cat ~/.ssh/id_ed25519.pub)" \
     --first-switch
 '
 ```
@@ -36,7 +35,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 - `config/platform.nix`: boot loader and firewall ports
 - `config/features.nix`: host feature toggles like `enableExtras`
 - `config/packages.nix`: system and user packages
-- `config/xo.nix`: XO account, config file, and TLS settings
+- `config/xo.nix`: XO config file and TLS settings
 - `config/storage.nix`: NFS, CIFS, VHD, and mount behavior
 - `config/overrides.nix`: optional local overrides applied last
 
@@ -55,7 +54,7 @@ nix shell nixpkgs#curl nixpkgs#git -c bash -lc '
 ```bash
 ./scripts/show-diff.sh
 ./scripts/commit-config.sh "Describe the change"
-./scripts/apply-config.sh --hostname nixoa
+./scripts/apply-config.sh
 
 nix flake check --no-write-lock-file
 ```
@@ -63,7 +62,7 @@ nix flake check --no-write-lock-file
 First install without the bootstrap helper:
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa --first-install
+./scripts/apply-config.sh --first-install
 ```
 
 ## Layout

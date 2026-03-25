@@ -13,7 +13,7 @@ config/
 ├── platform.nix           # boot loader and firewall defaults
 ├── features.nix           # host feature toggles
 ├── packages.nix           # systemPackages and userPackages
-├── xo.nix                 # XO service account and TLS/runtime settings
+├── xo.nix                 # XO runtime and TLS settings
 ├── storage.nix            # NFS/CIFS/VHD behavior
 └── overrides.nix          # optional host-local overrides, imported last
 ```
@@ -26,9 +26,9 @@ config/
 {
   hostSystem = "x86_64-linux";
   hostname = "nixoa";
-  timezone = "UTC";
+  timezone = "Europe/Paris";
   stateVersion = "25.11";
-  username = "xoa";
+  username = "nixoa";
   sshKeys = [ "ssh-ed25519 AAAA... user@host" ];
 }
 ```
@@ -69,8 +69,6 @@ config/
 
 ```nix
 {
-  xoUser = "xo";
-  xoGroup = "xo";
   xoConfigFile = ../config.nixoa.toml;
   xoHttpHost = "0.0.0.0";
   enableTLS = true;

@@ -5,18 +5,15 @@
 On a fresh NixOS VM, run:
 
 ```bash
-bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
-  --hostname nixoa \
-  --username xoa \
-  --ssh-key "$(cat ~/.ssh/id_ed25519.pub)" \
-  --first-switch
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) --first-switch
 ```
 
 The bootstrap script will:
 
 - clone or update the `system` repo on the `beta` branch
 - copy `hardware-configuration.nix`
-- optionally write `config/overrides.nix`
+- prompt for hostname, username, time zone, and an SSH public key
+- write `config/overrides.nix`
 - run `nix flake check --no-write-lock-file`
 - optionally run the first switch with Determinate’s install cache override
 
@@ -42,7 +39,7 @@ Then edit:
 Apply the first switch:
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa --first-install
+./scripts/apply-config.sh --first-install
 ```
 
 After that, normal rebuilds can omit `--first-install`.

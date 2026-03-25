@@ -35,7 +35,7 @@ nix develop
 ## Apply
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa
+./scripts/apply-config.sh
 ```
 
 Use `--dry-run` for a preview or `--build` for a build-only pass.

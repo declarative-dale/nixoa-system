@@ -6,12 +6,11 @@ NiXOA system is designed to be installed directly on the target NixOS host.
 ## Recommended One-Liner
 
 ```bash
-bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) \
-  --hostname nixoa \
-  --username xoa \
-  --ssh-key "$(cat ~/.ssh/id_ed25519.pub)" \
-  --first-switch
+bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/bootstrap.sh) --first-switch
 ```
+
+The bootstrap script prompts for hostname, username, time zone, and at least
+one SSH public key.
 
 ## Manual Install
 
@@ -39,7 +38,7 @@ nix flake check --no-write-lock-file
 5. Run the first switch with Determinate’s install cache override.
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa --first-install
+./scripts/apply-config.sh --first-install
 ```
 
 ## After Installation
@@ -47,5 +46,5 @@ nix flake check --no-write-lock-file
 Normal rebuilds become:
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa
+./scripts/apply-config.sh
 ```

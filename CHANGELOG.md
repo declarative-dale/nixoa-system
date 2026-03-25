@@ -1,3 +1,26 @@
+# system v3.1.0 - Interactive Bootstrap And Den User Batteries
+
+**Release Date:** March 25, 2026
+
+## ✨ Added
+
+- **Interactive bootstrap defaults** for hostname `nixoa`, username `nixoa`, and time zone `Europe/Paris`
+- **Required SSH key prompt** in the bootstrap flow when no key is passed by flag
+- **Host-side helper defaults** in `scripts/lib/common.sh` so apply commands follow the configured hostname
+
+## 🔄 Changed
+
+- **Bootstrap examples and daily commands** now use the no-argument apply flow by default
+- **User identity wiring** now uses `den.provides.define-user`, `den.provides.primary-user`, and `den.provides.user-shell`
+- **Repo defaults** in `config/site.nix` now match the bootstrap defaults
+
+## 🐛 Fixed
+
+- **Bootstrap/config drift** where docs and scripts still assumed the older `xoa` user and explicit host argument workflow
+- **Manual user-definition duplication** in Home Manager and host account setup
+
+---
+
 # system v3.0.0 - Den-Native Naming And Topology Cleanup
 
 **Release Date:** March 25, 2026

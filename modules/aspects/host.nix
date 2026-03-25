@@ -10,8 +10,11 @@
       ../nixos/runtime/determinate.nix
       ../nixos/runtime/nix-settings.nix
       ../nixos/core/appliance.nix
+      ../nixos/host/boot.nix
       ../nixos/host/hardware.nix
+      ../nixos/host/time.nix
       ../nixos/host/packages.nix
+      ../nixos/host/extras.nix
       ../nixos/host/firewall.nix
       ../nixos/host/accounts.nix
       ../nixos/host/ssh.nix

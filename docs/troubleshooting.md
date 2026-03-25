@@ -14,7 +14,7 @@ nix flake check --no-write-lock-file
 Check `sshKeys` in `config/site.nix` or `config/overrides.nix`, then rebuild:
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa
+./scripts/apply-config.sh
 ```
 
 ## Firewall Ports Still Closed

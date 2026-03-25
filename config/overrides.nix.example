@@ -3,8 +3,8 @@
 { ... }:
 {
   # hostname = "nixoa";
-  # username = "xoa";
-  # timezone = "UTC";
+  # username = "nixoa";
+  # timezone = "Europe/Paris";
   # sshKeys = [
   #   "ssh-ed25519 AAAA... user@host"
   # ];

@@ -64,5 +64,5 @@ Edit `config/platform.nix`:
 ## Apply
 
 ```bash
-./scripts/apply-config.sh --hostname nixoa
+./scripts/apply-config.sh
 ```
