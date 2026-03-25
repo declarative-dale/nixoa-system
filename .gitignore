@@ -21,3 +21,6 @@ Thumbs.db
 *.tmp
 *.bak
 *~
+
+# Rust build output
+pkgs/nixoa-menu/target/

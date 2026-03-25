@@ -92,4 +92,5 @@ system/
 - `hardware-configuration.nix` is machine-generated and should only be replaced by the bootstrap/manual install flow.
 - `nixoaCore` remains the immutable library input. Host-specific policy belongs here in `system/`.
 - No `denful` namespace is exported here because the flake is a concrete host configuration, not a reusable aspect library.
-- Interactive SSH logins for the managed user open an OPNsense-style numbered console menu. Use option `9` to drop into a normal shell.
+- Interactive SSH logins for the managed user open a ratatui-based admin console. The dashboard surfaces repo drift, rebuild state, flake input update checks, RAM usage, root storage usage, and the primary IPv4 address.
+- The console still writes to `config/menu.nix` for live edits, auto-commits relevant mutations, exposes rollback as action `0`, and exposes manual `nix-collect-garbage -d` through action `g`.

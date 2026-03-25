@@ -1,42 +1,51 @@
 {
   lib,
+  bash,
+  coreutils,
+  gawk,
   git,
-  writeShellApplication,
+  gnugrep,
+  gnused,
+  inetutils,
+  iproute2,
+  makeWrapper,
+  nix,
+  rustPlatform,
+  sudo,
 }:
 
-writeShellApplication {
-  name = "nixoa-menu";
-  runtimeInputs = [
-    git
-  ];
+rustPlatform.buildRustPackage {
+  pname = "nixoa-menu";
+  version = "0.2.0";
 
-  text = ''
-    set -euo pipefail
+  src = lib.cleanSource ./.;
 
-    repo_root="''${NIXOA_SYSTEM_ROOT:-}"
-    if [ -z "$repo_root" ]; then
-      if git_root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
-        repo_root="$git_root"
-      elif [ -n "''${HOME:-}" ] && [ -d "''${HOME}/system" ]; then
-        repo_root="''${HOME}/system"
-      else
-        repo_root="$PWD"
-      fi
-    fi
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+  };
 
-    script="$repo_root/scripts/tui/menu.sh"
-    if [ ! -x "$script" ]; then
-      echo "Could not find $script" >&2
-      echo "Set NIXOA_SYSTEM_ROOT or run this from a NiXOA system checkout." >&2
-      exit 1
-    fi
+  nativeBuildInputs = [ makeWrapper ];
 
-    export NIXOA_SYSTEM_ROOT="$repo_root"
-    exec "$script" "$@"
+  postInstall = ''
+    wrapProgram "$out/bin/nixoa-menu" \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          bash
+          coreutils
+          gawk
+          git
+          gnugrep
+          gnused
+          inetutils
+          iproute2
+          nix
+          sudo
+        ]
+      }
   '';
 
   meta = {
-    description = "OPNsense-style SSH administration console for NiXOA system hosts";
+    description = "Ratatui-based SSH administration console for NiXOA system hosts";
     homepage = "https://codeberg.org/NiXOA/system";
     license = lib.licenses.asl20;
     mainProgram = "nixoa-menu";

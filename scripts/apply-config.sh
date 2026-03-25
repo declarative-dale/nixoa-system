@@ -9,12 +9,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
   cat <<'EOF'
-Usage: apply-config.sh [--hostname HOSTNAME] [--build | --dry-run] [--first-install] [extra nixos-rebuild args...]
+Usage: apply-config.sh [--hostname HOSTNAME] [--build | --dry-run | --rollback] [--first-install] [extra nixos-rebuild args...]
 
 Options:
   --hostname HOSTNAME  Use a specific flake host output name.
   --build              Build without switching.
   --dry-run            Run a dry-build preview.
+  --rollback           Roll back to the previous system generation.
   --first-install      Add Determinate's install cache flags for the first switch.
   --help               Show this help text.
 EOF
@@ -22,7 +23,9 @@ EOF
 
 hostname_arg="${NIXOA_HOSTNAME:-$(nixoa_default_hostname)}"
 rebuild_action="switch"
+record_action="switch"
 first_install=0
+rollback=0
 extra_args=()
 
 while [ $# -gt 0 ]; do
@@ -37,6 +40,13 @@ while [ $# -gt 0 ]; do
       ;;
     --dry-run)
       rebuild_action="dry-build"
+      record_action="dry-build"
+      shift
+      ;;
+    --rollback)
+      rollback=1
+      rebuild_action="switch"
+      record_action="rollback"
       shift
       ;;
     --first-install)
@@ -61,13 +71,24 @@ done
 
 nixoa_cd_root
 
-rebuild_cmd=(
-  nixos-rebuild
-  "$rebuild_action"
-  --flake
-  ".#${hostname_arg}"
-  -L
-)
+current_head="$(git -C "$NIXOA_SYSTEM_ROOT" rev-parse HEAD 2>/dev/null || true)"
+
+if [ "$rollback" -eq 1 ]; then
+  rebuild_cmd=(
+    nixos-rebuild
+    switch
+    --rollback
+    -L
+  )
+else
+  rebuild_cmd=(
+    nixos-rebuild
+    "$rebuild_action"
+    --flake
+    ".#${hostname_arg}"
+    -L
+  )
+fi
 
 if [ "$first_install" -eq 1 ]; then
   rebuild_cmd+=(
@@ -90,4 +111,10 @@ printf 'Running:'
 printf ' %q' "${rebuild_cmd[@]}"
 printf '\n'
 
-exec "${rebuild_cmd[@]}"
+if "${rebuild_cmd[@]}"; then
+  nixoa_write_apply_state "success" "$record_action" "$hostname_arg" "$current_head" "$first_install" "0"
+else
+  exit_code="$?"
+  nixoa_write_apply_state "failed" "$record_action" "$hostname_arg" "$current_head" "$first_install" "$exit_code"
+  exit "$exit_code"
+fi

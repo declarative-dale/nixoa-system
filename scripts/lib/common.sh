@@ -23,6 +23,14 @@ nixoa_system_root() {
   printf '%s\n' "$NIXOA_SYSTEM_ROOT"
 }
 
+nixoa_state_dir() {
+  printf '%s\n' "${NIXOA_STATE_DIR:-${XDG_STATE_HOME:-${HOME:-$NIXOA_SYSTEM_ROOT/.local/state}}/nixoa}"
+}
+
+nixoa_apply_state_file() {
+  printf '%s\n' "${NIXOA_STATUS_FILE:-$(nixoa_state_dir)/apply-state.env}"
+}
+
 nixoa_config_string() {
   local key="$1"
   local file
@@ -61,4 +69,29 @@ nixoa_require_git_repo() {
 
 nixoa_status_porcelain() {
   git -C "$NIXOA_SYSTEM_ROOT" status --short -- "${NIXOA_TRACKED_PATHS[@]}"
+}
+
+nixoa_write_apply_state() {
+  local result="$1"
+  local action="$2"
+  local hostname="$3"
+  local head="$4"
+  local first_install="$5"
+  local exit_code="$6"
+  local state_file
+  local state_dir
+
+  state_file="$(nixoa_apply_state_file)"
+  state_dir="$(dirname "$state_file")"
+  mkdir -p "$state_dir"
+
+  {
+    printf 'last_apply_result=%s\n' "$result"
+    printf 'last_apply_action=%s\n' "$action"
+    printf 'last_apply_hostname=%s\n' "$hostname"
+    printf 'last_apply_head=%s\n' "$head"
+    printf 'last_apply_first_install=%s\n' "$first_install"
+    printf 'last_apply_exit_code=%s\n' "$exit_code"
+    printf 'last_apply_timestamp=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  } > "$state_file"
 }
