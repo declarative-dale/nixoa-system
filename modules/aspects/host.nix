@@ -12,6 +12,7 @@
       ../nixos/core/appliance.nix
       ../nixos/host/boot.nix
       ../nixos/host/hardware.nix
+      ../nixos/host/network.nix
       ../nixos/host/time.nix
       ../nixos/host/packages.nix
       ../nixos/host/rebuild.nix

@@ -18,8 +18,9 @@ The bootstrap script will:
 - copy `hardware-configuration.nix`
 - prompt for hostname, username, time zone, and an SSH public key
 - write `config/overrides.nix`
+- stage `config/overrides.nix` so flake evaluation includes the generated local overrides
 - run `nix flake check --no-write-lock-file`
-- optionally run the first switch with Determinate’s install cache override
+- optionally run the first switch with Determinate’s install cache override and the normal apply-time commit flow
 
 ## Manual Path
 

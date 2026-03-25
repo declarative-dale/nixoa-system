@@ -26,19 +26,23 @@ If `enableExtras = true` in `config/features.nix`:
 nix develop
 ```
 
-## Commit
-
-```bash
-./scripts/commit-config.sh "Describe the host change"
-```
-
 ## Apply
 
 ```bash
 ./scripts/apply-config.sh
 ```
 
-Use `--dry-run` for a preview or `--build` for a build-only pass.
+Before rebuilding, `apply-config.sh` checks for repo changes and runs
+`commit-config.sh` when it finds them. That stages the tracked repo paths,
+prompts for a commit message, and auto-generates one from the changed file list
+if you leave the prompt blank. Use `--dry-run` for a preview or `--build` for a
+build-only pass.
+
+## Commit Without Rebuilding
+
+```bash
+./scripts/commit-config.sh "Describe the host change"
+```
 
 ## Extend The Host
 

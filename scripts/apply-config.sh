@@ -71,6 +71,10 @@ done
 
 nixoa_cd_root
 
+if [ "$rollback" -ne 1 ] && nixoa_has_changes; then
+  "$SCRIPT_DIR/commit-config.sh"
+fi
+
 current_head="$(git -C "$NIXOA_SYSTEM_ROOT" rev-parse HEAD 2>/dev/null || true)"
 
 if [ "$rollback" -eq 1 ]; then

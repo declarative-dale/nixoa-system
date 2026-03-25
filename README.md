@@ -22,6 +22,8 @@ The bootstrap flow prompts for:
 - time zone, default `Europe/Paris`
 - at least one SSH public key, required
 
+Bootstrap stages `config/overrides.nix` automatically so the generated host-local values are visible to flake evaluation on the first rebuild.
+
 If `curl` or `git` are missing, use:
 
 ```bash
@@ -60,12 +62,14 @@ NIX_CONFIG="experimental-features = nix-command flakes" \
 
 ```bash
 ./scripts/show-diff.sh
-./scripts/commit-config.sh "Describe the change"
 ./scripts/apply-config.sh
+./scripts/commit-config.sh "Describe the change"
 nix run .#menu
 
 nix flake check --no-write-lock-file
 ```
+
+`apply-config.sh` checks for unstaged, untracked, or uncommitted repo changes before rebuilding. When it finds them, it runs `commit-config.sh`, which stages the tracked repo paths, prompts for a commit message when interactive, and auto-generates a file-based message if you leave it blank.
 
 First install without the bootstrap helper:
 

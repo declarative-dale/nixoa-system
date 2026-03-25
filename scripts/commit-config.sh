@@ -9,30 +9,28 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 nixoa_require_git_repo
 nixoa_cd_root
 
-if [ $# -eq 0 ]; then
-  echo "Usage: $0 <commit message>" >&2
-  echo "Example: $0 'Adjust XO TLS and firewall defaults'" >&2
-  exit 1
+if [ "${1:-}" = "--help" ]; then
+  echo "Usage: $0 [commit message]" >&2
+  echo "If no message is supplied, the script prompts for one and auto-generates one when left blank." >&2
+  exit 0
 fi
 
-COMMIT_MSG="$1"
+COMMIT_MSG="${1:-}"
 
-echo "=== Configuration Changes ==="
-git diff --stat -- "${NIXOA_TRACKED_PATHS[@]}" 2>/dev/null || true
-if [ -n "$(nixoa_status_porcelain)" ]; then
-  echo ""
-  nixoa_status_porcelain
-fi
-echo ""
-
-if [ -z "$(nixoa_status_porcelain)" ]; then
+if ! nixoa_has_changes; then
   echo "No changes to commit."
   exit 0
 fi
 
-git add -- "${NIXOA_TRACKED_PATHS[@]}"
+nixoa_print_change_summary
+nixoa_stage_changes
 
-git commit -m "$COMMIT_MSG"
+if ! nixoa_has_staged_changes; then
+  echo "No staged changes were produced."
+  exit 0
+fi
+
+nixoa_commit_changes "$COMMIT_MSG"
 
 echo "✓ Configuration committed successfully!"
 echo ""

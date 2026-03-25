@@ -75,6 +75,108 @@ nixoa_status_porcelain() {
   git -C "$NIXOA_SYSTEM_ROOT" status --short -- "${NIXOA_TRACKED_PATHS[@]}"
 }
 
+nixoa_has_changes() {
+  [ -n "$(nixoa_status_porcelain)" ]
+}
+
+nixoa_stage_changes() {
+  git -C "$NIXOA_SYSTEM_ROOT" add -A -- "${NIXOA_TRACKED_PATHS[@]}"
+}
+
+nixoa_has_staged_changes() {
+  ! git -C "$NIXOA_SYSTEM_ROOT" diff --cached --quiet -- "${NIXOA_TRACKED_PATHS[@]}"
+}
+
+nixoa_print_change_summary() {
+  echo "=== Configuration Changes ==="
+  git -C "$NIXOA_SYSTEM_ROOT" diff HEAD --stat -- "${NIXOA_TRACKED_PATHS[@]}" 2>/dev/null || true
+
+  if nixoa_has_changes; then
+    echo ""
+    nixoa_status_porcelain
+  fi
+
+  echo ""
+}
+
+nixoa_generate_commit_body() {
+  local updated=()
+  local added=()
+  local removed=()
+  local renamed=()
+  local emitted=0
+  local status=""
+  local first=""
+  local second=""
+
+  while IFS=$'\t' read -r status first second; do
+    [ -n "$status" ] || continue
+
+    case "$status" in
+      A*)
+        added+=("$first")
+        ;;
+      D*)
+        removed+=("$first")
+        ;;
+      R*)
+        renamed+=("$first -> $second")
+        ;;
+      *)
+        updated+=("$first")
+        ;;
+    esac
+  done < <(git -C "$NIXOA_SYSTEM_ROOT" diff --cached --name-status --find-renames -- "${NIXOA_TRACKED_PATHS[@]}")
+
+  if [ "${#updated[@]}" -gt 0 ]; then
+    echo "Updated:"
+    printf -- '- %s\n' "${updated[@]}"
+    emitted=1
+  fi
+
+  if [ "${#added[@]}" -gt 0 ]; then
+    [ "$emitted" -eq 1 ] && echo ""
+    echo "Added:"
+    printf -- '- %s\n' "${added[@]}"
+    emitted=1
+  fi
+
+  if [ "${#removed[@]}" -gt 0 ]; then
+    [ "$emitted" -eq 1 ] && echo ""
+    echo "Removed:"
+    printf -- '- %s\n' "${removed[@]}"
+    emitted=1
+  fi
+
+  if [ "${#renamed[@]}" -gt 0 ]; then
+    [ "$emitted" -eq 1 ] && echo ""
+    echo "Renamed:"
+    printf -- '- %s\n' "${renamed[@]}"
+  fi
+}
+
+nixoa_commit_changes() {
+  local commit_message="${1:-}"
+  local subject="Record local system changes"
+  local body=""
+
+  if [ -z "${commit_message//[[:space:]]/}" ] && [ -t 0 ]; then
+    read -r -p "Commit message [auto]: " commit_message
+  fi
+
+  if [ -n "${commit_message//[[:space:]]/}" ]; then
+    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$commit_message"
+    return 0
+  fi
+
+  body="$(nixoa_generate_commit_body)"
+  if [ -n "$body" ]; then
+    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$subject" -m "$body"
+  else
+    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$subject"
+  fi
+}
+
 nixoa_write_apply_state() {
   local result="$1"
   local action="$2"

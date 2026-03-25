@@ -66,3 +66,7 @@ Edit `config/platform.nix`:
 ```bash
 ./scripts/apply-config.sh
 ```
+
+This checks for repo changes first and runs `commit-config.sh` before the
+rebuild. If you leave the commit prompt blank, the script auto-generates a
+message from the files that changed.

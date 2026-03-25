@@ -10,7 +10,7 @@ nixoa_require_git_repo
 nixoa_cd_root
 
 echo "=== Uncommitted Changes ==="
-git diff -- "${NIXOA_TRACKED_PATHS[@]}"
+git diff HEAD -- "${NIXOA_TRACKED_PATHS[@]}"
 echo ""
 echo "=== Git Status ==="
 nixoa_status_porcelain || true

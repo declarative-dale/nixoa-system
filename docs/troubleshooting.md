@@ -17,6 +17,10 @@ Check `sshKeys` in `config/site.nix` or `config/overrides.nix`, then rebuild:
 ./scripts/apply-config.sh
 ```
 
+If `config/overrides.nix` was just created locally, `apply-config.sh` now routes
+through `commit-config.sh` before rebuilding so the generated override file is
+staged and committed automatically.
+
 ## Firewall Ports Still Closed
 
 Verify `config/platform.nix` contains the required ports and confirm the build

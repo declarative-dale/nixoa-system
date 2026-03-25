@@ -283,6 +283,9 @@ overrides_file="$repo_dir/config/overrides.nix"
 } > "$overrides_file"
 echo "Wrote $overrides_file"
 
+git -C "$repo_dir" add config/overrides.nix
+echo "Staged config/overrides.nix so flake evaluation includes local overrides"
+
 if [ "$skip_check" -eq 0 ]; then
   bootstrap_flake_check
 fi

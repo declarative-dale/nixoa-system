@@ -16,7 +16,9 @@ one SSH public key. `--enable-flakes` persists `nix-command flakes` first so
 the install works on a fresh NixOS VM. Before the first validation or switch,
 the bootstrap uses `sudo` for the privileged steps and passes the Xen
 Orchestra Cachix URL and signing key explicitly so the initial deployment can
-pull cached XO builds without making the repo root-owned.
+pull cached XO builds without making the repo root-owned. It also stages
+`config/overrides.nix` automatically so the generated SSH keys and local
+identity settings are included in the flake source immediately.
 
 ## Manual Install
 
@@ -47,6 +49,11 @@ nix flake check --no-write-lock-file
 ```bash
 ./scripts/apply-config.sh --first-install
 ```
+
+If the repo has local changes, `apply-config.sh` routes through
+`commit-config.sh` first. That stages the tracked repo paths, prompts for a
+commit message, and auto-generates one from the changed file list when left
+blank.
 
 ## After Installation
 
