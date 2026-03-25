@@ -14,6 +14,7 @@ The bootstrap script will:
 
 - clone or update the `system` repo on the `beta` branch
 - persist `nix-command flakes` when `--enable-flakes` is used
+- seed `/etc/nix/nix.conf` with the Xen Orchestra Cachix URL and signing key before the first validation/build path
 - copy `hardware-configuration.nix`
 - prompt for hostname, username, time zone, and an SSH public key
 - write `config/overrides.nix`

@@ -13,7 +13,10 @@ bash <(curl -fsSL https://codeberg.org/NiXOA/system/raw/branch/beta/scripts/boot
 
 The bootstrap script prompts for hostname, username, time zone, and at least
 one SSH public key. `--enable-flakes` persists `nix-command flakes` first so
-the install works on a fresh NixOS VM.
+the install works on a fresh NixOS VM. Before the first validation or switch,
+the bootstrap also seeds `/etc/nix/nix.conf` with the Xen Orchestra Cachix URL
+and signing key so the initial deployment can pull cached XO builds. If you
+are not root, expect a `sudo` prompt for that step.
 
 ## Manual Install
 

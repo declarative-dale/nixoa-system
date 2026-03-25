@@ -33,7 +33,7 @@ NIX_CONFIG="experimental-features = nix-command flakes" \
 '
 ```
 
-`--enable-flakes` persists `nix-command flakes` before validation so the bootstrap can run cleanly on a fresh NixOS VM.
+`--enable-flakes` persists `nix-command flakes` before validation so the bootstrap can run cleanly on a fresh NixOS VM. On a virgin host, the bootstrap also seeds `/etc/nix/nix.conf` with the Xen Orchestra Cachix URL and signing key before the first validation or switch so the initial deployment can substitute cached XO builds. If you are not root, expect a `sudo` prompt for that step.
 
 ## Edit Surface
 
