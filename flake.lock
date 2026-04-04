@@ -220,11 +220,11 @@
         "xen-orchestra-ce": "xen-orchestra-ce"
       },
       "locked": {
-        "lastModified": 1775294547,
-        "narHash": "sha256-ccKmwFRmKlvrDxA/EMupAFjrbGiZOoQXQsTO1vGM4Yo=",
+        "lastModified": 1775345062,
+        "narHash": "sha256-HfObv3VTXzr7fe7CC4+l9uwwEOheKFXjAOZKoo6X84E=",
         "ref": "beta",
-        "rev": "2835ab066b0b0663139e1ef60c966bc1d29ff117",
-        "revCount": 351,
+        "rev": "78391b561da449b1e0c9b4ddbd1121ca2506899c",
+        "revCount": 354,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/core.git"
       },
@@ -310,6 +310,22 @@
     },
     "nixpkgs_4": {
       "locked": {
+        "lastModified": 1771848320,
+        "narHash": "sha256-0MAd+0mun3K/Ns8JATeHT1sX28faLII5hVLq0L3BdZU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "2fc6539b481e1d2569f25f8799236694180c0993",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_5": {
+      "locked": {
         "lastModified": 1775002709,
         "narHash": "sha256-d3Yx83vSrN+2z/loBh4mJpyRqr9aAJqlke4TkpFmRJA=",
         "rev": "bcd464ccd2a1a7cd09aa2f8d4ffba83b761b1d0e",
@@ -328,7 +344,7 @@
         "determinate": "determinate",
         "home-manager": "home-manager",
         "nixoaCore": "nixoaCore",
-        "nixpkgs": "nixpkgs_4",
+        "nixpkgs": "nixpkgs_5",
         "snitch": "snitch"
       }
     },
@@ -355,10 +371,7 @@
     "xen-orchestra-ce": {
       "inputs": {
         "libvhdi": "libvhdi",
-        "nixpkgs": [
-          "nixoaCore",
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs_4"
       },
       "locked": {
         "lastModified": 1775294109,
