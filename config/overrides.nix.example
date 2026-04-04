@@ -4,6 +4,8 @@
 {
   # hostname = "nixoa";
   # username = "nixoa";
+  # gitName = "NiXOA Admin";
+  # gitEmail = "nixoa@nixoa";
   # timezone = "Europe/Paris";
   # sshKeys = [
   #   "ssh-ed25519 AAAA... user@host"

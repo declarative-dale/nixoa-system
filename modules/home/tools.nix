@@ -21,6 +21,8 @@
 
   programs.git = lib.mkIf vars.enableExtras {
     enable = true;
+    userName = vars.gitName;
+    userEmail = vars.gitEmail;
     settings = {
       init.defaultBranch = "main";
       pull.rebase = true;

@@ -15,6 +15,8 @@ Options:
   --enable-flakes       Persist nix-command + flakes before validation.
   --hostname NAME       Hostname. Defaults to nixoa.
   --username NAME       Primary username. Defaults to nixoa.
+  --git-name NAME       Git user.name override. Defaults to NiXOA Admin.
+  --git-email EMAIL     Git user.email override. Defaults to nixoa@nixoa.
   --timezone ZONE       Time zone. Defaults to Europe/Paris.
   --state-version VER   Write stateVersion into config/overrides.nix.
   --ssh-key KEY         Add an SSH public key. Repeatable. At least one key is required.
@@ -34,6 +36,8 @@ branch="beta"
 repo_dir="${HOME:-/root}/system"
 default_hostname="nixoa"
 default_username="nixoa"
+default_git_name="NiXOA Admin"
+default_git_email="nixoa@nixoa"
 default_timezone="Europe/Paris"
 enable_flakes=0
 skip_check=0
@@ -43,6 +47,8 @@ xoa_cache_url="https://xen-orchestra-ce.cachix.org"
 xoa_cache_key="xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
 hostname_arg=""
 username_arg=""
+git_name_arg=""
+git_email_arg=""
 timezone_arg=""
 state_version_arg=""
 declare -a ssh_keys=()
@@ -59,6 +65,23 @@ prompt_with_default() {
 
   read -r -p "$prompt [$default_value]: " reply
   printf '%s\n' "${reply:-$default_value}"
+}
+
+prompt_with_default_note() {
+  local prompt="$1"
+  local default_value="$2"
+  local note="$3"
+
+  if [ ! -t 0 ]; then
+    printf '%s\n' "$default_value"
+    return 0
+  fi
+
+  if [ -n "$note" ]; then
+    printf '%s\n' "$note"
+  fi
+
+  prompt_with_default "$prompt" "$default_value"
 }
 
 prompt_required() {
@@ -189,6 +212,14 @@ while [ $# -gt 0 ]; do
       username_arg="$2"
       shift 2
       ;;
+    --git-name)
+      git_name_arg="$2"
+      shift 2
+      ;;
+    --git-email)
+      git_email_arg="$2"
+      shift 2
+      ;;
     --timezone)
       timezone_arg="$2"
       shift 2
@@ -233,6 +264,19 @@ if [ -z "$username_arg" ]; then
   username_arg="$(prompt_with_default "Username" "$default_username")"
 fi
 
+if [ -z "$git_name_arg" ]; then
+  git_name_arg="$(prompt_with_default "Git user.name" "$default_git_name")"
+fi
+
+if [ -z "$git_email_arg" ]; then
+  git_email_arg="$(
+    prompt_with_default_note \
+      "Git user.email" \
+      "$default_git_email" \
+      "If this Git config will only be saved locally, the email address does not need to be a real inbox."
+  )"
+fi
+
 if [ -z "$timezone_arg" ]; then
   timezone_arg="$(prompt_with_default "Time zone" "$default_timezone")"
 fi
@@ -270,6 +314,8 @@ overrides_file="$repo_dir/config/overrides.nix"
   echo "{"
   echo "  hostname = $(nix_quote "$hostname_arg");"
   echo "  username = $(nix_quote "$username_arg");"
+  echo "  gitName = $(nix_quote "$git_name_arg");"
+  echo "  gitEmail = $(nix_quote "$git_email_arg");"
   echo "  timezone = $(nix_quote "$timezone_arg");"
   if [ -n "$state_version_arg" ]; then
     echo "  stateVersion = $(nix_quote "$state_version_arg");"
