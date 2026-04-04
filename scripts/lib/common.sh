@@ -5,6 +5,8 @@ readonly NIXOA_SYSTEM_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 readonly NIXOA_DEFAULT_HOSTNAME="nixoa"
 readonly NIXOA_DEFAULT_USERNAME="nixoa"
 readonly NIXOA_DEFAULT_TIMEZONE="Europe/Paris"
+readonly NIXOA_DEFAULT_GIT_NAME="NiXOA Admin"
+readonly NIXOA_DEFAULT_GIT_EMAIL="nixoa@nixoa"
 readonly NIXOA_MENU_FILE="$NIXOA_SYSTEM_ROOT/config/menu.nix"
 readonly -a NIXOA_TRACKED_PATHS=(
   AGENTS.md
@@ -58,6 +60,14 @@ nixoa_config_string() {
 
 nixoa_default_hostname() {
   nixoa_config_string hostname || printf '%s\n' "$NIXOA_DEFAULT_HOSTNAME"
+}
+
+nixoa_git_user_name() {
+  nixoa_config_string gitName || printf '%s\n' "$NIXOA_DEFAULT_GIT_NAME"
+}
+
+nixoa_git_user_email() {
+  nixoa_config_string gitEmail || printf '%s\n' "$NIXOA_DEFAULT_GIT_EMAIL"
 }
 
 nixoa_cd_root() {
@@ -159,21 +169,42 @@ nixoa_commit_changes() {
   local commit_message="${1:-}"
   local subject="Record local system changes"
   local body=""
+  local git_name=""
+  local git_email=""
+  local -a git_commit_cmd=()
 
   if [ -z "${commit_message//[[:space:]]/}" ] && [ -t 0 ]; then
     read -r -p "Commit message [auto]: " commit_message
   fi
 
   if [ -n "${commit_message//[[:space:]]/}" ]; then
-    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$commit_message"
+    git_name="$(nixoa_git_user_name)"
+    git_email="$(nixoa_git_user_email)"
+    git_commit_cmd=(
+      git
+      -C "$NIXOA_SYSTEM_ROOT"
+      -c "user.name=$git_name"
+      -c "user.email=$git_email"
+      commit
+    )
+    "${git_commit_cmd[@]}" -m "$commit_message"
     return 0
   fi
 
   body="$(nixoa_generate_commit_body)"
+  git_name="$(nixoa_git_user_name)"
+  git_email="$(nixoa_git_user_email)"
+  git_commit_cmd=(
+    git
+    -C "$NIXOA_SYSTEM_ROOT"
+    -c "user.name=$git_name"
+    -c "user.email=$git_email"
+    commit
+  )
   if [ -n "$body" ]; then
-    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$subject" -m "$body"
+    "${git_commit_cmd[@]}" -m "$subject" -m "$body"
   else
-    git -C "$NIXOA_SYSTEM_ROOT" commit -m "$subject"
+    "${git_commit_cmd[@]}" -m "$subject"
   fi
 }
 
