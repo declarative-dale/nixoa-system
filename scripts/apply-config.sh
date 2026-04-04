@@ -16,7 +16,7 @@ Options:
   --build              Build without switching.
   --dry-run            Run a dry-build preview.
   --rollback           Roll back to the previous system generation.
-  --first-install      Add first-install cache flags for the initial switch.
+  --first-install      Add first-install flake flags for the initial switch.
   --help               Show this help text.
 EOF
 }
@@ -99,12 +99,6 @@ if [ "$first_install" -eq 1 ]; then
     --option
     extra-experimental-features
     "nix-command flakes"
-    --option
-    extra-substituters
-    "https://install.determinate.systems https://xen-orchestra-ce.cachix.org"
-    --option
-    extra-trusted-public-keys
-    "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
   )
 fi
 
