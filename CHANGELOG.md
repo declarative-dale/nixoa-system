@@ -1,4 +1,4 @@
-## v3.5.0 - Den-Native Flow And Tree Renaming Cleanup
+## v1.10.0 - Den-Native Flow And Tree Renaming Cleanup
 
 **Release Date:** April 4, 2026
 
@@ -31,7 +31,7 @@ This release refactors the system flake around Den's current structure and examp
 - **Maintenance friction** caused by older Den naming, duplicated declaration fields, and less intuitive module ordering
 - **Drift from current Den examples** by moving hostname/user creation into Den defaults and standardizing the system tree around Den concepts
 
-## v3.2.0 - Interactive Login TUI
+## v1.9.0 - Interactive Login TUI
 
 ## ✨ Added
 
@@ -52,7 +52,7 @@ This release refactors the system flake around Den's current structure and examp
 
 ---
 
-# system v3.1.0 - Interactive Bootstrap And Den User Batteries
+# system v1.8.0 - Interactive Bootstrap And Den User Batteries
 
 **Release Date:** March 25, 2026
 
@@ -75,7 +75,7 @@ This release refactors the system flake around Den's current structure and examp
 
 ---
 
-# system v3.0.0 - Den-Native Naming And Topology Cleanup
+# system v1.7.0 - Den-Native Naming And Topology Cleanup
 
 **Release Date:** March 25, 2026
 
@@ -103,7 +103,7 @@ This release refactors the system flake around Den's current structure and examp
 
 ---
 
-# system v2.0.0 - Release Surface And Public Core Tracking Cleanup
+# system v1.6.0 - Release Surface And Public Core Tracking Cleanup
 
 **Release Date:** March 24, 2026
 
