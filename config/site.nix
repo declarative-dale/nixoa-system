@@ -4,7 +4,6 @@
 {
   hostSystem = "x86_64-linux";
   hostname = "nixoa";
-  repoDir = "/home/nixoa/system";
   timezone = "Europe/Paris";
   stateVersion = "25.11"; # Don't change this after initial installation
 

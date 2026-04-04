@@ -6,7 +6,7 @@
 }:
 {
   home.sessionVariables = {
-    NIXOA_SYSTEM_ROOT = vars.repoDir;
+    NIXOA_SYSTEM_ROOT = vars.repoDir or "$HOME/system";
     XO_MOUNTS = vars.mountsDir;
   };
 }

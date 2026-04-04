@@ -3,7 +3,7 @@
 { ... }:
 {
   # hostname = "nixoa";
-  # repoDir = "/home/nixoa/system";
+  # repoDir = "/home/your-user/system";
   # username = "nixoa";
   # gitName = "NiXOA Admin";
   # gitEmail = "nixoa@nixoa";
