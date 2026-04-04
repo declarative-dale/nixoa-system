@@ -34,6 +34,7 @@ in
     description = "NiXOA administrator";
     group = "users";
     extraGroups = [
+      "wheel"
       "systemd-journal"
     ];
     hashedPassword = "!";

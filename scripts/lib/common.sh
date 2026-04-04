@@ -217,6 +217,13 @@ nixoa_write_apply_state() {
   local exit_code="$6"
   local state_file
   local state_dir
+  local first_install_bool="false"
+
+  case "$first_install" in
+    1|true|TRUE|yes|on)
+      first_install_bool="true"
+      ;;
+  esac
 
   state_file="$(nixoa_apply_state_file)"
   state_dir="$(dirname "$state_file")"
@@ -227,7 +234,7 @@ nixoa_write_apply_state() {
     printf 'last_apply_action=%s\n' "$action"
     printf 'last_apply_hostname=%s\n' "$hostname"
     printf 'last_apply_head=%s\n' "$head"
-    printf 'last_apply_first_install=%s\n' "$first_install"
+    printf 'last_apply_first_install=%s\n' "$first_install_bool"
     printf 'last_apply_exit_code=%s\n' "$exit_code"
     printf 'last_apply_timestamp=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   } > "$state_file"

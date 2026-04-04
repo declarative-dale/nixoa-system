@@ -29,6 +29,17 @@ json_array() {
   printf ']'
 }
 
+json_bool() {
+  case "${1:-}" in
+    1|true|TRUE|yes|on)
+      printf 'true'
+      ;;
+    *)
+      printf 'false'
+      ;;
+  esac
+}
+
 load_apply_state() {
   last_apply_present=0
   last_apply_result=""
@@ -191,7 +202,7 @@ if [ "${1:-}" = "--json" ]; then
     printf '    "action": %s,\n' "$(json_quote "$last_apply_action")"
     printf '    "hostname": %s,\n' "$(json_quote "$last_apply_hostname")"
     printf '    "head": %s,\n' "$(json_quote "$last_apply_head")"
-    printf '    "firstInstall": %s,\n' "${last_apply_first_install:-false}"
+    printf '    "firstInstall": %s,\n' "$(json_bool "${last_apply_first_install:-false}")"
     printf '    "exitCode": %s,\n' "${last_apply_exit_code:-0}"
     printf '    "timestamp": %s\n' "$(json_quote "$last_apply_timestamp")"
     printf '  }\n'
