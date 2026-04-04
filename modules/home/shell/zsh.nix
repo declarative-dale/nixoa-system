@@ -16,6 +16,7 @@
     loginExtra = ''
       if [[ -n "''${SSH_TTY:-}" ]] && [[ -o interactive ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ -z "''${NIXOA_TUI_BYPASS:-}" ]] && [[ -z "''${NIXOA_TUI_ACTIVE:-}" ]]; then
         export NIXOA_TUI_ACTIVE=1
+        export NIXOA_SYSTEM_ROOT="''${NIXOA_SYSTEM_ROOT:-${vars.repoDir}}"
         exec nixoa-menu
       fi
     '';
