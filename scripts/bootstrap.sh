@@ -9,7 +9,7 @@ usage() {
 Usage: bootstrap.sh [options]
 
 Options:
-  --repo-dir PATH       Checkout directory. Defaults to $HOME/system.
+  --repo-dir PATH       Checkout directory. Defaults to the managed user's home plus /system.
   --repo-url URL        System repository URL.
   --branch NAME         Branch to clone or update. Defaults to beta.
   --enable-flakes       Persist nix-command + flakes before validation.
@@ -31,9 +31,23 @@ nix_quote() {
   printf '"%s"' "$(printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g')"
 }
 
+resolve_user_home() {
+  local username="$1"
+  local passwd_entry=""
+
+  passwd_entry="$(getent passwd "$username" 2>/dev/null || true)"
+  if [ -n "$passwd_entry" ]; then
+    printf '%s\n' "$passwd_entry" | cut -d: -f6
+    return 0
+  fi
+
+  printf '/home/%s\n' "$username"
+}
+
 repo_url="https://codeberg.org/NiXOA/system.git"
 branch="beta"
-repo_dir="${HOME:-/root}/system"
+repo_dir=""
+repo_dir_explicit=0
 default_hostname="nixoa"
 default_username="nixoa"
 default_git_name="NiXOA Admin"
@@ -45,6 +59,10 @@ skip_hardware_copy=0
 first_switch=0
 xoa_cache_url="https://xen-orchestra-ce.cachix.org"
 xoa_cache_key="xen-orchestra-ce.cachix.org-1:WAOajkFLXWTaFiwMbLidlGa5kWB7Icu29eJnYbeMG7E="
+launch_user="$(id -un)"
+launch_group="$(id -gn)"
+managed_home_dir=""
+managed_user_exists=0
 hostname_arg=""
 username_arg=""
 git_name_arg=""
@@ -190,6 +208,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --repo-dir)
       repo_dir="$2"
+      repo_dir_explicit=1
       shift 2
       ;;
     --repo-url)
@@ -264,6 +283,16 @@ if [ -z "$username_arg" ]; then
   username_arg="$(prompt_with_default "Username" "$default_username")"
 fi
 
+if getent passwd "$username_arg" >/dev/null 2>&1; then
+  managed_user_exists=1
+fi
+
+managed_home_dir="$(resolve_user_home "$username_arg")"
+
+if [ "$repo_dir_explicit" -eq 0 ]; then
+  repo_dir="${managed_home_dir}/system"
+fi
+
 if [ -z "$git_name_arg" ]; then
   git_name_arg="$(prompt_with_default "Git user.name" "$default_git_name")"
 fi
@@ -289,14 +318,34 @@ if [ "$enable_flakes" -eq 1 ]; then
   enable_flakes_now
 fi
 
-mkdir -p "$(dirname "$repo_dir")"
-
 if [ -d "$repo_dir/.git" ]; then
+  if [ ! -w "$repo_dir" ]; then
+    echo "Error: $repo_dir is not writable by $launch_user. Run bootstrap as $username_arg or pass --repo-dir to a writable location." >&2
+    exit 1
+  fi
   echo "Updating existing checkout in $repo_dir"
   git -C "$repo_dir" fetch origin "$branch"
   git -C "$repo_dir" checkout "$branch"
   git -C "$repo_dir" pull --ff-only origin "$branch"
 else
+  repo_parent_dir="$(dirname "$repo_dir")"
+  if [ -d "$repo_parent_dir" ]; then
+    if [ ! -w "$repo_parent_dir" ]; then
+      if [ "$repo_dir_explicit" -eq 0 ] && [ "$managed_user_exists" -eq 0 ]; then
+        run_as_root install -d -m 0755 -o "$launch_user" -g "$launch_group" "$repo_parent_dir"
+      else
+        echo "Error: $repo_parent_dir is not writable by $launch_user. Pass --repo-dir to a writable location or run bootstrap as the target user." >&2
+        exit 1
+      fi
+    fi
+  elif mkdir -p "$repo_parent_dir" 2>/dev/null; then
+    :
+  elif [ "$repo_dir_explicit" -eq 0 ] && [ "$managed_user_exists" -eq 0 ]; then
+    run_as_root install -d -m 0755 -o "$launch_user" -g "$launch_group" "$repo_parent_dir"
+  else
+    echo "Error: $repo_parent_dir is not writable by $launch_user. Pass --repo-dir to a writable location or run bootstrap as the target user." >&2
+    exit 1
+  fi
   echo "Cloning $repo_url into $repo_dir"
   git clone --branch "$branch" "$repo_url" "$repo_dir"
 fi
