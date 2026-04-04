@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # System packages from settings
 {
+  inputs,
   lib,
   pkgs,
   vars,
@@ -13,8 +14,7 @@ let
       (lib.splitString "." name)
       (throw "NiXOA system package '${name}' was not found in pkgs")
       pkgs;
-
-  nixoaMenu = pkgs.callPackage ../../../pkgs/nixoa-menu/package.nix { };
+  nixoaMenu = inputs.nixoaCore.packages.${pkgs.stdenv.hostPlatform.system}.nixoa-menu;
 in
 {
   environment.systemPackages =
