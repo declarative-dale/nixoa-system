@@ -7,8 +7,9 @@
       (
         (inputs.nixpkgs.lib.evalModules {
           modules = [
-            ./modules/dendritic.nix
-            ./modules/config
+            ./modules/den.nix
+            ./modules/vars
+            ./modules/schema
             ./modules/topology
             ./modules/aspects
             ./modules/outputs
@@ -28,12 +29,10 @@
   inputs = {
     den.url = "github:vic/den";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    flake-aspects.url = "github:vic/flake-aspects";
     home-manager = {
       inputs.nixpkgs.follows = "nixpkgs";
       url = "https://flakehub.com/f/nix-community/home-manager/0";
     };
-    import-tree.url = "github:vic/import-tree";
     nixoaCore.url = "git+https://codeberg.org/NiXOA/core.git?ref=beta";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     snitch = {

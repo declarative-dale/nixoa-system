@@ -1,3 +1,36 @@
+## v3.5.0 - Den-Native Flow And Tree Renaming Cleanup
+
+**Release Date:** April 4, 2026
+
+This release refactors the system flake around Den's current structure and examples so the repository reads in a clearer top-down flow: Den bootstrap,local vars, schema, topology, aspects, and outputs. For day-to-day users, the system behavior stays the same while the wiring becomes easier to maintain and extend.
+
+## ✨ Added
+
+- **Explicit `schema/` layer** for Den schema defaults instead of hiding user-class defaults inside topology
+- **Den flake output modules** for `apps`, `packages`, and `devShells` in the non-`flake-parts` flake
+- **Global Den batteries** for hostname and user creation through `den.default.includes`
+- **`den._.mutual-provider` context wiring** as part of the default host/user pipeline
+
+## 🔄 Changed
+
+- **Den input updated** to the current `6d6ff64` release line
+- **Repository flow renamed** from `config` and `dendritic` terminology to `vars`, `schema`, and `den`
+- **Aspect file naming** from generic `defaults/host/user` to clearer `global/host-base/user-base`
+- **Output file naming** from `dev-shell.nix` to `devShells.nix`
+- **Topology declarations** now rely on Den defaults for `hostName` and `userName` where the attr names already match
+- **Built-in battery references** now use the current `den._.*` alias consistently in touched files
+
+## 🗑️ Removed
+
+- **Obsolete root `flake-aspects` input** now that Den ships its own aspect support
+- **Unused root `import-tree` input**
+- **Legacy file and folder names** that no longer matched the Den documentation or examples
+
+## 🐛 Fixed
+
+- **Maintenance friction** caused by older Den naming, duplicated declaration fields, and less intuitive module ordering
+- **Drift from current Den examples** by moving hostname/user creation into Den defaults and standardizing the system tree around Den concepts
+
 ## v3.2.0 - Interactive Login TUI
 
 ## ✨ Added

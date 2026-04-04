@@ -1,8 +1,8 @@
 { ... }:
 {
   imports = [
-    ./defaults.nix
-    ./host.nix
-    ./user.nix
+    ./global.nix
+    ./host-base.nix
+    ./user-base.nix
   ];
 }

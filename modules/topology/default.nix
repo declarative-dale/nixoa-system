@@ -1,7 +1,4 @@
 { ... }:
 {
-  imports = [
-    ./classes.nix
-    ./hosts.nix
-  ];
+  imports = [ ./hosts.nix ];
 }

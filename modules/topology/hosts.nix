@@ -8,8 +8,6 @@ let
 in
 {
   den.hosts.${system}.${vars.hostname} = {
-    hostName = vars.hostname;
-
     instantiate =
       { modules, ... }:
       inputs.nixpkgs.lib.nixosSystem {
@@ -19,8 +17,6 @@ in
         };
       };
 
-    users.${vars.username} = {
-      userName = vars.username;
-    };
+    users.${vars.username} = { };
   };
 }
