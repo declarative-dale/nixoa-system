@@ -92,6 +92,31 @@ nixoa_require_git_repo() {
   fi
 }
 
+nixoa_sudo_bin() {
+  if [ -x /run/wrappers/bin/sudo ]; then
+    printf '%s\n' /run/wrappers/bin/sudo
+    return 0
+  fi
+
+  command -v sudo 2>/dev/null || return 1
+}
+
+nixoa_run_as_root() {
+  local sudo_bin
+
+  if [ "$(id -u)" -eq 0 ]; then
+    "$@"
+    return $?
+  fi
+
+  sudo_bin="$(nixoa_sudo_bin)" || {
+    echo "Error: root access is required for this step, but sudo is not available." >&2
+    return 1
+  }
+
+  "$sudo_bin" "$@"
+}
+
 nixoa_status_porcelain() {
   git -C "$NIXOA_SYSTEM_ROOT" status --short -- "${NIXOA_TRACKED_PATHS[@]}"
 }
@@ -255,8 +280,8 @@ nixoa_write_apply_state() {
     install -d -m 0755 "$state_dir"
     install -m 0644 "$temp_file" "$state_file"
   else
-    sudo install -d -m 0755 "$state_dir"
-    sudo install -m 0644 "$temp_file" "$state_file"
+    nixoa_run_as_root install -d -m 0755 "$state_dir"
+    nixoa_run_as_root install -m 0644 "$temp_file" "$state_file"
   fi
 
   rm -f "$temp_file"
@@ -281,10 +306,10 @@ nixoa_schedule_rebuild_on_boot() {
     return 0
   fi
 
-  sudo install -d -m 0755 "$queue_dir"
+  nixoa_run_as_root install -d -m 0755 "$queue_dir"
   {
     printf 'repo_root=%q\n' "$repo_root"
     printf 'hostname=%q\n' "$hostname"
     printf 'scheduled_at=%q\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  } | sudo tee "$queue_file" >/dev/null
+  } | nixoa_run_as_root tee "$queue_file" >/dev/null
 }

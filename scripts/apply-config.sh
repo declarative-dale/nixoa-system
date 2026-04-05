@@ -111,7 +111,8 @@ fi
 rebuild_cmd+=("${extra_args[@]}")
 
 if [ "$EUID" -ne 0 ]; then
-  rebuild_cmd=(sudo "${rebuild_cmd[@]}")
+  sudo_bin="$(nixoa_sudo_bin)" || exit 1
+  rebuild_cmd=("$sudo_bin" "${rebuild_cmd[@]}")
 fi
 
 printf 'Running:'

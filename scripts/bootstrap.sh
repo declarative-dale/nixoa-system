@@ -175,13 +175,21 @@ enable_flakes_now() {
 }
 
 run_as_root() {
+  local sudo_bin
+
   if [ "$(id -u)" -eq 0 ]; then
     "$@"
     return $?
   fi
 
-  if command -v sudo >/dev/null 2>&1; then
-    sudo "$@"
+  if [ -x /run/wrappers/bin/sudo ]; then
+    sudo_bin=/run/wrappers/bin/sudo
+    "$sudo_bin" "$@"
+    return $?
+  fi
+
+  if sudo_bin="$(command -v sudo 2>/dev/null)"; then
+    "$sudo_bin" "$@"
     return $?
   fi
 
