@@ -34,8 +34,4 @@ nixoa_commit_changes "$COMMIT_MSG"
 
 echo "✓ Configuration committed successfully!"
 echo ""
-echo "Next steps:"
-echo "  1. Review changes: git log -1 -p"
-echo "  2. Apply the host config: ./scripts/apply-config.sh"
-echo ""
 echo "To undo this commit: git reset HEAD~1"
