@@ -51,6 +51,9 @@ load_apply_state() {
   last_apply_timestamp=""
 
   apply_state_file="$(nixoa_apply_state_file)"
+  if [ ! -f "$apply_state_file" ]; then
+    apply_state_file="$(nixoa_legacy_apply_state_file)"
+  fi
   if [ -f "$apply_state_file" ]; then
     # shellcheck source=/dev/null
     . "$apply_state_file"

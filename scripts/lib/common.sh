@@ -26,15 +26,26 @@ nixoa_system_root() {
 }
 
 nixoa_state_dir() {
-  printf '%s\n' "${NIXOA_STATE_DIR:-${XDG_STATE_HOME:-${HOME:-$NIXOA_SYSTEM_ROOT/.local/state}}/nixoa}"
+  local default_state_home
+
+  default_state_home="${XDG_STATE_HOME:-${HOME:-$NIXOA_SYSTEM_ROOT}/.local/state}"
+  printf '%s\n' "${NIXOA_STATE_DIR:-$default_state_home/nixoa}"
+}
+
+nixoa_shared_state_dir() {
+  printf '%s\n' "${NIXOA_SHARED_STATE_DIR:-/var/lib/nixoa}"
 }
 
 nixoa_apply_state_file() {
-  printf '%s\n' "${NIXOA_STATUS_FILE:-$(nixoa_state_dir)/apply-state.env}"
+  printf '%s\n' "${NIXOA_STATUS_FILE:-$(nixoa_shared_state_dir)/apply-state.env}"
+}
+
+nixoa_legacy_apply_state_file() {
+  printf '%s\n' "$(nixoa_state_dir)/apply-state.env"
 }
 
 nixoa_rebuild_queue_file() {
-  printf '%s\n' "${NIXOA_REBUILD_QUEUE_FILE:-/var/lib/nixoa/rebuild-on-boot.env}"
+  printf '%s\n' "${NIXOA_REBUILD_QUEUE_FILE:-$(nixoa_shared_state_dir)/rebuild-on-boot.env}"
 }
 
 nixoa_config_string() {
@@ -217,6 +228,7 @@ nixoa_write_apply_state() {
   local exit_code="$6"
   local state_file
   local state_dir
+  local temp_file
   local first_install_bool="false"
 
   case "$first_install" in
@@ -227,7 +239,7 @@ nixoa_write_apply_state() {
 
   state_file="$(nixoa_apply_state_file)"
   state_dir="$(dirname "$state_file")"
-  mkdir -p "$state_dir"
+  temp_file="$(mktemp)"
 
   {
     printf 'last_apply_result=%s\n' "$result"
@@ -237,7 +249,17 @@ nixoa_write_apply_state() {
     printf 'last_apply_first_install=%s\n' "$first_install_bool"
     printf 'last_apply_exit_code=%s\n' "$exit_code"
     printf 'last_apply_timestamp=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  } > "$state_file"
+  } > "$temp_file"
+
+  if [ "$(id -u)" -eq 0 ]; then
+    install -d -m 0755 "$state_dir"
+    install -m 0644 "$temp_file" "$state_file"
+  else
+    sudo install -d -m 0755 "$state_dir"
+    sudo install -m 0644 "$temp_file" "$state_file"
+  fi
+
+  rm -f "$temp_file"
 }
 
 nixoa_schedule_rebuild_on_boot() {
