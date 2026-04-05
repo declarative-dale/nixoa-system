@@ -25,6 +25,7 @@ Commands:
   add-service VALUE
   update-nixpkgs
   update-home-manager
+  update-determinate
   update-xoa
   update-all
   cleanup-unmanaged-users
@@ -431,6 +432,11 @@ case "$command_name" in
     update_input_and_prompt \
       "Update home-manager input from nixoa-menu" \
       nix flake lock --update-input home-manager
+    ;;
+  update-determinate)
+    update_input_and_prompt \
+      "Update determinate input from nixoa-menu" \
+      nix flake lock --update-input determinate
     ;;
   update-xoa)
     current_xoa_rev="$(lock_rev_for xen-orchestra-ce)"
