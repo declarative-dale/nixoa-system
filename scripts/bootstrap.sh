@@ -408,4 +408,9 @@ echo "Configured user: $username_arg"
 echo "Next steps:"
 echo "  1. Review overrides in $repo_dir/config/overrides.nix."
 echo "  2. Run $repo_dir/scripts/show-diff.sh"
-echo "  3. Run $repo_dir/scripts/apply-config.sh"
+if [ "$first_switch" -eq 1 ]; then
+  echo "  3. The initial apply already ran during bootstrap."
+  echo "  4. Re-run $repo_dir/scripts/apply-config.sh only when you want to apply later changes."
+else
+  echo "  3. Run $repo_dir/scripts/apply-config.sh"
+fi
