@@ -19,21 +19,24 @@
     };
   };
 
-  programs.git = lib.mkIf vars.enableExtras {
+  programs.git = {
     enable = true;
     userName = vars.gitName;
     userEmail = vars.gitEmail;
-    settings = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      core.pager = "${pkgs.delta}/bin/delta";
-      delta = {
-        navigate = true;
-        line-numbers = true;
-        syntax-theme = "Dracula";
+    settings =
+      {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        merge.conflictstyle = "diff3";
+        diff.colorMoved = "default";
+      }
+      // lib.optionalAttrs vars.enableExtras {
+        core.pager = "${pkgs.delta}/bin/delta";
+        delta = {
+          navigate = true;
+          line-numbers = true;
+          syntax-theme = "Dracula";
+        };
       };
-      merge.conflictstyle = "diff3";
-      diff.colorMoved = "default";
-    };
   };
 }
