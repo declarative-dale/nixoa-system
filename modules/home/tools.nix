@@ -21,10 +21,10 @@
 
   programs.git = {
     enable = true;
-    userName = vars.gitName;
-    userEmail = vars.gitEmail;
     settings =
       {
+        user.name = vars.gitName;
+        user.email = vars.gitEmail;
         init.defaultBranch = "main";
         pull.rebase = true;
         merge.conflictstyle = "diff3";
