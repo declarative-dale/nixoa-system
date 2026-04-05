@@ -220,11 +220,11 @@
         "xen-orchestra-ce": "xen-orchestra-ce"
       },
       "locked": {
-        "lastModified": 1775373966,
-        "narHash": "sha256-dCMrS+OI/Ri3mLzIqf3TwE02wIOp9jAXhmI/erb238w=",
+        "lastModified": 1775374271,
+        "narHash": "sha256-PtQzj6j7k6oCIU+8ZJq5VAUQ1PumTRkQTmzYk3SYmQk=",
         "ref": "beta",
-        "rev": "c62e8d2900e0191b8598efecc33ad6b92639ce20",
-        "revCount": 364,
+        "rev": "7c90728b33e6e6c556ec4132fe806e42c823a456",
+        "revCount": 365,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/core.git"
       },
