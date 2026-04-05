@@ -134,6 +134,70 @@ load_network_state() {
   fi
 }
 
+lock_rev_for() {
+  local node_name="$1"
+
+  awk -v node_name="$node_name" '
+    BEGIN {
+      in_node = 0
+      in_locked = 0
+    }
+    $0 ~ "^[[:space:]]*\"" node_name "\"[[:space:]]*:[[:space:]]*\\{" {
+      in_node = 1
+      next
+    }
+    in_node && $0 ~ /^[[:space:]]*"locked"[[:space:]]*:[[:space:]]*\{/ {
+      in_locked = 1
+      next
+    }
+    in_node && in_locked && $0 ~ /^[[:space:]]*"rev"[[:space:]]*:/ {
+      line = $0
+      sub(/^[[:space:]]*"rev"[[:space:]]*:[[:space:]]*"/, "", line)
+      sub(/",?[[:space:]]*$/, "", line)
+      print line
+      exit
+    }
+    in_node && in_locked && $0 ~ /^[[:space:]]*}[,]?[[:space:]]*$/ {
+      in_locked = 0
+    }
+  ' "$NIXOA_SYSTEM_ROOT/flake.lock"
+}
+
+load_xoa_state() {
+  local working_dir=""
+  local package_path=""
+  local package_name=""
+  local locked_rev=""
+  local tls_enabled=""
+  local scheme="http"
+
+  xen_orchestra_version=""
+  web_ui_url=""
+
+  working_dir="$(systemctl show -p WorkingDirectory --value xo-server.service 2>/dev/null || true)"
+  if [ -n "$working_dir" ]; then
+    package_path="${working_dir%/libexec/xen-orchestra}"
+    package_name="${package_path##*/}"
+    xen_orchestra_version="$(printf '%s\n' "$package_name" | sed -nE 's/^[[:xdigit:]]{32}-xen-orchestra-ce-(.+)$/\1/p')"
+  fi
+
+  if [ -z "$xen_orchestra_version" ]; then
+    locked_rev="$(lock_rev_for xen-orchestra-ce)"
+    if [ -n "$locked_rev" ]; then
+      xen_orchestra_version="rev $(printf '%.8s' "$locked_rev")"
+    fi
+  fi
+
+  tls_enabled="$(nixoa_tui_read_bool_file enableTLS "$NIXOA_SYSTEM_ROOT/config/xo.nix" || true)"
+  if [ "$tls_enabled" = "true" ]; then
+    scheme="https"
+  fi
+
+  if [ -n "$primary_ip" ]; then
+    web_ui_url="${scheme}://${primary_ip}"
+  fi
+}
+
 mapfile -t ssh_keys < <(nixoa_tui_ssh_keys)
 mapfile -t system_packages < <(nixoa_tui_extra_system_packages)
 mapfile -t user_packages < <(nixoa_tui_extra_user_packages)
@@ -144,6 +208,7 @@ load_rebuild_queue
 load_memory_state
 load_storage_state
 load_network_state
+load_xoa_state
 
 dirty_count="$(nixoa_tui_dirty_count)"
 current_head="$(git -C "$NIXOA_SYSTEM_ROOT" rev-parse HEAD 2>/dev/null || printf '')"
@@ -197,6 +262,16 @@ if [ "${1:-}" = "--json" ]; then
   else
     printf '  "primaryIp": null,\n'
   fi
+  if [ -n "$xen_orchestra_version" ]; then
+    printf '  "xenOrchestraVersion": %s,\n' "$(json_quote "$xen_orchestra_version")"
+  else
+    printf '  "xenOrchestraVersion": null,\n'
+  fi
+  if [ -n "$web_ui_url" ]; then
+    printf '  "webUiUrl": %s,\n' "$(json_quote "$web_ui_url")"
+  else
+    printf '  "webUiUrl": null,\n'
+  fi
   printf '  "rebuildQueued": %s,\n' "$rebuild_queued"
   printf '  "rebuildNeeded": %s,\n' "$rebuild_needed"
   if [ "$last_apply_present" -eq 1 ]; then
@@ -236,5 +311,7 @@ printf 'storage_total_bytes=%s\n' "$storage_total_bytes"
 printf 'storage_used_bytes=%s\n' "$storage_used_bytes"
 printf 'storage_used_percent=%s\n' "$storage_used_percent"
 printf 'primary_ip=%s\n' "$primary_ip"
+printf 'xen_orchestra_version=%s\n' "$xen_orchestra_version"
+printf 'web_ui_url=%s\n' "$web_ui_url"
 printf 'rebuild_queued=%s\n' "$rebuild_queued"
 printf 'rebuild_needed=%s\n' "$rebuild_needed"
