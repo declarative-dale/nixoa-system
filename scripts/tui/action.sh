@@ -185,6 +185,12 @@ cleanup_unmanaged_users() {
   local -a homes=()
   local entry=""
   local dir=""
+  local total_targets=0
+  local current_target=0
+  local removed_users=0
+  local removed_orphans=0
+
+  echo "[1/4] Scanning for unmanaged users under /home..."
 
   while IFS=: read -r username _ _ _ _ home_dir _; do
     [ -n "$username" ] || continue
@@ -197,16 +203,22 @@ cleanup_unmanaged_users() {
     esac
   done < <(getent passwd)
 
+  total_targets="${#targets[@]}"
+
   if [ "${#targets[@]}" -eq 0 ]; then
     echo "No unmanaged users under /home were found."
   else
-    echo "Removing unmanaged users:"
+    echo "[2/4] Removing unmanaged users:"
     printf '  - %s\n' "${targets[@]}"
 
     local i
     for i in "${!targets[@]}"; do
       username="${targets[$i]}"
       home_dir="${homes[$i]}"
+      current_target=$((i + 1))
+
+      printf '[2/4] [%d/%d] Removing user %s and home %s\n' \
+        "$current_target" "$total_targets" "$username" "$home_dir"
 
       loginctl terminate-user "$username" >/dev/null 2>&1 || true
       loginctl disable-linger "$username" >/dev/null 2>&1 || true
@@ -219,9 +231,12 @@ cleanup_unmanaged_users() {
       if [ -d "$home_dir" ]; then
         rm -rf --one-file-system "$home_dir"
       fi
+
+      removed_users=$((removed_users + 1))
     done
   fi
 
+  echo "[3/4] Removing orphan home directories..."
   for dir in /home/*; do
     [ -d "$dir" ] || continue
     [ "$dir" = "/home/$managed_user" ] && continue
@@ -230,8 +245,13 @@ cleanup_unmanaged_users() {
     if [ -z "$entry" ]; then
       echo "Removing orphan home directory: $dir"
       rm -rf --one-file-system "$dir"
+      removed_orphans=$((removed_orphans + 1))
     fi
   done
+
+  echo "[4/4] Cleanup complete."
+  printf 'Removed %d unmanaged users and %d orphan home directories.\n' \
+    "$removed_users" "$removed_orphans"
 }
 
 if [ $# -lt 1 ]; then
