@@ -27,6 +27,7 @@ Commands:
   update-home-manager
   update-xoa
   update-all
+  cleanup-unmanaged-users
 EOF
 }
 
@@ -173,6 +174,64 @@ latest_xoa_tag() {
     | awk '{ sub("refs/tags/", "", $2); print $2, $1 }' \
     | sort -V \
     | tail -n 1
+}
+
+cleanup_unmanaged_users() {
+  local managed_user="$1"
+  local passwd_line=""
+  local username=""
+  local home_dir=""
+  local -a targets=()
+  local -a homes=()
+  local entry=""
+  local dir=""
+
+  while IFS=: read -r username _ _ _ _ home_dir _; do
+    [ -n "$username" ] || continue
+    [ "$username" = "$managed_user" ] && continue
+    case "$home_dir" in
+      /home/*)
+        targets+=("$username")
+        homes+=("$home_dir")
+        ;;
+    esac
+  done < <(getent passwd)
+
+  if [ "${#targets[@]}" -eq 0 ]; then
+    echo "No unmanaged users under /home were found."
+  else
+    echo "Removing unmanaged users:"
+    printf '  - %s\n' "${targets[@]}"
+
+    local i
+    for i in "${!targets[@]}"; do
+      username="${targets[$i]}"
+      home_dir="${homes[$i]}"
+
+      loginctl terminate-user "$username" >/dev/null 2>&1 || true
+      loginctl disable-linger "$username" >/dev/null 2>&1 || true
+      pkill -KILL -u "$username" >/dev/null 2>&1 || true
+
+      if id "$username" >/dev/null 2>&1; then
+        userdel --remove "$username"
+      fi
+
+      if [ -d "$home_dir" ]; then
+        rm -rf --one-file-system "$home_dir"
+      fi
+    done
+  fi
+
+  for dir in /home/*; do
+    [ -d "$dir" ] || continue
+    [ "$dir" = "/home/$managed_user" ] && continue
+
+    entry="$(getent passwd "$(basename "$dir")" || true)"
+    if [ -z "$entry" ]; then
+      echo "Removing orphan home directory: $dir"
+      rm -rf --one-file-system "$dir"
+    fi
+  done
 }
 
 if [ $# -lt 1 ]; then
@@ -381,6 +440,9 @@ EOF
     update_input_and_prompt \
       "Update flake inputs from nixoa-menu" \
       nix flake update
+    ;;
+  cleanup-unmanaged-users)
+    nixoa_run_as_root bash -lc "$(declare -f cleanup_unmanaged_users); cleanup_unmanaged_users $(printf '%q' "$username_value")"
     ;;
   *)
     usage >&2
