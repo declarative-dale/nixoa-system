@@ -2,11 +2,11 @@
   "nodes": {
     "den": {
       "locked": {
-        "lastModified": 1775447133,
-        "narHash": "sha256-Po6+GhalRr4f2JAfXAIbgsx7qSBBYh3/X3BibCBk8yA=",
+        "lastModified": 1775514282,
+        "narHash": "sha256-/2SDEtAzav3uSD2tTBdoMohiDSIZYcBH4fSXQ6tUtQU=",
         "owner": "vic",
         "repo": "den",
-        "rev": "e9fa30786ccc019e2a612c542cc74a5c2ebfb348",
+        "rev": "79c2a8bbd75609e061745daa3b4a64e83081b615",
         "type": "github"
       },
       "original": {
@@ -17,11 +17,11 @@
     },
     "den_2": {
       "locked": {
-        "lastModified": 1775447133,
-        "narHash": "sha256-Po6+GhalRr4f2JAfXAIbgsx7qSBBYh3/X3BibCBk8yA=",
+        "lastModified": 1775514282,
+        "narHash": "sha256-/2SDEtAzav3uSD2tTBdoMohiDSIZYcBH4fSXQ6tUtQU=",
         "owner": "vic",
         "repo": "den",
-        "rev": "e9fa30786ccc019e2a612c542cc74a5c2ebfb348",
+        "rev": "79c2a8bbd75609e061745daa3b4a64e83081b615",
         "type": "github"
       },
       "original": {
@@ -220,11 +220,11 @@
         "xen-orchestra-ce": "xen-orchestra-ce"
       },
       "locked": {
-        "lastModified": 1775507714,
-        "narHash": "sha256-Vj9cPwG8kXz0elHjHlPm/rv/d9nm76h/BKp7ZU8UACI=",
+        "lastModified": 1775522135,
+        "narHash": "sha256-JRei6pyQkxx02O78oaHqDDQuWtSmWtR2i5DUHdQplhs=",
         "ref": "beta",
-        "rev": "55a8a95c96e5eaeaec53ceb2d9f795ee2b3ef91e",
-        "revCount": 371,
+        "rev": "47c9f734c79a98dd7b01c60b74b96b4103a120d1",
+        "revCount": 372,
         "type": "git",
         "url": "https://codeberg.org/NiXOA/core.git"
       },
